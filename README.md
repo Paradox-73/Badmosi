@@ -98,9 +98,10 @@ godot --headless --path . --script res://tools/check_scripts.gd
 godot --headless --path . --script res://tools/check_levels.gd
 godot --headless --path . --script res://tools/check_content.gd
 godot --headless --path . --script res://tools/run_tests.gd
+godot --headless --path . --script res://tools/ui_smoke.gd
 ```
 
-These check that every script compiles, that the room files are valid, that the quiz, debate lines and club data are complete, and that the game rules hold.
+These check that every script compiles, that the room files are valid, that the quiz, debate lines and club data are complete, that the game rules hold, and that the hub boards, canteen and pause menu work.
 
 Arguments after `--` open a screen directly, for testing and frame captures: `--screen=<name>`, `--club=<id>`, `--fight` and `--autoplay`.
 
