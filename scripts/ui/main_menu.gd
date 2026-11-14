@@ -12,6 +12,7 @@ func _ready() -> void:
 	var items := [
 		{"text": "NEW GAME", "on": _new_game},
 		{"text": "CONTINUE", "on": _continue, "disabled": not Game.has_save()},
+		{"text": "HOW TO PLAY", "on": func(): Game.goto("how_to_play")},
 		{"text": "CLUB SELECT", "on": func(): Game.goto("club_select")},
 		{"text": "OPTIONS", "on": func(): Game.goto("options")},
 		{"text": "RHYTHM CALIBRATION", "on": func(): Game.goto("calibrate")},

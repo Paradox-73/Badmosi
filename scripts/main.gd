@@ -13,6 +13,7 @@ const SCREENS := {
 	"club": "res://scripts/club_room.gd",
 	"ending": "res://scripts/story/ending.gd",
 	"calibrate": "res://scripts/ui/calibrate.gd",
+	"how_to_play": "res://scripts/ui/how_to_play.gd",
 }
 
 var world: Node2D
