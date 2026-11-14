@@ -207,6 +207,8 @@ func _victory(how: String, lines: Array) -> void:
 		pages.append({"who": data.head, "text": data.hint, "look": data.head_look})
 	if id == "admin":
 		pages = [{"who": "THE ADMIN", "text": line, "tex": Px._cache.get("admin")}]
+	if Clubs.ALLIES.has(id):
+		pages.append({"who": data.head, "text": "...WAIT. WHERE AM I? THE CIRCULAR... WE WERE BRAINWASHED! THANKS, %s. %s HAS YOUR BACK NOW." % [Game.char_name(), data.name], "look": data.head_look})
 	var dlg := DialogueBox.new()
 	dlg.pages = pages
 	Game.main.ui.add_child(dlg)
@@ -218,6 +220,8 @@ func _victory(how: String, lines: Array) -> void:
 	cp.pages.append(CardPages.results_page("CLUB BEATEN!", lines, true))
 	if id != "admin":
 		cp.pages.append(CardPages.card_page(id))
+	if Clubs.ALLIES.has(id):
+		cp.pages.append(CardPages.results_page("%s IS FREE!" % data.name, ["NOW YOUR ALLY FOR THE REST OF THE RUN:", Clubs.ALLIES[id].desc], true))
 	var headline: String = data.head_straight if how == "straight" else data.head_flip % Game.fit_words().trim_suffix("!")
 	headline = headline.replace("FRESHER", Game.char_name())
 	cp.pages.append(CardPages.headline_page(headline))

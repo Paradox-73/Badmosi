@@ -303,11 +303,10 @@ func _spawn_guards() -> void:
 func _caught(gd: Guard) -> void:
 	gd.stop_t = 3.0
 	gd.chase_t = 0.0
-	Game.add_pixels(-30)
-	Game.tally("fines", 30)
+	var paid := Game.fine(30)
 	Game.tally("caught")
 	Audio.play("whistle", 0.0)
-	await _say([{"who": "SECURITY", "text": "ID CARD? ... LOITERING FINE: 30 PX.", "look": Guard.LOOK}])
+	await _say([{"who": "SECURITY", "text": "ID CARD? ... LOITERING FINE: %d PX." % paid, "look": Guard.LOOK}])
 	player.position = _gate_pos()
 	Game.save_run()
 

@@ -233,9 +233,26 @@ func char_name() -> String:
 	return char_data().name
 
 
-## The character's perk value for a key (see Roster), 0 if it has none.
+## The perk value for a key (see Roster): the character's own plus every
+## freed club's.
 func stat(key: String) -> float:
-	return float(char_data().perks.get(key, 0.0))
+	var v := float(char_data().perks.get(key, 0.0))
+	for id in cards:
+		v += float(Clubs.ALLIES.get(id, {}).get("perks", {}).get(key, 0.0))
+	return v
+
+
+func ally(id: String) -> bool:
+	return cards.has(id)
+
+
+## Takes a fine in pixels. DebSoc, once freed, argues it down by half.
+func fine(px: int) -> int:
+	if ally("debsoc"):
+		px /= 2
+	add_pixels(-px)
+	tally("fines", px)
+	return px
 
 
 func quirk() -> String:
@@ -326,6 +343,11 @@ func cycle_special() -> void:
 func beat_club(id: String, how: String) -> bool:
 	var first := not cards.has(id)
 	cards[id] = how
+	if first:
+		if ally("food"):
+			heal(15)
+		if id == "parvaaz":
+			proxies += 1
 	credits += 100
 	var up := false
 	if first and sem < 8:

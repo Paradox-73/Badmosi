@@ -72,6 +72,20 @@ func _process(_d: float) -> bool:
 	check(G.rage_t > 0.0, "enough hits empty Sachan's patience into rage")
 	G.rage_t = 0.0
 	G.character = "betala"
+	# Freed clubs as allies.
+	G.new_run()
+	G.pixels = 100
+	check(G.fine(30) == 30, "a fine costs full price before DebSoc is freed")
+	G.cards["debsoc"] = "straight"
+	check(G.fine(30) == 15 and G.pixels == 55, "freed DebSoc halves fines")
+	G.cards["vinci"] = "straight"
+	G.attendance = 100.0
+	G.hurt(10.0)
+	check(is_equal_approx(G.attendance, 91.0), "freed Vinci cuts losses by 10%")
+	var p0: int = G.proxies
+	G.beat_club("parvaaz", "straight")
+	check(G.proxies == p0 + 1, "freeing Parvaaz gives a Proxy")
+	G.new_run()
 	# Proxies.
 	G.new_run()
 	G.proxies = 1

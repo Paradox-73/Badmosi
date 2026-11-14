@@ -195,7 +195,7 @@ func _apply_swing() -> void:
 			swing_hit[e] = true
 			var landed: bool = e.take_hit(dmg, facing, combo == 3)
 			if landed:
-				Game.add_hype(1)
+				Game.add_hype(2 if combo == 3 and Game.ally("symphony") else 1)
 	if room and room.hit_prop(center() + facing * 12.0):
 		Fx.burst(center() + facing * 14.0, [Px.C.gold], 6, self, 5)
 

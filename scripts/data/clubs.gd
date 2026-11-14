@@ -319,6 +319,27 @@ static func hp_mult() -> float:
 	return 1.0 + 0.05 * Game.card_count()
 
 
+## What each freed club does for you for the rest of the run. "perks" use the
+## Roster perk keys and add to the character's own; the rest are handled where
+## they apply (Symphony in Player, Food and Parvaaz in Game.beat_club, DebSoc in
+## Game.fine, ECLIPSE and Zense in the sabotage events).
+const ALLIES := {
+	"impulse": {"desc": "-20% DODGE COOLDOWN", "perks": {"dodge": 0.2}},
+	"symphony": {"desc": "+1 HYPE ON EVERY COMBO FINISHER"},
+	"quiz": {"desc": "+15% MINIGAME TIME", "perks": {"time": 0.15}},
+	"pioneers": {"desc": "+10% FIGHT DAMAGE", "perks": {"dmg": 0.1}},
+	"eightbit": {"desc": "+10% MOVE SPEED", "perks": {"speed": 0.1}},
+	"eclipse": {"desc": "SEES IN THE DARK: LIGHT OUTAGES ARE SHORTER"},
+	"food": {"desc": "+15% ATTENDANCE AFTER EVERY CLUB YOU FREE"},
+	"chhaya": {"desc": "+20% PIXELS EARNED", "perks": {"px": 0.2}},
+	"film": {"desc": "+10% TIMING WINDOWS", "perks": {"window": 0.1}},
+	"zense": {"desc": "FIXES THE WIFI: OUTAGES ARE SHORTER"},
+	"vinci": {"desc": "-10% ATTENDANCE LOSS", "perks": {"guard": 0.1}},
+	"debsoc": {"desc": "ARGUES EVERY FINE DOWN BY HALF"},
+	"parvaaz": {"desc": "+1 PROXY, RIGHT NOW"},
+}
+
+
 static func all_beaten() -> bool:
 	for id in ORDER:
 		if not Game.cards.has(id):
