@@ -43,6 +43,10 @@ func _draw() -> void:
 			var on := Game.hype > i
 			var cost_mark := i < int(sp.cost)
 			draw_rect(Rect2(128 + i * 5, 14, 4, 6), (Px.C.gold if on else (Px.C.plum if cost_mark else Px.C.night)))
+		if Game.quirk() == "dhairya":
+			var rage := Game.rage_t > 0.0
+			Px.text(self, "RAGE!" if rage else "DHAIRYA", Vector2(184, 13), Px.C.red if rage else Px.C.steel)
+			Px.bar(self, Rect2(230, 14, 40, 6), 1.0 if rage else Game.dhairya / 100.0, Px.C.red if rage or Game.dhairya < 30.0 else Px.C.orange)
 		var cards := "CARDS %d/%d" % [Game.club_card_count(), Clubs.ORDER.size()]
 		Px.text(self, cards, Vector2(Px.W - Px.text_w(cards) - 3, 13), Px.C.mist)
 	elif mode == "minigame":
@@ -63,6 +67,9 @@ func _draw() -> void:
 	elif mode == "hub":
 		var cards2 := "CLUB CARDS %d/%d" % [Game.club_card_count(), Clubs.ORDER.size()]
 		Px.text(self, cards2, Vector2(3, 13), Px.C.gold)
+		var food := ", ".join(Game.buffs.keys().map(func(k): return Game.BUFFS[k].name))
+		if food != "":
+			Px.text(self, food, Vector2(110, 13), Px.C.red if Game.has_buff("upset") else Px.C.lime)
 		var spn := "DIFFICULTY " + Game.diff_name()
 		Px.text(self, spn, Vector2(Px.W - Px.text_w(spn) - 3, 13), Px.C.steel)
 	if boss and is_instance_valid(boss) and boss.active:

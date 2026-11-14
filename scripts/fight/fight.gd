@@ -70,6 +70,7 @@ func start() -> void:
 		_spawn_later(s[0], s[1], delay)
 		delay += 0.15
 	banner("%s RUSHES IN!" % d.name)
+	Game.add_hype(int(Game.stat("hype")))
 
 
 func _spawn_later(arch: String, cell: Vector2i, delay: float) -> void:

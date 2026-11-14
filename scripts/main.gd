@@ -102,6 +102,8 @@ func _ready() -> void:
 			args["id"] = a.substr(7)
 		if a == "--fight":
 			args["fight"] = true
+		if a.begins_with("--char="):
+			Game.character = a.substr(7)
 	_swap(first, args)
 
 

@@ -293,11 +293,20 @@ func club_card_count() -> int:
 	return n
 
 
+## Signature specials replace Downscale for the characters that have one.
+const SIGNATURES := {
+	"cartwheel": {"id": "cartwheel", "name": "CARTWHEEL", "cards": 0, "cost": 4},
+	"blackhole": {"id": "blackhole", "name": "BLACK HOLE", "cards": 0, "cost": 6},
+}
+
+
 func unlocked_specials() -> Array:
 	var out := []
 	for s in SPECIALS:
 		if card_count() >= s.cards:
 			out.append(s)
+	if SIGNATURES.has(quirk()):
+		out[0] = SIGNATURES[quirk()]
 	return out
 
 

@@ -59,6 +59,18 @@ func _process(_d: float) -> bool:
 		var lines: Array = Roster.perk_lines(cid)
 		var has_bad: bool = lines.any(func(l): return not l[1]) or Roster.get_char(cid).has("quirk")
 		check(lines.any(func(l): return l[1]) and has_bad, cid + " has a buff and a nerf or quirk")
+	G.character = "sodhi"
+	check(G.unlocked_specials()[0].id == "cartwheel", "Sodhi starts with the cartwheel")
+	G.character = "nirbhay"
+	check(G.unlocked_specials()[0].id == "blackhole", "Nirbhay starts with the black hole")
+	G.character = "sachan"
+	G.rage_t = 0.0
+	G.dhairya = 100.0
+	for i in 12:
+		G.attendance = 100.0
+		G.hurt(10.0)
+	check(G.rage_t > 0.0, "enough hits empty Sachan's patience into rage")
+	G.rage_t = 0.0
 	G.character = "betala"
 	# Proxies.
 	G.new_run()

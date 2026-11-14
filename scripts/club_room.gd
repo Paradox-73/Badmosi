@@ -61,6 +61,7 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	Game.end_club_buffs()
 	if Game.detained.is_connected(_on_detained):
 		Game.detained.disconnect(_on_detained)
 	if Game.proxy_used.is_connected(_on_proxy):
