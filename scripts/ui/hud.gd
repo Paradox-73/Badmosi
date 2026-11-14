@@ -72,6 +72,11 @@ func _draw() -> void:
 			Px.text(self, food, Vector2(110, 13), Px.C.red if Game.has_buff("upset") else Px.C.lime)
 		var spn := "DIFFICULTY " + Game.diff_name()
 		Px.text(self, spn, Vector2(Px.W - Px.text_w(spn) - 3, 13), Px.C.steel)
+	if Game.speedrun:
+		var clk := Game.clock(Game.run_time)
+		var w2 := Px.text_w(clk) + 6
+		draw_rect(Rect2(Px.W - w2 - 2, Px.TOP + 1, w2, 10), Color(Px.C.ink, 0.8))
+		Px.text(self, clk, Vector2(Px.W - w2 + 1, Px.TOP + 2), Px.C.lime)
 	if boss and is_instance_valid(boss) and boss.active:
 		var d: Dictionary = Clubs.get_club(boss.club)
 		var w := 200

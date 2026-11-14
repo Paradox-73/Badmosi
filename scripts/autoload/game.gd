@@ -41,6 +41,8 @@ var buffs := {}          # buff id -> clubs left (see BUFFS)
 var tallies := {}        # run counters for the end-of-sem summary
 var dhairya := 100.0     # Sachan's patience meter
 var rage_t := 0.0        # seconds of Sachan's rage left
+var run_time := 0.0      # seconds played this run, for the speedrun timer
+var speedrun := false    # shows the timer and keeps a best time
 var practice := false    # true when a club was opened from club select
 var autoplay := false    # --autoplay: scenes advance themselves, for frame captures
 var truffles_t := -1.0   # seconds until a Truffles order leaves the gate, -1 when none
@@ -158,6 +160,7 @@ func new_run() -> void:
 	tallies = {}
 	dhairya = 100.0
 	rage_t = 0.0
+	run_time = 0.0
 	truffles_t = -1.0
 	practice = false
 	stats_changed.emit()
@@ -262,6 +265,8 @@ func quirk() -> String:
 func _process(delta: float) -> void:
 	if get_tree().paused:
 		return
+	if main and main.screen_name in ["hub", "club", "opening"] and not practice:
+		run_time += delta
 	if rage_t > 0.0:
 		rage_t -= delta
 		if rage_t <= 0.0:
@@ -288,6 +293,11 @@ func end_club_buffs() -> void:
 		if buffs[k] <= 0:
 			buffs.erase(k)
 	stats_changed.emit()
+
+
+## A run time as M:SS.cc.
+static func clock(sec: float) -> String:
+	return "%d:%05.2f" % [int(sec) / 60, fmod(sec, 60.0)]
 
 
 ## Adds n to a run counter: fines, caught, flips, detained and so on.
@@ -387,7 +397,8 @@ func save_run() -> void:
 		return
 	var d := {"attendance": attendance, "proxies": proxies, "pixels": pixels,
 		"credits": credits, "sem": sem, "cards": cards, "difficulty": difficulty,
-		"character": character, "buffs": buffs, "tallies": tallies}
+		"character": character, "buffs": buffs, "tallies": tallies,
+		"run_time": run_time, "speedrun": speedrun}
 	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if f:
 		f.store_string(JSON.stringify(d))
@@ -414,6 +425,8 @@ func load_run() -> bool:
 	character = str(d.get("character", "kanav"))
 	buffs = d.get("buffs", {})
 	tallies = d.get("tallies", {})
+	run_time = float(d.get("run_time", 0.0))
+	speedrun = bool(d.get("speedrun", false))
 	practice = false
 	stats_changed.emit()
 	return true

@@ -69,7 +69,7 @@ func _pick() -> void:
 	Audio.play("select", 0.0)
 	Audio.play_music("theme_" + Game.character)
 	await get_tree().create_timer(0.6).timeout
-	Game.goto("flashback")
+	Game.goto("hub" if Game.speedrun else "flashback")
 
 
 func _draw() -> void:
