@@ -49,7 +49,7 @@ func _ready() -> void:
 	_crt.shader = load("res://shaders/crt.gdshader")
 	get_tree().root.size_changed.connect(_fit_frame)
 	_fit_frame()
-	set_crt(Game.opts.get("crt", true))
+	apply_crt()
 	var tap := PauseTap.new()
 	tap.main = self
 	_vp.add_child(tap)
@@ -197,8 +197,10 @@ func _fit_frame() -> void:
 	_frame.position = ((win - _frame.size) / 2.0).floor()
 
 
-func set_crt(on: bool) -> void:
-	_frame.material = _crt if on else null
+## Applies the CRT options: on or off, and how far the screen bulges.
+func apply_crt() -> void:
+	_frame.material = _crt if Game.opts.get("crt", true) else null
+	_crt.set_shader_parameter("curve", 0.004 * float(Game.opts.get("crt_curve", 3)))
 
 
 ## Opens the pause menu. Runs inside the game viewport, so menus that use

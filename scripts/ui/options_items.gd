@@ -17,6 +17,8 @@ static func build(include_difficulty := true) -> Array:
 			"change": func(d): Game.difficulty = (Game.difficulty + d + 3) % 3})
 	items.append({"text": "CRT FILTER", "value": func(): return onoff(Game.opts.crt),
 		"change": func(_d): Game.opts.crt = not Game.opts.crt; Game.apply_options(); Game.save_options()})
+	items.append({"text": "CRT CURVE", "value": func(): return "%d%%" % (int(Game.opts.crt_curve) * 10),
+		"change": func(d): Game.opts.crt_curve = clampi(int(Game.opts.crt_curve) + d, 0, 10); Game.apply_options(); Game.save_options()})
 	items.append({"text": "RHYTHM OFFSET", "value": func(): return "%d MS" % int(Game.opts.rhythm_offset),
 		"change": func(d): Game.opts.rhythm_offset = clampi(int(Game.opts.rhythm_offset) + d * 10, -300, 300); Game.save_options()})
 	items.append({"text": "CLEAN TEXT", "value": func(): return onoff(Game.opts.clean_text),

@@ -51,6 +51,7 @@ var assist_double := false
 var opts := {
 	"music": 0.7, "sfx": 0.8, "clean_text": false, "shake": true,
 	"reduce_flash": false, "fullscreen": false, "rhythm_offset": 0, "crt": true,
+	"crt_curve": 3,
 }
 
 
@@ -409,4 +410,4 @@ func apply_options() -> void:
 	if has_node("/root/Audio"):
 		get_node("/root/Audio").apply_volumes()
 	if main:
-		main.set_crt(opts.crt)
+		main.apply_crt()
