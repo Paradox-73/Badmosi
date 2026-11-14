@@ -290,6 +290,14 @@ func _draw() -> void:
 			elif MAP[y][x] == "n":
 				var tx := Px.char_tex(_aikyam(), "idle" if int(t * 2) % 2 == 0 else "walk1")
 				draw_texture(tx, p2)
+	# Progress over each door.
+	for k in BUILDINGS:
+		var c := _find(k)
+		var ids: Array = BUILDINGS[k].clubs
+		var done := ids.filter(func(i): return Game.cards.has(i)).size()
+		var s := "%d/%d" % [done, ids.size()]
+		var y := Px.TOP + c.y * 16 + (18 if c.y < 5 else -10)
+		Px.text_c(self, s, c.x * 16 + 8, y, Px.C.lime if done == ids.size() else Px.C.white)
 	# Gate.
 	Px.text_c(self, "MAIN GATE", 11 * 16 + 8, Px.H - 10, Px.C.mist)
 
