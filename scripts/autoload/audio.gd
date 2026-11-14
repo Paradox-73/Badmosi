@@ -303,6 +303,14 @@ func _render_song(name: String) -> AudioStreamWAV:
 					if q3 == 0 or q3 == 8: _mix_into(buf, cache["kick"], at)
 					if q3 == 12: _mix_into(buf, cache["snare"], at)
 					if q3 % 4 == 2: _mix_into(buf, cache["hat"], at)
+	# Normalise so stacked voices never clip.
+	var peak := 0.0
+	for i in buf.size():
+		peak = maxf(peak, absf(buf[i]))
+	if peak > 0.85:
+		var k := 0.85 / peak
+		for i in buf.size():
+			buf[i] *= k
 	return _to_wav(buf, true)
 
 
