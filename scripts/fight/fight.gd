@@ -334,6 +334,6 @@ class FightTop extends Node2D:
 				draw_rect(Rect2(p2, Vector2(2, 2)), r.color if i % 2 == 0 else Px.C.white)
 		if banner_t > 0.0 and banner_text != "":
 			var w := Px.text_w(banner_text) + 12
-			var rr := Rect2(Px.W / 2.0 - w / 2.0, Px.H - 22, w, 14)
+			var rr := Rect2(Px.W / 2.0 - w / 2.0, Px.TOP + 4, w, 14)
 			Px.panel(self, rr, Px.C.ink, Px.C.gold)
-			Px.text_c(self, banner_text, Px.W / 2.0, Px.H - 19, Px.C.white)
+			Px.text_c(self, banner_text, Px.W / 2.0, Px.TOP + 7, Px.C.white)
