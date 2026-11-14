@@ -272,9 +272,9 @@ const DATA := {
 		"stats": ["THE OFFICE", "OFFICE HOURS: NEVER", "RESOLUTION: 4K"],
 		"challenge": "AS PER CIRCULAR 404: FILL IN THIS FORM. ONE FIELD PER CLUB.",
 		"lose_straight": "...FORM COMPLETE. APPROVED. HOW IRREGULAR.",
-		"lose_flip": "DOWNSCALED... APPROVED. ROOM 404 IS YOURS.",
+		"lose_flip": "DOWNSCALED... CIRCULAR 404... REVOKED.",
 		"hint": "",
-		"head_straight": "PIXEL CLUB FOUND! ROOM 404 APPROVED",
+		"head_straight": "CIRCULAR 404 REVOKED. CAMPUS IS FREE",
 		"head_flip": "FRESHER SAYS %s, DOWNSCALES THE ADMIN",
 	},
 }
