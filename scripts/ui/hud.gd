@@ -73,7 +73,6 @@ func _draw() -> void:
 		Px.bar(self, r, boss.hp / boss.max_hp, Px.C.red)
 
 
-## A pixel-mosaic censor block over n characters.
 ## Cuts s to w pixels with ".." at the end. The minigame goal shares its row with the
 ## hold-F hint, and long goals ran underneath it. The full goal is on the key card.
 func _fit(s: String, w: int) -> String:
@@ -84,6 +83,7 @@ func _fit(s: String, w: int) -> String:
 	return s.strip_edges() + ".."
 
 
+## A pixel-mosaic censor block over n characters.
 func _censor(pos: Vector2, n: int) -> void:
 	var cols := [Px.C.pink, Px.C.violet, Px.C.gold, Px.C.cyan, Px.C.red]
 	for i in n * 2:
