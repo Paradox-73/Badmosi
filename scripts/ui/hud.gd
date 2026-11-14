@@ -46,7 +46,10 @@ func _draw() -> void:
 		var cards := "CARDS %d/%d" % [Game.club_card_count(), Clubs.ORDER.size()]
 		Px.text(self, cards, Vector2(Px.W - Px.text_w(cards) - 3, 13), Px.C.mist)
 	elif mode == "minigame":
-		Px.text(self, goal, Vector2(3, 13), Px.C.gold)
+		var room := Px.W - 6
+		if show_fit_hint:
+			room -= Px.text_w("HOLD F: " + Game.fit_words()) + 8
+		Px.text(self, _fit(goal, room), Vector2(3, 13), Px.C.gold)
 		if show_fit_hint:
 			var hint := "HOLD F: " + Game.fit_words()
 			if Game.opts.clean_text:
@@ -71,6 +74,16 @@ func _draw() -> void:
 
 
 ## A pixel-mosaic censor block over n characters.
+## Cuts s to w pixels with ".." at the end. The minigame goal shares its row with the
+## hold-F hint, and long goals ran underneath it. The full goal is on the key card.
+func _fit(s: String, w: int) -> String:
+	if Px.text_w(s) <= w:
+		return s
+	while s.length() > 1 and Px.text_w(s + "..") > w:
+		s = s.substr(0, s.length() - 1)
+	return s.strip_edges() + ".."
+
+
 func _censor(pos: Vector2, n: int) -> void:
 	var cols := [Px.C.pink, Px.C.violet, Px.C.gold, Px.C.cyan, Px.C.red]
 	for i in n * 2:
