@@ -49,7 +49,7 @@ func _new_game() -> void:
 func _start(d: int) -> void:
 	Game.difficulty = d
 	Game.new_run()
-	Game.goto("opening")
+	Game.goto("char_select")
 
 
 func _continue() -> void:

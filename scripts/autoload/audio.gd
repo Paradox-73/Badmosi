@@ -53,7 +53,9 @@ static func _freq(midi: float) -> float:
 
 ## Renders one tone into a float array.
 ## wave: square, pulse, tri, saw, noise, sine. slide: semitones over the tone.
-func _tone(freq: float, dur: float, wave := "square", vol := 0.5, attack := 0.005, decay := 1.0, slide := 0.0) -> PackedFloat32Array:
+func _tone(freq: float, dur: float, wave := "square", vol := 0.5, attack := 0.005, decay := 1.0, slide := 0.0, rng: RandomNumberGenerator = null) -> PackedFloat32Array:
+	if rng == null:
+		rng = _rng
 	var n := int(dur * RATE)
 	var out := PackedFloat32Array()
 	out.resize(n)
@@ -81,7 +83,7 @@ func _tone(freq: float, dur: float, wave := "square", vol := 0.5, attack := 0.00
 				noise_t += f / RATE
 				if noise_t >= 1.0:
 					noise_t -= 1.0
-					noise_v = _rng.randf_range(-1.0, 1.0)
+					noise_v = rng.randf_range(-1.0, 1.0)
 				s = noise_v
 		var env := minf(1.0, t / attack) if attack > 0.0 else 1.0
 		env *= pow(1.0 - k, decay) if decay > 0.0 else 1.0
@@ -226,9 +228,20 @@ const SONGS := {
 }
 
 
+## A song's settings: one of SONGS, or "theme_<id>" for a character's theme.
+func song_def(name: String) -> Dictionary:
+	if SONGS.has(name):
+		return SONGS[name]
+	if name.begins_with("theme_") and Roster.DATA.has(name.substr(6)):
+		return Roster.theme(name.substr(6))
+	return {}
+
+
+## Renders a song loop. Uses its own random generator so it can run on a worker thread.
 func _render_song(name: String) -> AudioStreamWAV:
-	var s: Dictionary = SONGS[name]
-	_rng.seed = s.seed
+	var s: Dictionary = song_def(name)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = s.seed
 	var beat := 60.0 / float(s.bpm)
 	var sixteenth := beat / 4.0
 	var bars := 8
@@ -263,16 +276,16 @@ func _render_song(name: String) -> AudioStreamWAV:
 		var step_len := 2 if lead_level >= 2 else 4
 		var q2 := 0
 		while q2 < 16:
-			var target: int = root + 36 + chord[_rng.randi() % 3]
+			var target: int = root + 36 + chord[rng.randi() % 3]
 			if q2 % 8 == 0:
 				melody_note = target
 			else:
-				melody_note += [-2, -1, 1, 2, 0][_rng.randi() % 5]
+				melody_note += [-2, -1, 1, 2, 0][rng.randi() % 5]
 				melody_note = clampi(melody_note, root + 31, root + 46)
 			var dur := step_len * sixteenth
-			if _rng.randf() < 0.25 and q2 % 4 == 0:
+			if rng.randf() < 0.25 and q2 % 4 == 0:
 				dur *= 2.0
-			var rest := _rng.randf() < 0.15
+			var rest := rng.randf() < 0.15
 			if not rest:
 				var k3 := "l%d:%f" % [melody_note, dur]
 				if not cache.has(k3):
@@ -282,8 +295,8 @@ func _render_song(name: String) -> AudioStreamWAV:
 		# Drums.
 		if not cache.has("kick"):
 			cache["kick"] = _tone(150, 0.12, "sine", 0.6, 0.001, 1.5, -24)
-			cache["snare"] = _tone(3000, 0.12, "noise", 0.28, 0.001, 1.8)
-			cache["hat"] = _tone(8000, 0.03, "noise", 0.1, 0.001, 2.0)
+			cache["snare"] = _tone(3000, 0.12, "noise", 0.28, 0.001, 1.8, 0.0, rng)
+			cache["hat"] = _tone(8000, 0.03, "noise", 0.1, 0.001, 2.0, 0.0, rng)
 		for q3 in 16:
 			var at := int((bar_t + q3 * sixteenth) * RATE)
 			match s.drums:
@@ -315,15 +328,16 @@ func _render_song(name: String) -> AudioStreamWAV:
 
 
 func play_music(name: String) -> void:
+	_want = ""
 	if name == music_name and music.playing:
 		return
-	if not SONGS.has(name):
+	if song_def(name).is_empty():
 		stop_music()
 		return
 	if not _songs.has(name):
 		_songs[name] = _render_song(name)
 	music_name = name
-	music_bpm = float(SONGS[name].bpm)
+	music_bpm = float(song_def(name).bpm)
 	music.stream = _songs[name]
 	_loop_len = 60.0 / music_bpm * 4.0 * 8.0
 	_loops = 0
@@ -333,8 +347,30 @@ func play_music(name: String) -> void:
 
 
 func stop_music() -> void:
+	_want = ""
 	music.stop()
 	music_name = ""
+
+
+var _want := ""           # song to start when its background render is done
+var _tasks := {}          # song name -> WorkerThreadPool task id
+var _done := {}           # song name -> rendered stream, filled by worker threads
+var _done_lock := Mutex.new()
+
+
+## Like play_music, but renders a new song on a worker thread first, so
+## browsing the roster never stalls a frame. The old song plays meanwhile.
+func play_music_soon(name: String) -> void:
+	if _songs.has(name) or not OS.has_feature("threads"):
+		play_music(name)
+		return
+	_want = name
+	if not _tasks.has(name):
+		_tasks[name] = WorkerThreadPool.add_task(func():
+			var w := _render_song(name)
+			_done_lock.lock()
+			_done[name] = w
+			_done_lock.unlock())
 
 
 ## Renders the remaining music loops one per frame, so later screen changes don't stall.
@@ -348,6 +384,16 @@ func prewarm() -> void:
 
 
 func _process(_d: float) -> void:
+	for n in _tasks.keys():
+		if WorkerThreadPool.is_task_completed(_tasks[n]):
+			WorkerThreadPool.wait_for_task_completion(_tasks[n])
+			_tasks.erase(n)
+			_done_lock.lock()
+			_songs[n] = _done[n]
+			_done.erase(n)
+			_done_lock.unlock()
+			if n == _want:
+				play_music(n)
 	if not _prewarm.is_empty():
 		var s: String = _prewarm.pop_front()
 		if not _songs.has(s):
