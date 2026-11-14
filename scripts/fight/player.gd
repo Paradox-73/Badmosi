@@ -21,6 +21,8 @@ var swing_hit := {}
 var shield_t := 0.0
 var input_enabled := true
 var moved_this_frame := false
+var bot := "--autofight" in OS.get_cmdline_user_args()
+var _bot_t := 0.0
 
 
 func _ready() -> void:
@@ -41,10 +43,12 @@ func _process(delta: float) -> void:
 	buffer_t = maxf(0.0, buffer_t - delta)
 	if buffer_t <= 0.0:
 		buffer = ""
-	if input_enabled:
+	if input_enabled and not bot:
 		_read_input()
 	moved_this_frame = false
 	var mv := Game.move_vec() if input_enabled else Vector2.ZERO
+	if bot and input_enabled:
+		mv = _bot(delta)
 	match state:
 		S.MOVE:
 			if mv.length() > 0.1:
@@ -91,6 +95,32 @@ func _process(delta: float) -> void:
 			step_anim(delta, false)
 	if room and room.is_hazard(position) and iframe_t <= 0.0 and state != S.DODGE:
 		take_hit(4.0, Vector2.ZERO, "hazard")
+
+
+## Test bot for frame captures: walks to the nearest enemy and attacks.
+func _bot(delta: float) -> Vector2:
+	_bot_t -= delta
+	if fight == null or fight.enemies.is_empty():
+		return Vector2.ZERO
+	var best = null
+	var bd := 9999.0
+	for e in fight.enemies:
+		if is_instance_valid(e) and not e.dead:
+			var d: float = e.position.distance_to(position)
+			if d < bd:
+				bd = d
+				best = e
+	if best == null:
+		return Vector2.ZERO
+	var to: Vector2 = best.position - position
+	if bd < 20.0:
+		facing = _snap8(to)
+		if _bot_t <= 0.0:
+			_bot_t = 0.12
+			buffer = "attack" if Game.hype < 5 or randf() < 0.8 else "special"
+			buffer_t = 0.15
+		return Vector2.ZERO
+	return to.normalized()
 
 
 func _read_input() -> void:

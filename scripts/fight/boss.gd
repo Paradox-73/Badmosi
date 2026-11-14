@@ -51,6 +51,8 @@ var locked := false
 var summon_n := 1
 var bounce := 1.0
 var is_admin := false
+var combo_hits := 0.0
+var guard_t := 0.0
 signal defeated
 
 
@@ -61,7 +63,7 @@ func setup_boss(club_id: String) -> void:
 	arch = "boss"
 	stats = {"hp": 120, "speed": 30, "dmg": 8, "windup": 0.5, "value": 80}
 	is_admin = club_id == "admin"
-	max_hp = (220.0 if is_admin else 120.0) * Clubs.hp_mult()
+	max_hp = (520.0 if is_admin else 300.0) * Clubs.hp_mult()
 	hp = max_hp
 	value = 80
 	if is_admin:
@@ -102,6 +104,8 @@ func _process(delta: float) -> void:
 	tick_effects(delta)
 	state_t += delta
 	reflect_t = maxf(0.0, reflect_t - delta)
+	combo_hits = maxf(0.0, combo_hits - delta * 1.5)
+	guard_t = maxf(0.0, guard_t - delta)
 	var p: Player = fight.player
 	if freeze_t > 0.0:
 		freeze_t -= delta
@@ -285,8 +289,15 @@ func take_hit(dmg: float, dir: Vector2, finisher: bool) -> bool:
 		Fx.word("DOWNSCALE IT!", center() + Vector2(0, -36), Px.C.cyan)
 		Audio.play("tick", 0.0)
 		return false
+	if guard_t > 0.0:
+		Fx.word("GUARD", center() + Vector2(0, -22), Px.C.steel)
+		Audio.play("tick", 0.0)
+		return false
 	if downscale_t > 0.0:
 		dmg *= 2.0
+	combo_hits += 1.0
+	if combo_hits >= 6.0 and downscale_t <= 0.0:
+		_shove()
 	flash_t = 0.07
 	Fx.hitstop(0.1 if finisher else 0.06)
 	Audio.play("finisher" if finisher else ["hit", "hit2"].pick_random())
@@ -300,6 +311,20 @@ func take_hit(dmg: float, dir: Vector2, finisher: bool) -> bool:
 	if hp <= 0.0 and not locked:
 		die()
 	return true
+
+
+## After a long combo the club head shoves Pix away and guards for a moment.
+func _shove() -> void:
+	combo_hits = 0.0
+	guard_t = 0.7
+	Audio.play("zap", 0.0)
+	fight.ring_fx(center(), Px.C.white)
+	var p: Player = fight.player
+	var d := (p.position - position)
+	if d.length() < 40.0:
+		p.knock = d.normalized() * 320.0
+		p.take_hit(3.0, d.normalized())
+	Fx.word(Clubs.get_club(club).words.pick_random(), center() + Vector2(0, -24), Px.C.white)
 
 
 func _admin_phase() -> void:
