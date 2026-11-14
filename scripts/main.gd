@@ -10,6 +10,8 @@ const SCREENS := {
 	"options": "res://scripts/ui/options_screen.gd",
 	"credits": "res://scripts/ui/credits.gd",
 	"club_select": "res://scripts/ui/club_select.gd",
+	"char_select": "res://scripts/ui/char_select.gd",
+	"flashback": "res://scripts/story/flashback.gd",
 	"opening": "res://scripts/story/opening.gd",
 	"hub": "res://scripts/world/hub.gd",
 	"club": "res://scripts/club_room.gd",
@@ -130,6 +132,7 @@ func _swap(name: String, args: Dictionary) -> void:
 		c.queue_free()
 	for c in fx_layer.get_children():
 		c.queue_free()
+	_vp.canvas_transform = Transform2D()
 	var s: Node = load(SCREENS[name]).new()
 	screen = s
 	screen_name = name

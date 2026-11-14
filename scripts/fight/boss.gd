@@ -56,6 +56,13 @@ var guard_t := 0.0
 signal defeated
 
 
+## The Admin's 32 x 24 sprite, also used by the story scenes.
+static func admin_tex() -> Texture2D:
+	var pal := {"k": Px.C.dark, "g": Px.C.grey, "m": Px.C.mist, "w": Px.C.white,
+		"r": Px.C.red, "s": Px.C.slate, "d": Px.C.steel, "a": Px.C.gold}
+	return Px.tex_from("admin", ADMIN_ART, pal)
+
+
 func setup_boss(club_id: String) -> void:
 	club = club_id
 	var d: Dictionary = Clubs.get_club(club_id)
@@ -67,9 +74,7 @@ func setup_boss(club_id: String) -> void:
 	hp = max_hp
 	value = 80
 	if is_admin:
-		var pal := {"k": Px.C.dark, "g": Px.C.grey, "m": Px.C.mist, "w": Px.C.white,
-			"r": Px.C.red, "s": Px.C.slate, "d": Px.C.steel, "a": Px.C.gold}
-		sprite.texture = Px.tex_from("admin", ADMIN_ART, pal)
+		sprite.texture = admin_tex()
 		sprite.offset = Vector2(0, -16)
 		he = Vector2(12, 4)
 	else:

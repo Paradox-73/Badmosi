@@ -218,6 +218,7 @@ func _victory(how: String, lines: Array) -> void:
 	if id != "admin":
 		cp.pages.append(CardPages.card_page(id))
 	var headline: String = data.head_straight if how == "straight" else data.head_flip % Game.fit_words().trim_suffix("!")
+	headline = headline.replace("FRESHER", Game.char_name())
 	cp.pages.append(CardPages.headline_page(headline))
 	if sem_up:
 		cp.pages.append(CardPages.results_page("SEM UP!", ["NOW IN SEM %d" % Game.sem, "+10% FIGHT DAMAGE", "-5% ATTENDANCE LOSSES"], true))
@@ -331,4 +332,4 @@ class FitOverlay extends Node2D:
 		Px.text(self, words, Vector2(x, y), Px.C.white, s)
 		if not Game.opts.clean_text:
 			CardPages.censor(self, Vector2(x + Px.text_w("F", s), y + 2), 3, t, s)
-		Px.text_c(self, "PIX FLIPS THE TABLE!", Px.W / 2.0, 114, Px.C.gold)
+		Px.text_c(self, Game.char_name() + " FLIPS THE TABLE!", Px.W / 2.0, 114, Px.C.gold)

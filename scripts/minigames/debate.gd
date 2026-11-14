@@ -110,7 +110,7 @@ func _draw() -> void:
 	var pix := Px.char_tex(Game.pix_look(), "idle")
 	draw_texture_rect(pix, Rect2(Vector2(Px.W - 72, 96), pix.get_size() * 2), false)
 	draw_rect(Rect2(Px.W - 80, 128, 48, 30), Px.C.brown)
-	Px.text_c(self, "PIX", Px.W - 56, 162, Px.C.gold)
+	Px.text_c(self, Game.char_name(), Px.W - 56, 162, Px.C.gold)
 	# Speech bubble.
 	if li >= 0 and li < lines.size():
 		var l: Dictionary = lines[li]
@@ -130,6 +130,6 @@ func _draw() -> void:
 		var on := float(i) / 40.0 < meter
 		draw_rect(Rect2(mr.position.x + 1 + i * 5, mr.position.y + 1, 4, 8), (Px.C.gold if on else Px.C.navy))
 	Px.text(self, "REBUTTAL", Vector2(mr.position.x - 54, 185), Px.C.white)
-	Px.text(self, "PIX", Vector2(mr.end.x + 6, 185), Px.C.gold)
+	Px.text(self, Game.char_name(), Vector2(mr.end.x + 6, 185), Px.C.gold)
 	draw_rect(Rect2(Px.W / 2.0, 182, 1, 14), Px.C.white)
 	draw_card()

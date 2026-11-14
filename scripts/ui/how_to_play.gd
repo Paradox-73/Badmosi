@@ -53,18 +53,18 @@ func _page_goal() -> void:
 	draw_texture_rect(pix, Rect2(Vector2(Px.W - 72, 44), pix.get_size() * 3), false)
 	Px.text(self, "THE GOAL", Vector2(24, 34), Px.C.cyan)
 	_lines([
-		"YOU ARE PIX, A FRESHER WHO WANTS TO",
-		"START THE PIXEL CLUB IN ROOM 404.",
-		"",
-		"BEAT ALL 13 CLUBS AT THEIR OWN GAME.",
-		"THEN BEAT THE SAC, THEN THE ADMIN.",
+		"THE ADMIN BRAINWASHED EVERY CLUB AND",
+		"PUT CAMPUS ON LOCKDOWN. YOUR GANG,",
+		"BADMOSI, IS THE LAST ONE STILL FREE.",
+		"BEAT ALL 13 CLUBS AT THEIR OWN GAME TO",
+		"FREE THEM. THEN THE SAC, THEN THE ADMIN.",
 		"",
 		"WALK INTO A BUILDING DOOR ON CAMPUS",
 		"TO SEE ITS CLUBS. EACH ONE HAS A",
 		"MINIGAME. WIN IT FOR A CLUB CARD.",
 	], 48)
 	Px.text(self, "HATE A MINIGAME? HOLD F FOR 1 SECOND.", Vector2(24, 158), Px.C.pink)
-	Px.text(self, "PIX FLIPS THE TABLE AND FIGHTS THE CLUB.", Vector2(24, 169), Px.C.pink)
+	Px.text(self, "YOU FLIP THE TABLE AND FIGHT THE CLUB.", Vector2(24, 169), Px.C.pink)
 
 
 func _page_rules() -> void:

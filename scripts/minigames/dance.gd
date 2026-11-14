@@ -138,7 +138,7 @@ func _draw() -> void:
 		c.a = 0.18 if (i + int(beat)) % 3 == 0 and ph < 0.5 else 0.06
 		draw_rect(Rect2(i * 32, 180, 32, 36), c)
 	Px.text_c(self, "COUNT EIGHT", _lane_x(0, 1) + 22, 28, Px.C.pink)
-	Px.text_c(self, "PIX", _lane_x(1, 1) + 22, 28, Px.C.gold)
+	Px.text_c(self, Game.char_name(), _lane_x(1, 1) + 22, 28, Px.C.gold)
 	# Which side is up?
 	var cur_phrase := int(floor((beat - LEAD) / 16.0))
 	var in_resp := fmod(beat - LEAD, 16.0) >= 8.0

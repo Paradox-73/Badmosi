@@ -1,6 +1,7 @@
 extends Node2D
-## The opening at the main gate: the club stalls turn Pix away, an SAC
-## enforcer hands over Circular No. 404 and picks the tutorial fight.
+## The opening at the main gate, after the flashback: brainwashed club
+## members on patrol, an SAC enforcer reads Circular No. 404 and picks the
+## tutorial fight.
 
 var pausable := true
 var room: Room
@@ -54,13 +55,15 @@ func _ready() -> void:
 func _run() -> void:
 	var tw := create_tween()
 	tw.tween_property(player, "position:x", 110.0, 1.2)
+	var me := Game.char_name()
 	await _talk([
-		{"who": "PIX", "text": "IIIT-B! I'M STARTING THE PIXEL CLUB. ALL I NEED IS A ROOM.", "look": Game.pix_look()},
-		{"who": "IMPULSE", "text": "A ROOM? EVERY ROOM IS BOOKED FOR SYNERGY. 5-6-7-NO.", "look": Clubs.get_club("impulse").look},
-		{"who": "ZENSE", "text": "ROOMS: 0 FREE. EXCEPT ROOM 404. IT RETURNS NOT FOUND.", "look": Clubs.get_club("zense").look},
-		{"who": "8-BIT", "text": "ROOM 404 ISN'T ON ANY FLOOR PLAN. GREAT STORY THOUGH.", "look": Clubs.get_club("eightbit").look},
-		{"who": "SAC ENFORCER", "text": "CIRCULAR NO. 404: A NEW CLUB GETS A ROOM ONCE ITS FOUNDER BEATS EVERY CLUB AT ITS OWN GAME.", "look": Clubs.get_club("sac").look},
-		{"who": "SAC ENFORCER", "text": "ALSO, YOU'RE LOITERING. THAT'S A FINE. HAND OVER YOUR PIXELS.", "look": Clubs.get_club("sac").look},
+		{"who": me, "text": "MAIN GATE. CHAINED. AND THE CLUBS ARE ON PATROL. GREAT.", "look": Game.pix_look()},
+		{"who": "IMPULSE", "text": "5-6-7-COMPLY. 5-6-7-COMPLY.", "look": Clubs.get_club("impulse").look},
+		{"who": "ZENSE", "text": "ERROR 404: STUDENT FUN NOT FOUND. PLEASE RETURN TO HOSTEL.", "look": Clubs.get_club("zense").look},
+		{"who": "8-BIT", "text": "TODAY'S HEADLINE: EVERYTHING IS FINE, SAYS THE ADMIN.", "look": Clubs.get_club("eightbit").look},
+		{"who": me, "text": "THEY'RE BRAINWASHED. ALL OF THEM.", "look": Game.pix_look()},
+		{"who": "SAC ENFORCER", "text": "CIRCULAR NO. 404: EVERY CLUB NOW ANSWERS TO THE ADMIN. YOU ARE OUT AFTER CURFEW.", "look": Clubs.get_club("sac").look},
+		{"who": "SAC ENFORCER", "text": "THAT'S A FINE. HAND OVER YOUR PIXELS.", "look": Clubs.get_club("sac").look},
 	])
 	for i in 4:
 		npcs[i].queue_free()
@@ -81,9 +84,10 @@ func _run() -> void:
 
 func _after_fight() -> void:
 	Audio.play_music("hub")
+	var me := Game.char_name()
 	await _talk([
-		{"who": "PIX", "text": "THIRTEEN CLUBS. THEIR OWN GAMES. FINE.", "look": Game.pix_look()},
-		{"who": "PIX", "text": "AND IF A GAME IS UNFAIR... I CAN ALWAYS HOLD F AND FLIP THE TABLE.", "look": Game.pix_look()},
+		{"who": me, "text": "THIRTEEN CLUBS. BEAT EACH ONE AT ITS OWN GAME AND IT SNAPS OUT OF IT.", "look": Game.pix_look()},
+		{"who": me, "text": "FREED CLUBS WILL OWE US. AND IF A GAME IS RIGGED... HOLD F. FLIP THE TABLE.", "look": Game.pix_look()},
 	])
 	Game.save_run()
 	Game.goto("hub")
