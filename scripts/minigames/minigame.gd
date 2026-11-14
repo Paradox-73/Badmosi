@@ -140,6 +140,43 @@ func draw_card() -> void:
 	Px.bar(self, Rect2(r.position.x + 8, r.end.y - 6, r.size.x - 16, 3), card_t / 3.0, Px.C.gold)
 
 
+# ------------------------------------------------------------ shared cursor
+
+var cursor := Vector2(192, 120)
+var cursor_speed := 110.0
+var _clicked := false
+var _mouse_seen := false
+
+
+func _input(e: InputEvent) -> void:
+	if e is InputEventMouseMotion:
+		cursor = get_global_transform_with_canvas().affine_inverse() * e.position
+		_mouse_seen = true
+	elif e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT:
+		cursor = get_global_transform_with_canvas().affine_inverse() * e.position
+		_clicked = true
+
+
+## Moves the cursor with the keys and returns true on a press (click, or J).
+func cursor_step(delta: float, bounds: Rect2 = PLAY) -> bool:
+	var mv := Game.move_vec()
+	if mv.length() > 0.1:
+		cursor += mv * cursor_speed * delta
+	cursor = cursor.clamp(bounds.position, bounds.end - Vector2.ONE)
+	var p := _clicked or Input.is_action_just_pressed("attack")
+	_clicked = false
+	return p
+
+
+func draw_cursor(c: Color = Px.C.white) -> void:
+	var p := cursor.floor()
+	for d in [Vector2(-5, 0), Vector2(-4, 0), Vector2(-3, 0), Vector2(3, 0), Vector2(4, 0), Vector2(5, 0),
+			Vector2(0, -5), Vector2(0, -4), Vector2(0, -3), Vector2(0, 3), Vector2(0, 4), Vector2(0, 5)]:
+		draw_rect(Rect2(p + d + Vector2(1, 1), Vector2.ONE), Px.C.dark)
+		draw_rect(Rect2(p + d, Vector2.ONE), c)
+	draw_rect(Rect2(p, Vector2.ONE), Px.C.red)
+
+
 ## Draws the remaining time as a pixel bar at the bottom of the play area.
 func draw_timer() -> void:
 	if not uses_timer():

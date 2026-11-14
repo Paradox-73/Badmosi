@@ -40,6 +40,12 @@ func _choose(i: int) -> void:
 func _process(delta: float) -> void:
 	t += delta
 	queue_redraw()
+	if Game.autoplay and t > 0.8:
+		if menu:
+			_choose(0)
+		else:
+			_next()
+		return
 	if menu:
 		return
 	if t > 0.5 and (Input.is_action_just_pressed("attack") or Input.is_action_just_pressed("dodge")):

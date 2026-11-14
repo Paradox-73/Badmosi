@@ -96,7 +96,7 @@ func speed_mult() -> float:
 
 func _process(delta: float) -> void:
 	queue_redraw()
-	if Fx.frozen() or dead:
+	if Fx.frozen() or dead or fight == null:
 		return
 	delta = Fx.dt(delta)
 	tick_effects(delta)

@@ -36,6 +36,9 @@ func _process(delta: float) -> void:
 		return
 	var full: String = pages[idx].text
 	shown = minf(shown + delta * 60.0, full.length())
+	if Game.autoplay and _t > 0.6:
+		_end()
+		return
 	if Input.is_action_pressed("attack"):
 		hold += delta
 		if hold > 0.8:

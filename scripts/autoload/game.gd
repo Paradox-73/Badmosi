@@ -29,6 +29,7 @@ var hype := 0
 var special_idx := 0
 var cards := {}          # club id -> "straight" or "flipped"
 var practice := false    # true when a club was opened from club select
+var autoplay := false    # --autoplay: scenes advance themselves, for frame captures
 
 # Settings
 var difficulty := 1
@@ -43,6 +44,7 @@ var opts := {
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_setup_input()
+	autoplay = "--autoplay" in OS.get_cmdline_user_args()
 	load_options()
 
 
