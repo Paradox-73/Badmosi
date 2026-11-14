@@ -185,7 +185,7 @@ class PixelBurst extends Node2D:
 		if target and value > 0 and not paid and t > 0.6:
 			paid = true
 			Game.add_pixels(value)
-			Audio.play("coin", 0.1)
+			Audio.coin()
 		if alive == 0 or t > 3.0:
 			if target and value > 0 and not paid:
 				Game.add_pixels(value)

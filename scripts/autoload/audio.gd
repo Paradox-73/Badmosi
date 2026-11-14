@@ -182,6 +182,19 @@ func play(name: String, pitch_var := 0.05, vol_db := 0.0) -> void:
 	p.play()
 
 
+var _coin_chain := 0
+var _coin_last := 0.0
+
+
+## The pixel pickup sound. Its pitch rises along a chain of quick pickups.
+func coin() -> void:
+	var now := Time.get_ticks_msec() / 1000.0
+	_coin_chain = _coin_chain + 1 if now - _coin_last < 0.6 else 0
+	_coin_last = now
+	play("coin", 0.0)
+	_players[(_next - 1 + _players.size()) % _players.size()].pitch_scale = minf(1.0 + 0.06 * _coin_chain, 1.8)
+
+
 ## Plays a melodic note (a MIDI number), used by the piano tiles.
 func note(midi: int, dur := 0.35, wave := "tri") -> void:
 	var key := "%d:%s:%f" % [midi, wave, dur]
