@@ -1,30 +1,85 @@
 extends Node2D
-## The campus hub. Walk into a building door to open its directory board,
-## into the counter for the canteen, into a sign to read it.
+## The campus hub: a scrolling map of IIIT-B. Walk into a door to open its
+## directory board, into the counter for the canteen, into a sign to read it.
 
 var pausable := true
+## One character per 16 px tile. x wall, @ main gate, j jogging track,
+## p walkway, . paving, g grass, T tree, h hedge, F fountain, f football ground,
+## k basketball, v volleyball, A R V I H B buildings, $ canteen, c Coffee Cove,
+## t Truffles, y Juicy, ? door sign, n Aikyam volunteer. Doors are in BUILDINGS
+## and FLAVOUR.
 const MAP := [
-	"AAAAAAAAAA...RRRRRRRRRRR",
-	"AAAAAAAAAA...RRRRRRRRRRR",
-	"AAAA1AAA6A...RRRR2RRRRRR",
-	"pppppppppppppppppppppppp",
-	"gg?ggggggggpgggg?ggggggg",
-	"ggggggggggp4pggggggggggg",
-	"gg?gggggggpppgggggn?gggg",
-	"pppppppppppppppppppppppp",
-	"BBBB3BB$B..p...FFFF5FFFF",
-	"BBBBBBBBB..p...FFFFFFFFF",
-	"BBBBBBBBB..p...FFFFFFFFF",
-	"BBBBBBBBB..@...FFFFFFFFF",
+	"xxxxxxxxxxxxxxxxxxxxxxxxxxx@xxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+	"xggggggggggggggggggggTg........tgggTggggggffffffffffffgx",
+	"xggggggggjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjgffffffffffffgx",
+	"xggTgggggjgggTggggggggggggggggggggggTgggjgffffffffffffgx",
+	"xggggggggjggggggggggggggFFggggggggggggggj.5fffffffffffgx",
+	"xggggggggjggggggggggggggFFggggggggggggTgjgffffffffffffgx",
+	"xgggggTggjggggg?ggggnggggggggggggg?gggggjgffffffffffffgx",
+	"xggggggggjggggggggggggggggggggggggggggggjgffffffffffffgx",
+	"xggggggggjppppppppppppppppppppppppppppppjggggggggggggggx",
+	"xgggTggggjhhhhhhhh.hhhhhh.hhhhhh.hhhhhhhjjjjjjjjjjjjjjjx",
+	"xggggggggjgAAAAAAAmAAAAAA6AAAAAAcAAAAAAgpgg...........jx",
+	"xjjjjjjjjjgAAAAAAAAAAAAAAAAAAAAAAAAAAAAgpgg.RRRR2RRRR.jx",
+	"xjgggggggpgAAAAAAAAAAAAAAAAAAAAAAAAAAAAgpgg.RRRcRRRRR.jx",
+	"xjgVVVVVgpgAAAAAA1AAAAAAAAAAAAAAAAAAAAAgpgg.RR.....RR.jx",
+	"xjgVVVVV.p..............................pgg.RR.....RR.jx",
+	"xjgVVVVV.ppppppppppppppppppppppjjjjjjjjjjjj.....4..bR.jx",
+	"xjgVVVVV.ggg?ggggggggggggggggggjgkkkkkkkggj.RR.....RR.jx",
+	"xjgggggggggggggggggggg?gggggTggjgkkkkkkkggj.RR.....RR.jx",
+	"xjgIIIIIIIIIIIIIIIIIIIIIIIIIgggjgkkkkkkkggj.RRRRRRRRR.jx",
+	"xjgIIIIIIIIIIIIIIIIIIIIIIIIIgTgjgvvvvvvvggj.RRRRRRRRR.jx",
+	"xjgIIIIIIILIIIIIIIIIIIIIIIIIgggjgvvvvvvvggj...........jx",
+	"xj.............................jgvvvvvvvggjjjjjjjjjjjjjx",
+	"xjjjjjjjjjjjjjpppppppppppppppppjgTgggggggggggggggggggggx",
+	"xggggggggggggj.................jgggggggggggggggggggggggx",
+	"xggggggggggggj.HHHH7HHHGHHH....jyggggggggggggggggggTgggx",
+	"xggggTgggggggj.3HHHHHHHHHHH....jgggggTgggggggggggggggggx",
+	"xggggggggggggj.HHHHHHHHHHHH....jgggggggggggggggggggggggx",
+	"xggggggggggggj.HHHHHHHH8HHH....jjjjjjjjjjjjjjjjjjgg?gggx",
+	"xggggggggTgggj.HHHHH............................jggggggx",
+	"xggggggggggggj.HHHHH............BBBMBBBBBBBBBB..jggggggx",
+	"xggggg?ggggggj.HHHHH............BBBBB$BBBBBBBB..jgggTggx",
+	"xggggggggggggj.9HHHH.....................BBBBB..jggggggx",
+	"xggggggggggggj.HHHHH.....................BBBBB..jggggggx",
+	"xgggTggggggggj.HHHHH.....................BBBBB..jggggggx",
+	"xggggggggggggj.HHHHHHHHHHHHHHHBBBBBBBBBBBBBBBB..jggggggx",
+	"xgggggggggTggj.HHHHHHHHHHHHHHHBBBBBBBBBBBBBBBB..jgTggggx",
+	"xggggggggggggj.HHHHHHHHHHHHHHHBBBBBBBBBBBBBBBB..jggggggx",
+	"xggggggggggggj..................................jggggggx",
+	"xggggggggggggjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjggggggx",
+	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
 ]
 const BUILDINGS := {
-	"1": {"name": "ARYABHATTA BLOCK", "clubs": ["pioneers", "eightbit", "vinci", "debsoc"]},
-	"2": {"name": "RAMANUJAN BLOCK", "clubs": ["quiz", "film", "zense", "parvaaz"]},
-	"3": {"name": "MPH & BHASKARA", "clubs": ["impulse", "symphony", "food", "sac"]},
+	"1": {"name": "ARYABHATTA CLASSROOMS", "clubs": ["pioneers", "debsoc"]},
+	"2": {"name": "RAMANUJAN CLASSROOMS", "clubs": ["quiz", "zense"]},
+	"3": {"name": "MPH 8-BIT CORNER", "clubs": ["eightbit"]},
 	"4": {"name": "THINKER'S STATUE", "clubs": ["chhaya"]},
-	"5": {"name": "PLAYGROUND (NIGHT)", "clubs": ["eclipse"]},
-	"6": {"name": "ADMIN OFFICE", "clubs": ["admin"]},
+	"5": {"name": "FOOTBALL GROUND (NIGHT)", "clubs": ["eclipse"]},
+	"6": {"name": "ARYABHATTA RECEPTION", "clubs": ["admin"]},
+	"7": {"name": "MPH SAC ROOM", "clubs": ["sac"]},
+	"8": {"name": "MPH IMPULSE & VINCI ROOM", "clubs": ["impulse", "vinci"]},
+	"9": {"name": "MPH SYMPHONY ROOM", "clubs": ["symphony"]},
+	"M": {"name": "BHASKARA MESS", "clubs": ["food"]},
+	"L": {"name": "LILAVATI", "clubs": ["film", "parvaaz"]},
 }
+## Doors and machines with one line to read and no club behind them.
+const FLAVOUR := {
+	"G": ["MPH GYM", "BENCH PRESS QUEUE: 14 SENIORS. COME BACK NEXT SEM."],
+	"m": ["VENDING MACHINE", "OUT OF ORDER SINCE ORIENTATION. IT HUMS AT YOU."],
+	"b": ["BADMINTON COURT", "SHUTTLES STUCK IN THE ROOF: 37. NOBODY HAS A LADDER."],
+}
+## Building colours by map character.
+const WALLS := {"A": "tan", "R": "steel", "V": "olive", "I": "teal", "H": "slate", "B": "orange", "x": "brown"}
+## Name labels: text, centre x and top y in tiles.
+const LABELS := [
+	["ARYABHATTA", 25.0, 12.1], ["RAMANUJAN", 48.5, 18.3], ["VISVESVARYA", 5.5, 13.3],
+	["LILAVATI", 18.0, 18.6], ["MPH", 21.0, 25.3], ["BHASKARA", 38.0, 35.0],
+	["FOOTBALL GROUND", 48.0, 1.2], ["BASKETBALL", 36.5, 16.2], ["VOLLEYBALL/TENNIS", 36.5, 20.2],
+	["MAIN GATE", 27.5, 0.2], ["START HERE", 22.0, 0.2], ["CANTEEN", 37.5, 31.1],
+	["COFFEE COVE", 32.5, 11.0], ["COFFEE COVE", 47.5, 13.1], ["TRUFFLES", 31.5, 0.2],
+	["JUICY", 32.5, 23.2], ["GYM", 23.5, 23.3],
+]
 const ANNA_LINES := [
 	"CHAI? CHAI. ALWAYS CHAI.", "OPEN TILL 2 AM. SOMETIMES 3.", "NO CREDIT. ONLY PIXELS.",
 	"YOU LOOK TIRED. FRESHER, NO?", "PUFF IS FRESH. FROM MORNING.", "DOSA TAKES TIME. LIKE GRADES.",
@@ -48,6 +103,7 @@ var healed := false
 var overlay: Node = null
 var from := ""
 var room: Room
+var map_tex: ImageTexture
 
 
 func setup(args: Dictionary) -> void:
@@ -56,14 +112,22 @@ func setup(args: Dictionary) -> void:
 
 func _ready() -> void:
 	Game.practice = false
+	y_sort_enabled = true
 	room = HubRoom.new()
 	room.grid.assign(MAP)
 	room.visible = false
 	add_child(room)
+	map_tex = _bake()
 	player = Player.new()
 	player.room = room
 	add_child(player)
 	player.position = _spawn_pos()
+	var cam := Camera2D.new()
+	cam.limit_left = 0
+	cam.limit_top = 0
+	cam.limit_right = MAP[0].length() * Px.TILE
+	cam.limit_bottom = Px.TOP + MAP.size() * Px.TILE
+	player.add_child(cam)
 	hud = Hud.new()
 	hud.mode = "hub"
 	Game.main.ui.add_child(hud)
@@ -73,13 +137,33 @@ func _ready() -> void:
 	_check_unlocks()
 
 
+func _exit_tree() -> void:
+	# The camera leaves its offset on the viewport; the next screen expects none.
+	get_viewport().canvas_transform = Transform2D()
+
+
 func _spawn_pos() -> Vector2:
-	if from != "":
-		for k in BUILDINGS:
-			if from in BUILDINGS[k].clubs:
-				var c := _find(k)
-				return room.cell_center(c + Vector2i(0, 1 if c.y < 5 else -1)) + Vector2(0, 6)
-	return room.cell_center(_find("@") + Vector2i(0, -1)) + Vector2(0, 6)
+	for k in BUILDINGS:
+		if from in BUILDINGS[k].clubs:
+			return _stand(_front(_find(k)))
+	return _gate_pos()
+
+
+func _gate_pos() -> Vector2:
+	return _stand(_find("@") + Vector2i.DOWN)
+
+
+## Feet position on a tile, with the collision box inside it.
+func _stand(c: Vector2i) -> Vector2:
+	return room.cell_center(c) + Vector2(0, 4)
+
+
+## The walkable tile in front of a door.
+func _front(c: Vector2i) -> Vector2i:
+	for d in [Vector2i.DOWN, Vector2i.UP, Vector2i.LEFT, Vector2i.RIGHT]:
+		if not room.is_solid(c + d):
+			return c + d
+	return c
 
 
 func _find(ch: String) -> Vector2i:
@@ -87,18 +171,18 @@ func _find(ch: String) -> Vector2i:
 		var x: int = MAP[y].find(ch)
 		if x >= 0:
 			return Vector2i(x, y)
-	return Vector2i(11, 7)
+	return Vector2i(27, 1)
 
 
 func _check_unlocks() -> void:
 	if Game.cards.has("admin"):
 		return
 	if Clubs.all_beaten() and not Game.cards.has("sac") and from != "sac":
-		_say([{"who": "8-BIT REPORTER", "text": "EVERY CLUB IS BEATEN! THE SAC IS WAITING IN THE MPH.", "look": Clubs.get_club("eightbit").look}])
+		_say([{"who": "8-BIT REPORTER", "text": "EVERY CLUB IS BEATEN! THE SAC IS WAITING IN THE SAC ROOM, MPH.", "look": Clubs.get_club("eightbit").look}])
 	elif Game.cards.has("sac") and from == "sac":
-		_say([{"who": "CLIPBOARD", "text": "THE ADMIN OFFICE IS OPEN. NEXT TO ARYABHATTA BLOCK. GOOD LUCK.", "look": Clubs.get_club("sac").head_look}])
+		_say([{"who": "CLIPBOARD", "text": "THE ADMIN OFFICE IS OPEN. ARYABHATTA RECEPTION, BY THE FOUNTAIN LAWN. GOOD LUCK.", "look": Clubs.get_club("sac").head_look}])
 	elif Game.card_count() == 0 and from == "":
-		_say([{"who": "PIX", "text": "THIRTEEN CLUBS. BEAT EVERY ONE AT ITS OWN GAME. WALK INTO A DOOR TO START.", "look": Game.pix_look()}])
+		_say([{"who": Game.char_name(), "text": "THIRTEEN CLUBS. BEAT EVERY ONE AT ITS OWN GAME. WALK INTO A DOOR TO START.", "look": Game.pix_look()}])
 
 
 func _say(pages: Array) -> void:
@@ -133,6 +217,8 @@ func _process(delta: float) -> void:
 		_open_board(ch)
 	elif ch == "$":
 		_open_canteen()
+	elif ch in FLAVOUR:
+		_say([{"who": FLAVOUR[ch][0], "text": FLAVOUR[ch][1]}])
 	elif ch == "?":
 		var idx := (c.x * 7 + c.y * 3) % Clubs.SIGNS.size()
 		var s: Array = Clubs.SIGNS[idx]
@@ -235,77 +321,186 @@ func _buy(item: Dictionary, bg: BoardBg) -> void:
 	Game.save_run()
 
 
-func _draw() -> void:
-	var pal := {"wall": Px.C.slate, "floor": Px.C.green}
+# ---------------------------------------------------------------- drawing
+
+## Paints the ground, buildings and props once. Only moving things are drawn per frame.
+func _bake() -> ImageTexture:
+	var im := Image.create_empty(MAP[0].length() * 16, MAP.size() * 16, false, Image.FORMAT_RGBA8)
+	var grass := Px.tile_tex("grass", {}).get_image()
+	var path := Px.tile_tex("path", {}).get_image()
+	var paving := Px.tile_tex("floor", {"floor": Px.C.grey.lerp(Px.C.sand, 0.45)}).get_image()
+	var track: Color = Px.C.orange.lerp(Px.C.sand, 0.35)
+	var full := Rect2i(0, 0, 16, 16)
 	for y in MAP.size():
 		for x in MAP[y].length():
 			var ch: String = MAP[y][x]
-			var p := Vector2(x * 16, Px.TOP + y * 16)
+			var p := Vector2i(x * 16, y * 16)
+			im.blit_rect(grass if ch in "gT?nFfkv5" else (path if ch == "p" else paving), full, p)
+			var wc := _wall_col(x, y)
+			if ch in WALLS or ch in BUILDINGS or ch in FLAVOUR or ch in "$c":
+				if ch != "4" and ch != "5":
+					im.blit_rect(Px.tile_tex("wall", {"wall": wc}).get_image(), full, p)
 			match ch:
-				"g", "n", "?":
-					draw_texture(Px.tile_tex("grass", {}), p)
-				"p", ".", "@":
-					draw_texture(Px.tile_tex("path", {}), p)
-				"A", "R", "B":
-					var wc: Color = {"A": Px.C.tan, "R": Px.C.steel, "B": Px.C.orange}[ch].darkened(0.25)
-					draw_texture(Px.tile_tex("wall", {"wall": wc}), p)
-					if (x + y) % 2 == 0 and y % 3 != 2:
-						draw_rect(Rect2(p + Vector2(4, 4), Vector2(8, 6)), Px.C.gold if (x * 3 + y + int(t)) % 5 == 0 else Px.C.navy)
-				"F":
-					draw_rect(Rect2(p, Vector2(16, 16)), Px.C.navy.darkened(0.4))
-					if (x * 5 + y * 3) % 4 == 0:
-						draw_rect(Rect2(p + Vector2((x * 7) % 12, (y * 5) % 12), Vector2.ONE), Px.C.white)
-					if y == 8:
-						draw_rect(Rect2(p + Vector2(0, 2), Vector2(16, 2)), Px.C.steel)
-				"$":
-					draw_texture(Px.tile_tex("wall", {"wall": Px.C.orange.darkened(0.25)}), p)
-					draw_texture(Px.tile_tex("desk", {"floor": Px.C.orange.darkened(0.3)}), p)
+				"j":
+					im.fill_rect(Rect2i(p, Vector2i(16, 16)), track)
+					for q in [Vector2i(3, 2), Vector2i(11, 6), Vector2i(6, 12), Vector2i(13, 13)]:
+						im.set_pixelv(p + q, track.darkened(0.15))
+				"h":
+					im.fill_rect(Rect2i(p + Vector2i(0, 2), Vector2i(16, 13)), Px.C.jade)
+					for q in [Vector2i(2, 4), Vector2i(9, 3), Vector2i(5, 8), Vector2i(12, 9), Vector2i(7, 12)]:
+						im.set_pixelv(p + q, Px.C.green)
+					im.fill_rect(Rect2i(p + Vector2i(0, 14), Vector2i(16, 1)), Px.C.dark)
+				"@":
+					im.fill_rect(Rect2i(p, Vector2i(16, 16)), Px.C.dark)
+					for i in range(1, 16, 3):
+						im.fill_rect(Rect2i(p + Vector2i(i, 0), Vector2i(1, 16)), Px.C.steel)
+					im.fill_rect(Rect2i(p + Vector2i(0, 7), Vector2i(16, 1)), Px.C.steel)
+				"T":
+					_disc(im, p + Vector2i(8, 14), 4.5, Color(Px.C.dark, 0.35))
+					im.fill_rect(Rect2i(p + Vector2i(7, 10), Vector2i(2, 5)), Px.C.brown)
+					_disc(im, p + Vector2i(8, 7), 7.0, Px.C.jade)
+					_disc(im, p + Vector2i(7, 6), 5.0, Px.C.green)
+					for q in [Vector2i(5, 4), Vector2i(9, 5), Vector2i(6, 8)]:
+						im.set_pixelv(p + q, Px.C.lime)
+				"?":
+					im.fill_rect(Rect2i(p + Vector2i(7, 8), Vector2i(2, 8)), Px.C.brown)
+					im.fill_rect(Rect2i(p + Vector2i(2, 2), Vector2i(12, 7)), Px.C.tan)
+					im.fill_rect(Rect2i(p + Vector2i(4, 4), Vector2i(8, 1)), Px.C.brown)
+					im.fill_rect(Rect2i(p + Vector2i(4, 6), Vector2i(6, 1)), Px.C.brown)
+				"$", "c":
+					im.blit_rect(Px.tile_tex("desk", {"floor": wc.darkened(0.3)}).get_image(), full, p)
+					if ch == "c":
+						im.fill_rect(Rect2i(p + Vector2i(6, 1), Vector2i(4, 4)), Px.C.white)
+						im.fill_rect(Rect2i(p + Vector2i(7, 2), Vector2i(2, 1)), Px.C.brown)
+				"m":
+					im.fill_rect(Rect2i(p + Vector2i(3, 1), Vector2i(10, 15)), Px.C.red)
+					im.fill_rect(Rect2i(p + Vector2i(5, 3), Vector2i(4, 8)), Px.C.cyan)
+					im.fill_rect(Rect2i(p + Vector2i(10, 4), Vector2i(1, 3)), Px.C.gold)
+				"t", "y":
+					var aw: Color = Px.C.red if ch == "t" else Px.C.lime
+					for i in 4:
+						im.fill_rect(Rect2i(p + Vector2i(i * 4, 1), Vector2i(4, 5)), aw if i % 2 == 0 else Px.C.white)
+					im.fill_rect(Rect2i(p + Vector2i(1, 6), Vector2i(14, 10)), Px.C.brown)
+					im.fill_rect(Rect2i(p + Vector2i(1, 6), Vector2i(14, 2)), Px.C.tan)
+					im.fill_rect(Rect2i(p + Vector2i(5, 10), Vector2i(6, 3)), Px.C.gold if ch == "t" else Px.C.orange)
 				"4":
-					draw_texture(Px.tile_tex("grass", {}), p)
+					im.fill_rect(Rect2i(p + Vector2i(2, 11), Vector2i(12, 5)), Px.C.grey.darkened(0.3))
+					im.fill_rect(Rect2i(p + Vector2i(5, 3), Vector2i(6, 9)), Px.C.grey)
+					im.fill_rect(Rect2i(p + Vector2i(6, 0), Vector2i(4, 4)), Px.C.grey.lightened(0.2))
+					im.fill_rect(Rect2i(p + Vector2i(9, 3), Vector2i(2, 4)), Px.C.grey.darkened(0.2))
 				_:
-					if ch in BUILDINGS:
-						draw_texture(Px.tile_tex("door", {"wall2": Px.C.dark}), p)
-	# Labels.
-	Px.text(self, "ARYABHATTA", Vector2(4, Px.TOP + 4), Px.C.white)
-	Px.text(self, "RAMANUJAN", Vector2(13 * 16 + 4, Px.TOP + 4), Px.C.white)
-	Px.text(self, "MPH-BHASKARA", Vector2(4, Px.TOP + 9 * 16 + 4), Px.C.white)
-	Px.text(self, "PLAYGROUND", Vector2(15 * 16 + 14, Px.TOP + 9 * 16 + 6), Px.C.mist)
-	Px.text(self, "ADMIN", Vector2(8 * 16 - 6, Px.TOP + 16 + 6), Px.C.red if not Game.cards.has("sac") else Px.C.lime)
-	Px.text(self, "CANTEEN", Vector2(6 * 16, Px.TOP + 8 * 16 - 9), Px.C.gold)
-	# Thinker's Statue.
-	var sp := Vector2(11 * 16, Px.TOP + 5 * 16)
-	draw_rect(Rect2(sp + Vector2(2, 10), Vector2(12, 6)), Px.C.grey.darkened(0.3))
-	draw_rect(Rect2(sp + Vector2(5, 1), Vector2(6, 10)), Px.C.grey)
-	draw_rect(Rect2(sp + Vector2(6, -3), Vector2(4, 4)), Px.C.grey.lightened(0.2))
-	draw_rect(Rect2(sp + Vector2(9, 1), Vector2(2, 4)), Px.C.grey.darkened(0.2))
-	# Signs.
+					if ch in WALLS and (x + y) % 2 == 0 and y % 3 != 2 and ch != "x":
+						im.fill_rect(Rect2i(p + Vector2i(4, 4), Vector2i(8, 6)), Px.C.gold if (x * 3 + y) % 5 == 0 else Px.C.navy)
+					elif ch in BUILDINGS or ch in FLAVOUR:
+						im.blit_rect(Px.tile_tex("door", {"wall": wc}).get_image(), full, p)
+	_ground(im, _box("f5"))
+	_court(im, _box("k"), Px.C.orange.darkened(0.35), false)
+	_court(im, _box("v"), Px.C.teal, true)
+	var f := _box("F")
+	_disc(im, f.get_center(), 15.0, Px.C.steel)
+	_disc(im, f.get_center(), 13.0, Px.C.blue)
+	_disc(im, f.get_center(), 4.0, Px.C.steel)
+	_disc(im, f.get_center(), 2.0, Px.C.mist)
+	var g := _find("5") * 16
+	im.fill_rect(Rect2i(g + Vector2i(0, 2), Vector2i(3, 13)), Px.C.brown)
+	for i in range(3, 15, 3):
+		im.fill_rect(Rect2i(g + Vector2i(0, i), Vector2i(3, 1)), Px.C.tan)
+	return ImageTexture.create_from_image(im)
+
+
+## Colour of the building next to (or under) a tile.
+func _wall_col(x: int, y: int) -> Color:
+	for d in [Vector2i.ZERO, Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+		var ch := room.at(Vector2i(x, y) + d)
+		if ch in WALLS:
+			return Px.col(WALLS[ch]).darkened(0.25)
+	return Px.C.slate
+
+
+## Pixel rectangle covering every tile of the given characters.
+func _box(chars: String) -> Rect2i:
+	var r := Rect2i()
 	for y in MAP.size():
 		for x in MAP[y].length():
-			var p2 := Vector2(x * 16, Px.TOP + y * 16)
-			if MAP[y][x] == "?":
-				draw_rect(Rect2(p2 + Vector2(7, 8), Vector2(2, 8)), Px.C.brown)
-				draw_rect(Rect2(p2 + Vector2(2, 2), Vector2(12, 7)), Px.C.tan)
-				draw_rect(Rect2(p2 + Vector2(4, 4), Vector2(8, 1)), Px.C.brown)
-				draw_rect(Rect2(p2 + Vector2(4, 6), Vector2(6, 1)), Px.C.brown)
-			elif MAP[y][x] == "n":
-				var tx := Px.char_tex(_aikyam(), "idle" if int(t * 2) % 2 == 0 else "walk1")
-				draw_texture(tx, p2)
+			if MAP[y][x] in chars:
+				var c := Rect2i(x * 16, y * 16, 16, 16)
+				r = c if r.size == Vector2i.ZERO else r.merge(c)
+	return r
+
+
+func _disc(im: Image, c: Vector2i, r: float, col: Color) -> void:
+	var n := ceili(r)
+	for y in range(-n, n + 1):
+		for x in range(-n, n + 1):
+			var q := c + Vector2i(x, y)
+			if x * x + y * y <= r * r and q.x >= 0 and q.y >= 0 and q.x < im.get_width() and q.y < im.get_height():
+				if col.a < 1.0:
+					im.set_pixelv(q, im.get_pixelv(q).blend(col))
+				else:
+					im.set_pixelv(q, col)
+
+
+func _outline(im: Image, r: Rect2i, col: Color) -> void:
+	im.fill_rect(Rect2i(r.position, Vector2i(r.size.x, 1)), col)
+	im.fill_rect(Rect2i(r.position + Vector2i(0, r.size.y - 1), Vector2i(r.size.x, 1)), col)
+	im.fill_rect(Rect2i(r.position, Vector2i(1, r.size.y)), col)
+	im.fill_rect(Rect2i(r.position + Vector2i(r.size.x - 1, 0), Vector2i(1, r.size.y)), col)
+
+
+func _ground(im: Image, r: Rect2i) -> void:
+	for x in range(r.position.x, r.end.x, 8):
+		im.fill_rect(Rect2i(x, r.position.y, 8, r.size.y), Px.C.green if (x >> 3) % 2 == 0 else Px.C.green.darkened(0.12))
+	_outline(im, r, Px.C.grey)
+	var inner := r.grow(-5)
+	_outline(im, inner, Px.C.white)
+	var c := inner.get_center()
+	im.fill_rect(Rect2i(c.x, inner.position.y, 1, inner.size.y), Px.C.white)
+	_disc(im, c, 12.0, Px.C.white)
+	_disc(im, c, 11.0, Px.C.green.darkened(0.06))
+	im.fill_rect(Rect2i(c.x - 24, c.y - 4, 48, 8), Px.C.sand)
+	for side in [inner.position.x - 3, inner.end.x]:
+		im.fill_rect(Rect2i(side, c.y - 8, 3, 16), Px.C.white)
+
+
+func _court(im: Image, r: Rect2i, floor: Color, net: bool) -> void:
+	im.fill_rect(r.grow(-1), floor)
+	_outline(im, r.grow(-3), Px.C.white)
+	var c := r.get_center()
+	if net:
+		im.fill_rect(Rect2i(c.x - 1, r.position.y + 1, 2, r.size.y - 2), Px.C.dark)
+		im.fill_rect(Rect2i(c.x - 1, r.position.y + 1, 2, 1), Px.C.white)
+	else:
+		im.fill_rect(Rect2i(c.x, r.position.y + 3, 1, r.size.y - 6), Px.C.white)
+		_disc(im, c, 6.0, Px.C.white)
+		_disc(im, c, 5.0, floor)
+		for hx in [r.position.x + 5, r.end.x - 7]:
+			im.fill_rect(Rect2i(hx, c.y - 2, 2, 4), Px.C.red)
+
+
+func _draw() -> void:
+	draw_texture(map_tex, Vector2(0, Px.TOP))
+	# Fountain spray.
+	var fc := Vector2(_box("F").get_center()) + Vector2(0, Px.TOP)
+	for i in 6:
+		var a := t * 2.0 + i * TAU / 6.0
+		draw_rect(Rect2((fc + Vector2(cos(a), sin(a)) * (6.0 + 3.0 * sin(t * 3.0 + i))).round(), Vector2.ONE), Px.C.white)
+	var nc := _find("n")
+	draw_texture(Px.char_tex(_aikyam(), "idle" if int(t * 2) % 2 == 0 else "walk1"), Vector2(nc.x * 16, Px.TOP + nc.y * 16))
+	for l in LABELS:
+		Px.text_c(self, l[0], l[1] * 16.0, Px.TOP + l[2] * 16.0, Px.C.white)
+	Px.text_c(self, "ADMIN", 25.5 * 16, Px.TOP + 11.0 * 16, Px.C.red if not Game.cards.has("sac") else Px.C.lime)
 	# Progress over each door.
 	for k in BUILDINGS:
 		var c := _find(k)
 		var ids: Array = BUILDINGS[k].clubs
 		var done := ids.filter(func(i): return Game.cards.has(i)).size()
-		var s := "%d/%d" % [done, ids.size()]
-		var y := Px.TOP + c.y * 16 + (18 if c.y < 5 else -10)
-		Px.text_c(self, s, c.x * 16 + 8, y, Px.C.lime if done == ids.size() else Px.C.white)
-	# Gate.
-	Px.text_c(self, "MAIN GATE", 11 * 16 + 8, Px.H - 10, Px.C.mist)
+		Px.text_c(self, "%d/%d" % [done, ids.size()], c.x * 16 + 8, Px.TOP + c.y * 16 - 9, Px.C.lime if done == ids.size() else Px.C.white)
 
 
 class HubRoom extends Room:
 	func is_solid(c: Vector2i) -> bool:
 		var ch := at(c)
-		return not (ch in [".", "p", "g", "@"])
+		return not (ch in [".", "p", "g", "j", "k", "v"])
 
 
 class BoardBg extends Node2D:
