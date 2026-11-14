@@ -1,5 +1,5 @@
 extends SceneTree
-## Drives the hub's directory board, food stops and pause menu, and fails on any
+## Drives the hub's directory board, food stops, guards and pause menu, and fails on any
 ## script error. godot --headless --path . --script res://tools/ui_smoke.gd
 
 var step := 0
@@ -23,6 +23,12 @@ func tap(action: String) -> void:
 	r.action = action
 	r.pressed = false
 	Input.parse_input_event(r)
+
+
+func close_dialogues() -> void:
+	for c in main.ui.get_children():
+		if c.has_method("_end"):
+			c._end()
 
 
 func _process(_d: float) -> bool:
@@ -111,13 +117,30 @@ func _process(_d: float) -> bool:
 		19:
 			check(is_equal_approx(G.attendance, 100.0) and G.has_buff("power") and G.tallies.get("truffles", 0) == 1 and G.truffles_t < 0.0, "the rider delivers a full heal and the power buff")
 			G.end_club_buffs()
-			main.screen._close_overlay()
-			main.screen._open_board("3")
+			close_dialogues()
 			wait = 5
 		20:
+			var hub = main.screen
+			check(hub.guards.size() == 3, "3 guards on SD")
+			check(hub.guards.all(func(g): return hub.room.at(g.cell) in "jp"), "guards stay on the paths")
+			G.pixels = 100
+			hub.safe_t = 0.0
+			hub.guards[0].stop_t = 0.0
+			hub.guards[0].position = hub.player.position
+			wait = 5
+		21:
+			var gd = main.screen.guards[0]
+			check(G.pixels == 70 and G.tallies.get("fines", 0) == 30 and G.tallies.get("caught", 0) == 1 and gd.stop_t > 2.9, "a guard fines 30 px and stands still")
+			close_dialogues()
+			check(main.screen.player.position == main.screen._gate_pos(), "a caught player goes back to the gate")
+			wait = 5
+		22:
+			main.screen._open_board("3")
+			wait = 5
+		23:
 			tap("attack")
 			wait = 40
-		21:
+		24:
 			check(main.screen_name == "club", "board opens a club")
 			print("ui smoke: %d problems" % fails)
 			quit(1 if fails > 0 else 0)

@@ -1,6 +1,7 @@
 extends Node2D
 ## The campus hub: a scrolling map of IIIT-B. Walk into a door to open its
-## directory board, into the counter for the canteen, into a sign to read it.
+## directory board, into a counter to buy food, into a sign to read it.
+## Security guards walk the paths and fine anyone they catch.
 
 var pausable := true
 ## One character per 16 px tile. x wall, @ main gate, j jogging track,
@@ -128,6 +129,8 @@ var room: Room
 var map_tex: ImageTexture
 var rider: Walker = null
 var kharab := false      # the last juice was bad; say so when the stall closes
+var guards: Array[Guard] = []
+var safe_t := 2.0        # no catches until this runs out
 
 
 func setup(args: Dictionary) -> void:
@@ -152,6 +155,7 @@ func _ready() -> void:
 	cam.limit_right = MAP[0].length() * Px.TILE
 	cam.limit_bottom = Px.TOP + MAP.size() * Px.TILE
 	player.add_child(cam)
+	_spawn_guards()
 	hud = Hud.new()
 	hud.mode = "hub"
 	Game.main.ui.add_child(hud)
@@ -206,7 +210,8 @@ func _check_unlocks() -> void:
 	elif Game.cards.has("sac") and from == "sac":
 		_say([{"who": "CLIPBOARD", "text": "THE ADMIN OFFICE IS OPEN. ARYABHATTA RECEPTION, BY THE FOUNTAIN LAWN. GOOD LUCK.", "look": Clubs.get_club("sac").head_look}])
 	elif Game.card_count() == 0 and from == "":
-		_say([{"who": Game.char_name(), "text": "THIRTEEN CLUBS. BEAT EVERY ONE AT ITS OWN GAME. WALK INTO A DOOR TO START.", "look": Game.pix_look()}])
+		_say([{"who": Game.char_name(), "text": "THIRTEEN CLUBS. BEAT EVERY ONE AT ITS OWN GAME. WALK INTO A DOOR TO START.", "look": Game.pix_look()},
+			{"who": "SECURITY", "text": "NO LOITERING ON THE PATHS, FRESHER. WE FINE.", "look": Guard.LOOK}])
 
 
 func _say(pages: Array) -> void:
@@ -223,6 +228,7 @@ func _free() -> void:
 	busy = false
 	player.input_enabled = true
 	bump_cd = 0.4
+	safe_t = 2.0
 
 
 func _process(delta: float) -> void:
@@ -239,6 +245,12 @@ func _process(delta: float) -> void:
 		add_child(rider)
 	if busy:
 		return
+	safe_t = maxf(0.0, safe_t - delta)
+	for gd in guards:
+		gd.step(delta, player.position)
+		if gd.stop_t <= 0.0 and safe_t <= 0.0 and gd.position.distance_to(player.position) < 10.0:
+			_caught(gd)
+			return
 	if rider:
 		_ride(delta)
 	if busy or bump_cd > 0.0:
@@ -267,6 +279,37 @@ func _process(delta: float) -> void:
 			Game.heal(100)
 			Audio.play("proxy", 0.0)
 			_say([{"who": "AIKYAM VOLUNTEER", "text": "SOCIAL SERVICE! FREE CHECK-UP. ATTENDANCE BACK TO 100%.", "look": _aikyam()}])
+
+
+## 2 guards on HD, 3 on SD, 4 on 8-BIT, on path tiles far from the player.
+func _spawn_guards() -> void:
+	var pc := room.cell_of(player.position)
+	var spots: Array[Vector2i] = []
+	for y in MAP.size():
+		for x in MAP[y].length():
+			if MAP[y][x] in "jp" and absi(x - pc.x) + absi(y - pc.y) >= 15:
+				spots.append(Vector2i(x, y))
+	spots.shuffle()
+	for i in [2, 3, 4][Game.difficulty]:
+		var gd := Guard.new()
+		gd.room = room
+		gd.look = Guard.LOOK
+		gd.cell = spots[i]
+		gd.position = _stand(gd.cell)
+		add_child(gd)
+		guards.append(gd)
+
+
+func _caught(gd: Guard) -> void:
+	gd.stop_t = 3.0
+	gd.chase_t = 0.0
+	Game.add_pixels(-30)
+	Game.tally("fines", 30)
+	Game.tally("caught")
+	Audio.play("whistle", 0.0)
+	await _say([{"who": "SECURITY", "text": "ID CARD? ... LOITERING FINE: 30 PX.", "look": Guard.LOOK}])
+	player.position = _gate_pos()
+	Game.save_run()
 
 
 func _aikyam() -> Dictionary:
@@ -620,6 +663,64 @@ class Walker extends Node2D:
 		draw_texture(tex, Vector2(-8, -tex.get_height()))
 		if mark != "":
 			Px.text_c(self, mark, 0, -tex.get_height() - 9, Px.C.red)
+
+
+## Campus security. Walks the paths like a Pac-Man ghost: a random turn at each
+## junction, never back the way it came unless the path ends there. Chases a
+## player it sees on the path within 5 tiles.
+class Guard extends Walker:
+	const LOOK := {"hair": "ink", "skin": "skin2", "cloth": "navy", "shade": "ink", "accent": "steel", "pants": "ink", "hat": "cap"}
+	const DIRS := [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]
+	var room: Room
+	var dir := Vector2i.ZERO
+	var goal := Vector2i.ZERO   # where the player was last seen
+	var chase_t := 0.0
+	var stop_t := 0.0
+
+	func step(delta: float, p: Vector2) -> void:
+		moving = stop_t <= 0.0
+		if stop_t > 0.0:
+			stop_t -= delta
+			mark = ""
+			return
+		anim += delta
+		var pc := room.cell_of(p)
+		if _sees(pc):
+			chase_t = 2.0
+			goal = pc
+			if Vector2(goal - cell).dot(Vector2(dir)) < 0.0:
+				cell += dir   # turn around on the spot
+				dir = -dir
+		chase_t = maxf(0.0, chase_t - delta)
+		mark = "!" if chase_t > 0.0 else ""
+		var to := room.cell_center(cell + dir) + Vector2(0, 4)
+		position = position.move_toward(to, Player.SPEED * (0.85 if chase_t > 0.0 else 0.5) * delta)
+		if position == to:
+			cell += dir
+			dir = _turn()
+
+	func _path(c: Vector2i) -> bool:
+		return room.at(c) in ["j", "p"]
+
+	## True if the player stands on the path in a straight line, 5 tiles or closer.
+	func _sees(pc: Vector2i) -> bool:
+		var d := pc - cell
+		if (d.x != 0 and d.y != 0) or absi(d.x + d.y) > 5:
+			return false
+		var s := Vector2i(signi(d.x), signi(d.y))
+		for i in absi(d.x + d.y) + 1:
+			if not _path(cell + s * i):
+				return false
+		return true
+
+	func _turn() -> Vector2i:
+		var opts := DIRS.filter(func(d): return d != -dir and _path(cell + d))
+		if opts.is_empty():
+			return -dir
+		if chase_t > 0.0:
+			opts.sort_custom(func(a, b): return (cell + a - goal).length_squared() < (cell + b - goal).length_squared())
+			return opts[0]
+		return opts.pick_random()
 
 
 class BoardBg extends Node2D:
