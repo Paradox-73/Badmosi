@@ -256,6 +256,7 @@ func _on_detained() -> void:
 		fight.over = true
 	Audio.stop_music()
 	Audio.play("detained", 0.0)
+	Game.tally("detained")
 	var cp := CardPages.new()
 	cp.pages = [_detained_page]
 	cp.choices = ["RE-EXAM", "BACK TO HUB"]
@@ -269,12 +270,32 @@ func _on_detained() -> void:
 		Game.goto("hub" if not Game.practice else "club_select", {"from": id})
 
 
+## Game over: the Admin emails your parents. The mail types itself out.
 func _detained_page(ci: Node2D, t: float) -> void:
-	var big := t > 0.3
-	Px.text_c(ci, "DETAINED", Px.W / 2.0, 46 if big else 54, Px.C.red, 32 if big else 16)
-	Px.text_c(ci, "ATTENDANCE 0%", Px.W / 2.0, 92, Px.C.white)
-	Px.text_c(ci, "NO PROXY LEFT TO MARK YOU PRESENT.", Px.W / 2.0, 106, Px.C.mist)
-	Px.text_c(ci, "YOU KEEP YOUR PIXELS.", Px.W / 2.0, 118, Px.C.gold)
+	Px.text_c(ci, "DETAINED", Px.W / 2.0, 8, Px.C.red, 16)
+	var r := Rect2(40, 28, Px.W - 80, 100)
+	ci.draw_rect(r, Px.C.white)
+	ci.draw_rect(Rect2(r.position, Vector2(r.size.x, 12)), Px.C.blue)
+	Px.text(ci, "NEW MAIL", r.position + Vector2(4, 2), Px.C.white, 8, false)
+	var lines := [
+		"FROM: admin.office@campus",
+		"TO: PARENTS OF %s" % Game.char_name(),
+		"SUBJECT: ATTENDANCE 0% - IMMEDIATE ACTION",
+		"",
+		"DEAR PARENT,",
+		"YOUR WARD WAS FOUND HAVING FUN WITHOUT",
+		"APPROVAL (CIRCULAR NO. 404). ATTENDANCE: 0%.",
+		"KINDLY CALL YOUR WARD. TODAY.",
+	]
+	var shown := int(t * 60.0)
+	var y := r.position.y + 15
+	for l in lines:
+		var s: String = l.substr(0, maxi(0, shown))
+		shown -= l.length() + 4
+		Px.text(ci, s, Vector2(r.position.x + 6, y), Px.C.ink, 8, false)
+		y += 10
+	if t > 2.5:
+		Px.text_c(ci, "MAIL SENT. YOUR PHONE IS RINGING: MUMMY (14 MISSED CALLS)", Px.W / 2.0, 134, Px.C.gold)
 
 
 ## Pause menu assist.
