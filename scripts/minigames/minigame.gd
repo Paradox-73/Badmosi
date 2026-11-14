@@ -1,0 +1,149 @@
+class_name Minigame
+extends Node2D
+## Base for every club minigame. Shows the 3-second key card, runs the timer,
+## applies Attendance penalties and reports a pass or a fail.
+## A subclass overrides info(), begin(), tick(delta) and draws in _draw().
+
+signal finished(won: bool, accuracy: float)
+
+const PLAY := Rect2(0, 24, 384, 192)
+
+var club := ""
+var hud: Hud
+var card_t := 3.0
+var running := false
+var over := false
+var time_left := 60.0
+var time_total := 60.0
+var mistakes := 0
+var t := 0.0
+var speedup := 1.0       # Form 404 rounds run faster
+var short_round := false # Form 404: a 10 s version
+
+
+func setup(club_id: String, h: Hud) -> void:
+	club = club_id
+	hud = h
+
+
+## {goal, keys (Array of Strings), time}
+func info() -> Dictionary:
+	return {"goal": "WIN", "keys": [], "time": 60.0}
+
+
+func begin() -> void:
+	pass
+
+
+func tick(_delta: float) -> void:
+	pass
+
+
+func goal_text() -> String:
+	return ""
+
+
+func can_flip() -> bool:
+	return running and not over
+
+
+func _ready() -> void:
+	var inf := info()
+	time_total = float(inf.get("time", 60.0)) * Game.time_mult()
+	if short_round:
+		time_total = 12.0 * Game.time_mult()
+		card_t = 1.2
+	time_left = time_total
+	if hud:
+		hud.mode = "minigame"
+		hud.goal = inf.goal
+
+
+func _process(delta: float) -> void:
+	queue_redraw()
+	if over or get_tree().paused:
+		return
+	if card_t > 0.0:
+		card_t -= delta
+		if card_t <= 0.0 or (card_t < 2.6 and Input.is_action_just_pressed("attack")):
+			card_t = 0.0
+			running = true
+			begin()
+		return
+	t += delta
+	if uses_timer():
+		time_left -= delta
+	tick(delta)
+	if hud:
+		hud.goal = goal_text() if goal_text() != "" else info().goal
+	if uses_timer() and time_left <= 0.0 and not over:
+		time_up()
+
+
+func uses_timer() -> bool:
+	return true
+
+
+## Called when time runs out. By default the game decides with judge().
+func time_up() -> void:
+	var r := judge()
+	finish(r[0], r[1])
+
+
+## Returns [won, accuracy] at the end of the time.
+func judge() -> Array:
+	return [false, 0.0]
+
+
+func penalty(pct: float, word := "", at := Vector2(-1, -1)) -> void:
+	mistakes += 1
+	Game.hurt(pct)
+	Audio.play("wrong", 0.0)
+	Fx.shake(1, 0.1)
+	if word != "":
+		Fx.word(word, at if at.x >= 0 else Vector2(Px.W / 2.0, 100), Px.C.red)
+
+
+func finish(won: bool, acc: float) -> void:
+	if over:
+		return
+	over = true
+	running = false
+	finished.emit(won, clampf(acc, 0.0, 1.0))
+
+
+## Draws the shared key card. Subclasses call this at the end of _draw().
+func draw_card() -> void:
+	if card_t <= 0.0:
+		return
+	var inf := info()
+	var d: Dictionary = Clubs.get_club(club)
+	var r := Rect2(48, 50, 288, 128)
+	draw_rect(PLAY, Color(Px.C.ink, 0.6))
+	Px.panel(self, r, Px.C.night, Px.C.gold)
+	Px.text_c(self, d.game_name, Px.W / 2.0, 58, Px.C.gold, 16)
+	var gl := DialogueBox.wrap_text(inf.goal, 44)
+	for i in gl.size():
+		Px.text_c(self, gl[i], Px.W / 2.0, 82 + i * 10, Px.C.white)
+	var y := 104
+	for k in inf.get("keys", []):
+		Px.text_c(self, k, Px.W / 2.0, y, Px.C.cyan)
+		y += 10
+	var fit := "HOLD F TO SAY " + Game.fit_words()
+	Px.text_c(self, fit, Px.W / 2.0, 158, Px.C.pink)
+	if not Game.opts.clean_text:
+		var x0 := Px.W / 2.0 - Px.text_w(fit) / 2.0 + Px.text_w("HOLD F TO SAY F")
+		var cols := [Px.C.pink, Px.C.violet, Px.C.gold, Px.C.cyan]
+		for i in 6:
+			for j in 3:
+				draw_rect(Rect2(x0 + i * 3, 158 + j * 3, 3, 3), cols[(i + j + int(t * 8 + card_t * 8)) % 4])
+	Px.bar(self, Rect2(r.position.x + 8, r.end.y - 6, r.size.x - 16, 3), card_t / 3.0, Px.C.gold)
+
+
+## Draws the remaining time as a pixel bar at the bottom of the play area.
+func draw_timer() -> void:
+	if not uses_timer():
+		return
+	var f := time_left / time_total
+	var c: Color = Px.C.cyan if f > 0.25 else (Px.C.red if int(t * 6) % 2 == 0 else Px.C.gold)
+	Px.bar(self, Rect2(4, Px.H - 6, Px.W - 8, 4), f, c)

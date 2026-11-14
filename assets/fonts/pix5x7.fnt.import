@@ -1,0 +1,17 @@
+[remap]
+
+importer="font_data_bmfont"
+type="FontFile"
+uid="uid://ctpx38ea1017k"
+path="res://.godot/imported/pix5x7.fnt-d20d470f3f2d1085e6197a7dea3c8e7e.fontdata"
+
+[deps]
+
+source_file="res://assets/fonts/pix5x7.fnt"
+dest_files=["res://.godot/imported/pix5x7.fnt-d20d470f3f2d1085e6197a7dea3c8e7e.fontdata"]
+
+[params]
+
+fallbacks=[]
+compress=true
+scaling_mode=2
