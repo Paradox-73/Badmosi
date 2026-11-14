@@ -57,9 +57,12 @@ func _draw() -> void:
 	var gl := 1 if int(t * 5.0) % 9 == 0 else 0
 	Px.text_c(self, "BADMOSI", Px.W / 2.0 + gl * 2, 24, Px.C.red, 48)
 	Px.text_c(self, "BADMOSI", Px.W / 2.0 - gl, 22, Px.C.gold, 48)
-	# Pix waits by the gate.
-	var tex := Px.char_tex(Game.pix_look(), "walk1" if int(t * 2.0) % 2 == 0 else "idle")
-	draw_texture_rect(tex, Rect2(Vector2(Px.W / 2.0 - 16, 118), tex.get_size() * 2), false)
+	# The whole gang on the lawn, bobbing out of step.
+	for i in Roster.ORDER.size():
+		var look: Dictionary = Roster.get_char(Roster.ORDER[i]).look
+		var bob := int(t * 3.0 + i * 0.7) % 2
+		var tex := Px.char_tex(look, "walk1" if bob == 0 else "idle")
+		draw_texture(tex, Vector2(8 + i * 17.6, 150 - tex.get_height() - bob))
 	if int(t * 2.0) % 2 == 0:
 		Px.text_c(self, "PRESS ANY KEY", Px.W / 2.0, 166, Px.C.white)
 	Px.text_c(self, "CONTAINS FLASHING LIGHTS. SEE OPTIONS.", Px.W / 2.0, 186, Px.C.steel)

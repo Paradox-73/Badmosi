@@ -1,8 +1,32 @@
+<div align="center">
+
+<img src="docs/banner.png" alt="Badmosi title screen: the pixel logo over a night skyline, with all 21 members of the Badmosi gang standing on the campus lawn." width="100%">
+
 # Badmosi
 
-A top-down pixel adventure set at IIIT-B, made for the Synergy '26 Game Dev competition (theme: **Pixelated Game**) by Team Claude laggye.
+**A top-down pixel adventure set on the IIIT-B campus.** The Admin has brainwashed every club and put campus on lockdown. Your gang is the last one still free.
 
-A fresher, Pix, wants to start a Pixel Club. The only free room is Room 404, which is not on any floor plan. Circular No. 404 says a new club gets a room only after its founder beats every club at its own game. So Pix takes on all thirteen clubs, then the SAC, then the Admin itself.
+[![Godot 4.7.2](https://img.shields.io/badge/Godot-4.7.2-478CBF?style=for-the-badge&logo=godotengine&logoColor=white)](https://godotengine.org/download/archive/4.7.2-stable/)
+[![GDScript](https://img.shields.io/badge/GDScript-100%25-355570?style=for-the-badge)](scripts/)
+[![Theme: Pixelated Game](https://img.shields.io/badge/Theme-Pixelated%20Game-f6c445?style=for-the-badge&labelColor=140f1d)](#pixel-rules)
+<br>
+[![384 x 216](https://img.shields.io/badge/Resolution-384%20x%20216-9bdc4b?style=for-the-badge&labelColor=140f1d)](#pixel-rules)
+[![21 characters](https://img.shields.io/badge/Roster-21%20characters-f07ab5?style=for-the-badge&labelColor=140f1d)](#the-gang)
+[![13 clubs](https://img.shields.io/badge/Clubs-13%20minigames-5fd3e0?style=for-the-badge&labelColor=140f1d)](#the-clubs)
+[![Gamepad](https://img.shields.io/badge/Gamepad-supported-8c4fd6?style=for-the-badge&labelColor=140f1d)](#controls)
+<br>
+[![All assets made by the team](https://img.shields.io/badge/Assets-all%20made%20by%20the%20team-e2384a?style=for-the-badge&labelColor=140f1d)](CREDITS.md)
+[![Windows and Web](https://img.shields.io/badge/Builds-Windows%20%7C%20Web-7d8fb3?style=for-the-badge&labelColor=140f1d)](#running-and-building)
+
+Synergy '26 Game Dev competition entry by Team Claude laggye.
+
+</div>
+
+## The story
+
+It opens on a sepia flashback. Clubs used to run campus life: fest nights, 2 AM chai, pure badmosi. Then the Admin issued Circular No. 404 ("fun is pending approval"), brainwashed every club into enforcing its rules, and locked the campus down. Lifts fall, the lights go out, ceilings cave in, all "for your safety".
+
+You pick one member of the Badmosi gang. Beat a club at its own game and it snaps out of it and joins you. Free all thirteen, then beat the SAC, then the Admin. The game ends with everyone eating at Cornerhouse, then a report card: *Iss sem ki badmosi*.
 
 Every club challenge is a minigame. At any moment you can hold **F** to say `F*** IT!` (censored by a pixel mosaic): the minigame shatters into pixels and turns into a beat 'em up fight with the whole club.
 
@@ -14,28 +38,37 @@ Every club challenge is a minigame. At any moment you can hold **F** to say `F**
 | Folder | What it holds |
 |---|---|
 | `scripts/autoload/` | `Px` (palette, sprites drawn from text, pixel font helpers), `Game` (run state, options, input map, saving), `Audio` (chiptune synth and beat clock), `Fx` (hitstop, shake, comic words, pixel bursts, telegraphs) |
-| `scripts/fight/` | Pix, the five enemy archetypes, club heads with eight shared attack pieces, the Admin's phases, the fight manager and attack tokens |
+| `scripts/fight/` | The player, the five enemy archetypes, club heads with eight shared attack pieces, the Admin's phases, the fight manager and attack tokens |
 | `scripts/minigames/` | The base minigame (key card, penalties, timer, cursor) and one script per club game |
 | `scripts/club_room.gd` | One scene for every club: challenge, minigame, F-it switch, fight, results, membership card, 8-Bit headline |
 | `scripts/world/` | The room loader (text files) and the campus hub |
-| `scripts/ui/` | HUD, menus, pause, options, dialogue, name cards, result cards, credits |
-| `scripts/story/` | Opening and ending |
-| `scripts/data/clubs.gd` | Every club's data: names, looks, palette, attacks, lines, headlines |
+| `scripts/ui/` | HUD, menus, character select, pause, options, dialogue, name cards, result cards, credits |
+| `scripts/story/` | Flashback, opening and the Cornerhouse ending |
+| `scripts/data/clubs.gd` | Every club's data: names, looks, palette, attacks, lines, headlines, ally perks |
+| `scripts/data/roster.gd` | The 21 playable characters: looks, perks, quirks, theme songs |
 | `levels/*.txt` | Club rooms, one character per tile (24 x 12) |
 | `data/` | Quiz questions and DebSoc speech lines |
-| `shaders/` | Mosaic transition, sprite flash and Downscale, club palette |
+| `shaders/` | Mosaic transition, sprite flash and Downscale, club palette, CRT filter |
 | `tools/` | Content checks, rule tests and the font builder |
 
 ## How to play
 
-Walk around campus and into a building door to see its clubs. Pick a club, hear the challenge, and play its game. Win to get its membership card. Beat all thirteen clubs to open the SAC, and beat the SAC to reach the Admin.
+Pick a character, then walk the campus. It follows the real IIIT-B layout: the fountain lawn and main gate, Aryabhatta, Visvesvarya, Lilavati, Ramanujan, the courts, the football ground, and the MPH and Bhaskara block. Walk into a door to see the clubs inside. Beat a club's game to free it and get its card. Free all thirteen to open the SAC room in the MPH; beat the SAC to open the Admin's office at Aryabhatta reception.
 
 College life is the rule set:
-- **Attendance** is your health. Every minigame mistake and every hit costs some. At 0% you are **DETAINED**.
+- **Attendance** is your health. Every minigame mistake and every hit costs some. At 0% you are **DETAINED**, and the Admin emails your parents.
 - A **Proxy** is an extra life: a friend marks you present.
-- **Pixels (px)** are money. Spend them at the Bhaskara canteen, open till 2 AM.
+- **Pixels (px)** are money. Spend them at the Bhaskara canteen, Coffee Cove, Juicy and Truffles.
 - Each new club card is a **SEM UP**: more fight damage, smaller Attendance losses.
 - Every 3 cards unlock a new fight special.
+
+On campus:
+- **Security guards** patrol the paths like Pac-Man ghosts. Get spotted on a path and they chase you. Caught means a loitering fine and a walk back to the gate.
+- **Coffee Cove** (Aryabhatta and Ramanujan): cold coffee for speed, cappuccino for smaller Attendance losses, brownies to heal. Food buffs last until the end of your next club.
+- **Truffles**: order at the main gate and a rider brings it to you about 25 seconds later. Full heal and more fight damage.
+- **Juicy**: cheap juice that heals. Sometimes it ends in *pet kharab*: slower, with washroom breaks.
+
+In fights, the Admin sabotages you every 15 seconds or so: a ceiling collapse, a falling lift, a power cut, the wifi going down (no specials), a random fine, or a fire extinguisher full of foam.
 
 ### Controls
 
@@ -50,27 +83,61 @@ College life is the rule set:
 | Pause | Esc | Start |
 | Fullscreen | F11 | |
 
-Each minigame shows its own keys on a key card before it starts.
+Each minigame shows its own keys on a key card before it starts. Menus, minigames and fights all work with a gamepad.
+
+### The gang
+
+21 characters, each with a theme song, buffs and nerfs. Four have a signature quirk.
+
+| Character | Buffs | Nerfs | Signature |
+|---|---|---|---|
+| Aarpeet | +15% move speed, -30% dodge cooldown | +15% attendance loss | - |
+| Ivan | +20% fight damage, -10% attendance loss | -10% move speed | - |
+| Dhulli | +30% pixels earned, +20% minigame time | -10% fight damage | - |
+| Gupta | -20% attendance loss, +15% pixels earned | -15% timing windows | - |
+| Betala | +25% timing windows, +3 hype at fight start | -10% move speed | - |
+| Kaushal | +15% fight damage, +10% move speed | -20% minigame time | - |
+| Modi | +25% pixels earned, -10% attendance loss | +30% dodge cooldown | - |
+| Sachan | -25% attendance loss, +10% fight damage | -5% move speed | Dhairya meter: every hit drains the patience. At zero: 6 s of rage, double damage. |
+| Nikunj | +25% minigame time, +15% timing windows | -15% fight damage | - |
+| Kanav | +10% fight damage, +10% move speed, +2 hype at fight start | +10% attendance loss | - |
+| Jayant | +20% move speed, +2 hype at fight start | -20% pixels earned | - |
+| Tyagi | -30% attendance loss, +1 hype at fight start | -15% move speed | - |
+| Nirbhay | +10% fight damage, +1 hype at fight start | -15% minigame time | Black hole special: pulls every enemy in, then collapses. |
+| Gary | -40% dodge cooldown, +10% move speed | +20% attendance loss | - |
+| Mittal | +20% pixels earned, +15% timing windows | -10% fight damage | - |
+| Antala | +25% fight damage | +30% dodge cooldown, -10% timing windows | - |
+| Pratham | +20% minigame time, -15% attendance loss | -10% move speed | - |
+| Suryans | +20% timing windows, +10% fight damage | -20% pixels earned | - |
+| Bhavya | +15% move speed, +20% pixels earned, +1 hype at fight start | - | Phone buzz: the phone buzzes now and then. Press K in time to ignore it. |
+| Sodhi | +10% move speed, -20% dodge cooldown | +10% attendance loss | Cartwheel special: cartwheels through a whole line of enemies. |
+| Gathik | +3 hype at fight start, +10% fight damage | -15% minigame time | - |
+
+### Speedrun
+
+**Speedrun** on the main menu starts a run on SD with a timer on screen and skips the story scenes. The best time is saved.
 
 ### The clubs
 
-| Club | Game | Pixel twist |
-|---|---|---|
-| Impulse, the dance club | Dance-off: repeat COUNT EIGHT's arrow phrases on the beat | Arrows burst into pixels on a PERFECT |
-| Symphony, the music club | Piano tiles: each correct press plays the next note of Ode to Joy | Tiles shatter on a wrong note |
-| Quiz Society | Six questions, then a picture round | Pictures start as 4 x 4 blocks and sharpen |
-| Pioneers, the maths club | Maths sprint, then make 404 from six numbers | Large pixel digits |
-| 8-Bit, the student magazine | Proofread the cover | Find single wrong pixels |
-| ECLIPSE, the astronomy club | Telescope hunt in a dark sky | Single-pixel stars |
-| Food Committee | 2 AM rush: build canteen trays | Pixel patience bars |
-| Chhayachitra, the photography club | Golden hour: shoot when the focus is sharp | Focus is a pulsing mosaic |
-| Film Division | Boom operator | Pixel frame edge |
-| Zense, the developers' club | Bug squash, but green crawlers are features | Pixel-font code |
-| Vinci, the art club | Paint a pixel painting from memory | The whole game is pixel art |
-| DebSoc, the debating society | Point of order: object only to fallacies | Pixel audience meter |
-| Parvaaz, the theatre club | Stage fright: dodge the spotlights | Dithered pixel spotlights |
-| The SAC | House rules that change every 10 seconds | Pixel rule banners |
-| The Admin | Form 404: a quick round of each club's game, then a stamp | The Admin upscales itself into giant pixels |
+| Club | Game | Pixel twist | Ally perk once freed |
+|---|---|---|---|
+| Impulse, the dance club | Dance-off: repeat COUNT EIGHT's arrow phrases on the beat | Arrows burst into pixels on a PERFECT | -20% dodge cooldown |
+| Symphony, the music club | Piano tiles: each correct press plays the next note of Ode to Joy | Tiles shatter on a wrong note | +1 hype on every combo finisher |
+| Quiz Society | Six questions, then a picture round | Pictures start as 4 x 4 blocks and sharpen | +15% minigame time |
+| Pioneers, the maths club | Maths sprint, then make 404 from six numbers | Large pixel digits | +10% fight damage |
+| 8-Bit, the student magazine | Proofread the cover | Find single wrong pixels | +10% move speed |
+| ECLIPSE, the astronomy club | Telescope hunt in a dark sky | Single-pixel stars | shorter power cuts |
+| Food Committee | 2 AM rush: build canteen trays | Pixel patience bars | +15% Attendance after every club you free |
+| Chhayachitra, the photography club | Golden hour: shoot when the focus is sharp | Focus is a pulsing mosaic | +20% pixels earned |
+| Film Division | Boom operator | Pixel frame edge | +10% timing windows |
+| Zense, the developers' club | Bug squash, but green crawlers are features | Pixel-font code | shorter wifi outages |
+| Vinci, the art club | Paint a pixel painting from memory | The whole game is pixel art | -10% Attendance loss |
+| DebSoc, the debating society | Point of order: object only to fallacies | Pixel audience meter | halves every fine |
+| Parvaaz, the theatre club | Stage fright: dodge the spotlights | Dithered pixel spotlights | +1 Proxy |
+| The SAC | House rules that change every 10 seconds | Pixel rule banners | - |
+| The Admin | Form 404: a quick round of each club's game, then a stamp | The Admin upscales itself into giant pixels | - |
+
+Each freed club stays an ally for the rest of the run, so the order you free them in changes the run.
 
 **Club select** on the main menu opens any club, the SAC or the Admin straight away, with either the minigame or the fight first. The pause menu has assists (invincible, double damage, skip club) with no penalty.
 
@@ -111,7 +178,8 @@ godot --path . --write-movie out/frames.png --fixed-fps 30 --quit-after 200 -- -
 
 ## Pixel rules
 
-- The game renders at 384 x 216 and scales up by whole numbers only (stretch mode `viewport`, scale mode `integer`), so every game pixel is a sharp square block: 4 x 4 in the default window, 5 x 5 at 1080p.
+- The game renders into a 384 x 216 viewport that is scaled up by whole numbers only, so every game pixel is a sharp square block: 4 x 4 in the default window, 5 x 5 at 1080p.
+- An optional CRT filter (on by default) draws row gaps, a phosphor stripe, colour fringing and a vignette at window resolution, so it never blurs the game pixels. Its screen curve is a setting, from flat to 100%.
 - Nearest-neighbour filtering everywhere, and pixel snapping on.
 - One pixel size for sprites, tiles, UI, text and particles. The font is a 5 x 7 bitmap font built by `tools/make_font.py`.
 
