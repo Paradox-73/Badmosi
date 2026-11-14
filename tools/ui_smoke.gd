@@ -1,5 +1,5 @@
 extends SceneTree
-## Drives the hub's directory board, canteen and pause menu, and fails on any
+## Drives the hub's directory board, food stops and pause menu, and fails on any
 ## script error. godot --headless --path . --script res://tools/ui_smoke.gd
 
 var step := 0
@@ -83,12 +83,41 @@ func _process(_d: float) -> bool:
 			wait = 5
 		12:
 			check(not paused, "back out of pause resumes")
-			main.screen._open_board("3")
+			main.screen._open_shop("c")
 			wait = 5
 		13:
 			tap("attack")
-			wait = 40
+			wait = 5
 		14:
+			check(G.has_buff("speed") and G.pixels == 410, "cold coffee gives the speed buff for 60 px")
+			tap("dodge")
+			wait = 5
+		15:
+			main.screen._open_shop("t")
+			wait = 5
+		16:
+			tap("attack")
+			wait = 5
+		17:
+			check(G.truffles_t > 0.0 and G.pixels == 260, "a Truffles order costs 150 px and starts the timer")
+			tap("dodge")
+			G.truffles_t = 0.0
+			G.attendance = 40.0
+			wait = 5
+		18:
+			check(main.screen.rider != null, "the rider sets off when the timer runs out")
+			main.screen.rider.position = main.screen.player.position
+			wait = 5
+		19:
+			check(is_equal_approx(G.attendance, 100.0) and G.has_buff("power") and G.tallies.get("truffles", 0) == 1 and G.truffles_t < 0.0, "the rider delivers a full heal and the power buff")
+			G.end_club_buffs()
+			main.screen._close_overlay()
+			main.screen._open_board("3")
+			wait = 5
+		20:
+			tap("attack")
+			wait = 40
+		21:
 			check(main.screen_name == "club", "board opens a club")
 			print("ui smoke: %d problems" % fails)
 			quit(1 if fails > 0 else 0)

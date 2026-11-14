@@ -43,6 +43,7 @@ var dhairya := 100.0     # Sachan's patience meter
 var rage_t := 0.0        # seconds of Sachan's rage left
 var practice := false    # true when a club was opened from club select
 var autoplay := false    # --autoplay: scenes advance themselves, for frame captures
+var truffles_t := -1.0   # seconds until a Truffles order leaves the gate, -1 when none
 
 # Settings
 var difficulty := 1
@@ -157,6 +158,7 @@ func new_run() -> void:
 	tallies = {}
 	dhairya = 100.0
 	rage_t = 0.0
+	truffles_t = -1.0
 	practice = false
 	stats_changed.emit()
 

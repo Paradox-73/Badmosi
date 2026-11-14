@@ -93,6 +93,28 @@ const MENU := [
 	{"name": "FILTER COFFEE", "price": 80, "desc": "FULL HYPE"},
 	{"name": "PROXY SLIP", "price": 200, "desc": "+1 PROXY (MAX 3)"},
 ]
+const RIDER := {"hair": "ink", "skin": "skin2", "cloth": "red", "shade": "maroon", "accent": "gold", "pants": "ink", "hat": "cap"}
+const TRUFFLES_WAIT := 25.0   # seconds of campus time before the rider sets off
+## Food stops by map character.
+const SHOPS := {
+	"$": {"title": "BHASKARA CANTEEN - OPEN TILL 2 AM", "who": "ANNA", "lines": ANNA_LINES, "menu": MENU,
+		"look": {"hair": "ink", "skin": "skin3", "cloth": "white", "shade": "mist", "accent": "orange", "pants": "brown"}},
+	"c": {"title": "COFFEE COVE", "who": "BARISTA",
+		"look": {"hair": "brown", "skin": "skin1", "cloth": "brown", "shade": "dark", "accent": "white", "pants": "ink"},
+		"lines": ["COLD COFFEE MAKES YOU FAST. ALLEGEDLY.", "FOAM ART TODAY: A PIXEL HEART.", "BROWNIE IS WARM. BROWNIE IS LIFE.",
+			"SAME BEANS IN BOTH BLOCKS. DON'T TELL.", "RUSH HOUR IS WHEN CLASS ENDS."],
+		"menu": [{"name": "COLD COFFEE", "price": 60, "desc": "+25% SPEED, NEXT CLUB"},
+			{"name": "CAPPUCCINO", "price": 70, "desc": "-25% ATT. LOSS, NEXT CLUB"},
+			{"name": "BROWNIE", "price": 40, "desc": "+30% ATTENDANCE"}]},
+	"y": {"title": "JUICY - FRESH JUICE", "who": "JUICY BHAIYA",
+		"look": {"hair": "ink", "skin": "skin3", "cloth": "orange", "shade": "brown", "accent": "lime", "pants": "navy"},
+		"lines": ["FRESH JUICE! VERY FRESH. MOSTLY.", "WATERMELON TODAY. YESTERDAY ALSO.", "ICE IS FROM... SOMEWHERE. DRINK!",
+			"ONE JUICE, ONE STRAW, NO REFUNDS."],
+		"menu": [{"name": "JUICE", "price": 40, "desc": "+30% ATTENDANCE"}]},
+	"t": {"title": "TRUFFLES - BURGERS TO THE GATE", "who": "TRUFFLES", "look": RIDER,
+		"lines": ["DELIVERY TO THE MAIN GATE ONLY.", "RIDER LEAVES IN 25 SECONDS. MAYBE 26.", "EXTRA CHEESE IS NOT OPTIONAL."],
+		"menu": [{"name": "ORDER", "price": 150, "desc": "FULL ATT., +25% DMG"}]},
+}
 
 var player: Player
 var hud: Hud
@@ -104,6 +126,8 @@ var overlay: Node = null
 var from := ""
 var room: Room
 var map_tex: ImageTexture
+var rider: Walker = null
+var kharab := false      # the last juice was bad; say so when the stall closes
 
 
 func setup(args: Dictionary) -> void:
@@ -205,6 +229,18 @@ func _process(delta: float) -> void:
 	t += delta
 	bump_cd = maxf(0.0, bump_cd - delta)
 	queue_redraw()
+	if Game.truffles_t > 0.0:
+		Game.truffles_t = maxf(0.0, Game.truffles_t - delta)
+	if Game.truffles_t == 0.0 and rider == null:
+		rider = Walker.new()
+		rider.look = RIDER
+		rider.cell = _find("@") + Vector2i.DOWN
+		rider.position = _stand(rider.cell)
+		add_child(rider)
+	if busy:
+		return
+	if rider:
+		_ride(delta)
 	if busy or bump_cd > 0.0:
 		return
 	var mv := Game.move_vec()
@@ -215,8 +251,8 @@ func _process(delta: float) -> void:
 	var ch := room.at(c)
 	if ch in BUILDINGS:
 		_open_board(ch)
-	elif ch == "$":
-		_open_canteen()
+	elif ch in SHOPS:
+		_open_shop(ch)
 	elif ch in FLAVOUR:
 		_say([{"who": FLAVOUR[ch][0], "text": FLAVOUR[ch][1]}])
 	elif ch == "?":
@@ -276,21 +312,29 @@ func _close_overlay() -> void:
 		overlay.queue_free()
 	overlay = null
 	_free()
+	if kharab:
+		kharab = false
+		_say([{"who": Game.char_name(), "text": "PET KHARAB! THAT JUICE WAS NOT FRESH. -25% SPEED TILL THE NEXT CLUB.", "look": Game.pix_look()}])
 
 
 func _open_canteen() -> void:
+	_open_shop("$")
+
+
+func _open_shop(k: String) -> void:
 	busy = true
 	player.input_enabled = false
+	var shop: Dictionary = SHOPS[k]
 	var bg := BoardBg.new()
-	bg.note = ANNA_LINES.pick_random()
-	bg.canteen = true
+	bg.shop = shop
+	bg.note = "YOUR ORDER IS ON ITS WAY." if k == "t" and Game.truffles_t >= 0.0 else shop.lines.pick_random()
 	var items := []
-	for it in MENU:
+	for it in shop.menu:
 		var item: Dictionary = it
 		items.append({"text": "%-14s %4d PX  %s" % [item.name, item.price, item.desc], "on": func(): _buy(item, bg)})
 	items.append({"text": "LEAVE", "on": _close_overlay})
 	var m := MenuList.new(items, 330)
-	m.title = "BHASKARA CANTEEN - OPEN TILL 2 AM"
+	m.title = shop.title
 	m.center = false
 	m.position = Vector2(Px.W / 2.0, 66)
 	m.back.connect(_close_overlay)
@@ -315,10 +359,66 @@ func _buy(item: Dictionary, bg: BoardBg) -> void:
 				Audio.play("wrong", 0.0)
 				return
 			Game.proxies += 1
+		"COLD COFFEE": Game.add_buff("speed")
+		"CAPPUCCINO": Game.add_buff("guard")
+		"BROWNIE", "JUICE": Game.heal(30)
+		"ORDER":
+			if Game.truffles_t >= 0.0:
+				bg.note = "ONE ORDER AT A TIME. IT IS ON ITS WAY."
+				Audio.play("wrong", 0.0)
+				return
+			Game.truffles_t = TRUFFLES_WAIT
 	Game.add_pixels(-int(item.price))
 	Audio.play("buy", 0.0)
-	bg.note = ANNA_LINES.pick_random()
+	bg.note = bg.shop.lines.pick_random()
+	if item.name == "ORDER":
+		bg.note = "ORDER PLACED. THE RIDER LEAVES IN 25 S."
+	elif item.name == "JUICE" and randf() < 0.35:
+		kharab = true
+		Game.add_buff("upset")
+		Game.tally("juicy")
 	Game.save_run()
+
+
+## The Truffles rider walks from the gate to the player, one tile at a time.
+func _ride(delta: float) -> void:
+	var to := _stand(rider.cell)
+	rider.position = rider.position.move_toward(to, 100.0 * delta)
+	rider.anim += delta
+	rider.moving = true
+	if rider.position.distance_to(player.position) < 12.0:
+		rider.queue_free()
+		rider = null
+		Game.truffles_t = -1.0
+		Game.heal(100)
+		Game.add_buff("power")
+		Game.tally("truffles")
+		Game.save_run()
+		Audio.play("buy", 0.0)
+		_say([{"who": "TRUFFLES RIDER", "text": "ORDER FOR %s! ONE BURGER, EXTRA CHEESE. FULL ATTENDANCE, +25%% DAMAGE TILL THE NEXT CLUB." % Game.char_name(), "look": RIDER}])
+	elif rider.position == to:
+		rider.cell = _step_toward(rider.cell, room.cell_of(player.position))
+
+
+## The next tile on a shortest walk from a to b, or a if b can't be reached.
+func _step_toward(a: Vector2i, b: Vector2i) -> Vector2i:
+	var prev := {a: a}
+	var q: Array[Vector2i] = [a]
+	var i := 0
+	while i < q.size() and not prev.has(b):
+		var c := q[i]
+		i += 1
+		for d in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+			var n: Vector2i = c + d
+			if not prev.has(n) and not room.is_solid(n):
+				prev[n] = c
+				q.append(n)
+	if not prev.has(b):
+		return a
+	var step := b
+	while prev[step] != a:
+		step = prev[step]
+	return step
 
 
 # ---------------------------------------------------------------- drawing
@@ -503,9 +603,28 @@ class HubRoom extends Room:
 		return not (ch in [".", "p", "g", "j", "k", "v"])
 
 
+## A person on the map who walks tile to tile: the Truffles rider and the guards.
+class Walker extends Node2D:
+	var look := {}
+	var cell := Vector2i.ZERO
+	var moving := false
+	var anim := 0.0
+	var mark := ""
+
+	func _process(_delta: float) -> void:
+		queue_redraw()
+
+	func _draw() -> void:
+		var tex := Px.char_tex(look, ("walk1" if int(anim * 8.0) % 2 == 0 else "walk2") if moving else "idle")
+		draw_rect(Rect2(-5, -1, 10, 2), Color(Px.C.dark, 0.5))
+		draw_texture(tex, Vector2(-8, -tex.get_height()))
+		if mark != "":
+			Px.text_c(self, mark, 0, -tex.get_height() - 9, Px.C.red)
+
+
 class BoardBg extends Node2D:
 	var note := ""
-	var canteen := false
+	var shop := {}
 	var tt := 0.0
 
 	func _ready() -> void:
@@ -518,12 +637,11 @@ class BoardBg extends Node2D:
 	func _draw() -> void:
 		draw_rect(Rect2(0, 0, Px.W, Px.H), Color(Px.C.ink, 0.75))
 		Px.panel(self, Rect2(12, 50, Px.W - 24, 150), Px.C.night, Px.C.gold)
-		if canteen:
-			var anna := {"hair": "ink", "skin": "skin3", "cloth": "white", "shade": "mist", "accent": "orange", "pants": "brown"}
-			var tex := Px.char_tex(anna, "idle")
-			draw_texture_rect(tex, Rect2(Vector2(20, 26), tex.get_size() * 2), false)
+		if not shop.is_empty():
+			var tex := Px.char_tex(shop.look, "idle")
+			draw_texture_rect(tex, Rect2(Vector2(20, 58 - tex.get_height() * 2), tex.get_size() * 2), false)
 			Px.panel(self, Rect2(58, 28, Px.W - 76, 18), Px.C.ink, Px.C.mist)
-			Px.text(self, "ANNA: " + note, Vector2(64, 33), Px.C.white)
+			Px.text(self, shop.who + ": " + note, Vector2(64, 33), Px.C.white)
 			Px.text(self, "YOUR PIXELS: %d    ATTENDANCE: %d%%    HYPE: %d" % [Game.pixels, roundi(Game.attendance), Game.hype], Vector2(24, 186), Px.C.gold)
 		else:
 			Px.text(self, "* = DIFFICULTY. WALK BACK OUT WITH K.", Vector2(24, 186), Px.C.steel)
