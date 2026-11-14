@@ -47,6 +47,23 @@ const LEGS := {
 	"walk1": ["....kppk.kppk...", "....kbbk.kppk...", ".........kbbk..."],
 	"walk2": ["....kppk.kppk...", "....kppk.kbbk...", "....kbbk........"],
 }
+# A smaller 12 x 12 body, for Juniors.
+const MINI := [
+	"............",
+	"...kkkkkk...",
+	"..khhhhhhk..",
+	"..ksesssesk.",
+	"..kssssssk..",
+	"...kkkkkk...",
+	"..kccaaccdk.",
+	".scccccccds.",
+	"..kppppppk..",
+]
+const MINI_LEGS := {
+	"idle": ["..kpk..kpk..", "..kbk..kbk..", "............"],
+	"walk1": ["..kbk..kpk..", ".......kbk..", "............"],
+	"walk2": ["..kpk..kbk..", "..kbk.......", "............"],
+}
 # Hats sit in 4 rows above the 16 x 16 body, for club heads.
 const HATS := {
 	"none": ["................", "................", "................", "................"],
@@ -112,6 +129,10 @@ func char_tex(look: Dictionary, frame := "idle") -> Texture2D:
 	if _cache.has(key):
 		return _cache[key]
 	var rows: Array = []
+	if look.get("mini", false):
+		rows.append_array(MINI)
+		rows.append_array(MINI_LEGS.get(frame, MINI_LEGS.idle))
+		return tex_from(key, rows, char_pal(look))
 	if hat != "none":
 		rows.append_array(HATS[hat])
 	rows.append_array(BODY)

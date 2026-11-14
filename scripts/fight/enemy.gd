@@ -46,6 +46,7 @@ func setup(a: String, club_id: String, l: Dictionary) -> void:
 			lk["hat"] = "cap"
 		"junior":
 			lk["hair"] = lk.get("accent", "gold")
+			lk["mini"] = true
 		"coordinator":
 			lk["hat"] = "visor"
 		"thrower":
