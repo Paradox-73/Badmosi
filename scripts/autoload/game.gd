@@ -187,6 +187,15 @@ func card_count() -> int:
 	return cards.size()
 
 
+## Cards from the thirteen clubs only, without the SAC and the Admin.
+func club_card_count() -> int:
+	var n := 0
+	for k in cards:
+		if not k in ["sac", "admin"]:
+			n += 1
+	return n
+
+
 func unlocked_specials() -> Array:
 	var out := []
 	for s in SPECIALS:

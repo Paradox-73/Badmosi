@@ -33,6 +33,9 @@ var feedback_t := 0.0
 var rng := RandomNumberGenerator.new()
 var need := 8
 var word_pool := []
+var pad := false        # a gamepad is connected: answers become a choice of four
+var choices := []
+var csel := 0
 
 
 func info() -> Dictionary:
@@ -47,6 +50,7 @@ func _ready() -> void:
 	word_pool.shuffle()
 	if short_round:
 		need = 2
+	pad = not Input.get_connected_joypads().is_empty()
 
 
 func begin() -> void:
@@ -99,6 +103,13 @@ func _new_q() -> void:
 			var w: Array = word_pool.pop_back()
 			q = w[0]
 			ans = w[1]
+	choices = [ans]
+	while choices.size() < 4:
+		var c: int = ans + [-10, -2, -1, 1, 2, 10, 5, -5][rng.randi() % 8]
+		if c >= 0 and not choices.has(c):
+			choices.append(c)
+	choices.shuffle()
+	csel = 0
 
 
 func _unhandled_input(e: InputEvent) -> void:
@@ -132,6 +143,9 @@ func _submit() -> void:
 		Fx.word("QED!", Vector2(Px.W / 2.0, 120), Px.C.lime)
 		if right >= need and short_round:
 			finish(true, 1.0)
+			return
+		if right >= need and pad:
+			finish(true, float(right) / maxf(1, right + mistakes))
 			return
 		if right >= need:
 			_start_bonus()
@@ -193,6 +207,14 @@ func time_up() -> void:
 
 func tick(delta: float) -> void:
 	feedback_t -= delta
+	if pad and not bonus_mode:
+		if Input.is_action_just_pressed("left"):
+			csel = (csel + 3) % 4
+		if Input.is_action_just_pressed("right"):
+			csel = (csel + 1) % 4
+		if Input.is_action_just_pressed("attack"):
+			typed = str(choices[csel])
+			_submit()
 
 
 func _draw() -> void:
@@ -216,6 +238,14 @@ func _draw() -> void:
 			Px.text_c(self, lines[i], Px.W / 2.0, 52 + i * 12, Px.C.white, size)
 		var qed := Px.char_tex(Clubs.get_club("pioneers").head_look, "idle")
 		draw_texture_rect(qed, Rect2(Vector2(16, 140), qed.get_size() * 2), false)
+	if pad and not bonus_mode:
+		for i in choices.size():
+			var r := Rect2(Px.W / 2.0 - 130 + i * 66, 112, 60, 30)
+			Px.panel(self, r, Px.C.ink, Px.C.gold if i == csel else Px.C.slate)
+			Px.text_c(self, str(choices[i]), r.get_center().x, 119, Px.C.cyan, 16)
+		draw_timer()
+		draw_card()
+		return
 	var box := Rect2(Px.W / 2.0 - 120, 112, 240, 30)
 	Px.panel(self, box, Px.C.ink, Px.C.cyan)
 	var cur := "_" if int(t * 3) % 2 == 0 else " "

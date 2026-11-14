@@ -316,7 +316,21 @@ func stop_music() -> void:
 	music_name = ""
 
 
+## Renders the remaining music loops one per frame, so later screen changes don't stall.
+var _prewarm: Array = []
+
+
+func prewarm() -> void:
+	for s in SONGS:
+		if not _songs.has(s) and not _prewarm.has(s):
+			_prewarm.append(s)
+
+
 func _process(_d: float) -> void:
+	if not _prewarm.is_empty():
+		var s: String = _prewarm.pop_front()
+		if not _songs.has(s):
+			_songs[s] = _render_song(s)
 	if music.playing:
 		var p := music.get_playback_position()
 		if p + 0.5 < _last_pos:

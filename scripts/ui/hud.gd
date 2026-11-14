@@ -43,7 +43,7 @@ func _draw() -> void:
 			var on := Game.hype > i
 			var cost_mark := i < int(sp.cost)
 			draw_rect(Rect2(128 + i * 5, 14, 4, 6), (Px.C.gold if on else (Px.C.plum if cost_mark else Px.C.night)))
-		var cards := "CARDS %d/%d" % [Game.card_count(), Clubs.ORDER.size()]
+		var cards := "CARDS %d/%d" % [Game.club_card_count(), Clubs.ORDER.size()]
 		Px.text(self, cards, Vector2(Px.W - Px.text_w(cards) - 3, 13), Px.C.mist)
 	elif mode == "minigame":
 		Px.text(self, goal, Vector2(3, 13), Px.C.gold)
@@ -58,7 +58,7 @@ func _draw() -> void:
 		if hold_f > 0.0:
 			Px.bar(self, Rect2(Px.W - 120, 21, 117, 3), hold_f, Px.C.red)
 	elif mode == "hub":
-		var cards2 := "CLUB CARDS %d/%d" % [Game.card_count(), Clubs.ORDER.size()]
+		var cards2 := "CLUB CARDS %d/%d" % [Game.club_card_count(), Clubs.ORDER.size()]
 		Px.text(self, cards2, Vector2(3, 13), Px.C.gold)
 		var spn := "DIFFICULTY " + Game.diff_name()
 		Px.text(self, spn, Vector2(Px.W - Px.text_w(spn) - 3, 13), Px.C.steel)

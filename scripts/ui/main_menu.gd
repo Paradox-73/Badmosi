@@ -8,6 +8,7 @@ var diff_menu: MenuList
 
 func _ready() -> void:
 	Audio.play_music("title")
+	Audio.prewarm()
 	var items := [
 		{"text": "NEW GAME", "on": _new_game},
 		{"text": "CONTINUE", "on": _continue, "disabled": not Game.has_save()},

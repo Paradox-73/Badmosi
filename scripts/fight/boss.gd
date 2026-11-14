@@ -111,6 +111,10 @@ func _process(delta: float) -> void:
 		freeze_t -= delta
 		if p.moved_this_frame and not freeze_hit:
 			freeze_hit = p.take_hit(8.0, Vector2.ZERO)
+	if locked and Game.hype < 5:
+		Game.hype = 10
+		Game.special_idx = 0
+		Game.stats_changed.emit()
 	if not active or busy:
 		step_anim(delta, false)
 		return

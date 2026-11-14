@@ -106,7 +106,7 @@ static func card_page(club: String) -> Callable:
 		for i in 10:
 			if (i * 7 + int(t * 10)) % 5 != 0:
 				ci.draw_rect(Rect2(r.position + Vector2(64 + i * 8, 84), Vector2(6, 6)), Px.C.gold)
-		Px.text_c(ci, "CARDS: %d / %d" % [Game.card_count(), Clubs.ORDER.size()], Px.W / 2.0, 164, Px.C.white)
+		Px.text_c(ci, "CARDS: %d / %d" % [Game.club_card_count(), Clubs.ORDER.size()], Px.W / 2.0, 164, Px.C.white)
 
 
 static func headline_page(text: String) -> Callable:
