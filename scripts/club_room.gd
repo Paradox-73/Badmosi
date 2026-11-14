@@ -105,7 +105,9 @@ func _process(delta: float) -> void:
 	if get_tree().paused:
 		return
 	if phase == "minigame" and game and game.can_flip():
-		if Input.is_action_pressed("fit"):
+		if "--autofit" in OS.get_cmdline_user_args() and game.t > 1.5:
+			fit_hold = 1.0
+		if Input.is_action_pressed("fit") or fit_hold >= 1.0:
 			fit_hold += delta
 			hud.hold_f = fit_hold
 			if fit_hold >= 1.0:
@@ -150,6 +152,7 @@ func _start_fight() -> void:
 	fight.won.connect(_on_fight_won)
 	fight.lost.connect(_on_detained)
 	Audio.play_music("fight")
+	Game.main.set_palette(Clubs.palette4(id), 0.3)
 	fight.start()
 	_watch_boss()
 
@@ -189,6 +192,7 @@ func _on_fight_won() -> void:
 
 func _victory(how: String, lines: Array) -> void:
 	phase = "won"
+	Game.main.set_palette([], 0.0)
 	Audio.play_music("ending")
 	Audio.play("card", 0.0)
 	if game:
@@ -317,10 +321,14 @@ class FitOverlay extends Node2D:
 			draw_rect(Rect2(bl[0].round(), Vector2(6, 6)), bl[2])
 		var words := Game.fit_words()
 		var s := 32 if t > 0.1 else 16
+		var band := clampf(t / 0.1, 0.0, 1.0)
+		draw_rect(Rect2(0, 100 - 30 * band, Px.W, 60 * band), Color(Px.C.ink, 0.9))
+		draw_rect(Rect2(0, 100 - 30 * band, Px.W, 1), Px.C.red)
+		draw_rect(Rect2(0, 100 + 30 * band - 1, Px.W, 1), Px.C.red)
 		var w := Px.text_w(words, s)
 		var x := Px.W / 2.0 - w / 2.0
-		var y := 80.0 + (2 if int(t * 30) % 2 == 0 and t < 0.6 else 0)
+		var y := 76.0 + (2 if int(t * 30) % 2 == 0 and t < 0.6 else 0)
 		Px.text(self, words, Vector2(x, y), Px.C.white, s)
 		if not Game.opts.clean_text:
 			CardPages.censor(self, Vector2(x + Px.text_w("F", s), y + 2), 3, t, s)
-		Px.text_c(self, "PIX FLIPS THE TABLE!", Px.W / 2.0, 124, Px.C.gold)
+		Px.text_c(self, "PIX FLIPS THE TABLE!", Px.W / 2.0, 114, Px.C.gold)
