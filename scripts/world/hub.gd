@@ -115,7 +115,6 @@ func _free() -> void:
 	busy = false
 	player.input_enabled = true
 	bump_cd = 0.4
-	overlay = null
 
 
 func _process(delta: float) -> void:
@@ -189,6 +188,7 @@ func _open_board(k: String) -> void:
 func _close_overlay() -> void:
 	if overlay and is_instance_valid(overlay):
 		overlay.queue_free()
+	overlay = null
 	_free()
 
 
