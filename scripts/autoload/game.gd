@@ -37,7 +37,7 @@ var assist_invincible := false
 var assist_double := false
 var opts := {
 	"music": 0.7, "sfx": 0.8, "clean_text": false, "shake": true,
-	"reduce_flash": false, "fullscreen": false, "rhythm_offset": 0, "hoodie": 0,
+	"reduce_flash": false, "fullscreen": false, "rhythm_offset": 0, "hoodie": 0, "crt": true,
 }
 
 
@@ -313,3 +313,5 @@ func apply_options() -> void:
 			DisplayServer.window_set_mode(mode)
 	if has_node("/root/Audio"):
 		get_node("/root/Audio").apply_volumes()
+	if main:
+		main.set_crt(opts.crt)

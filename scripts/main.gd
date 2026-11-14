@@ -1,6 +1,8 @@
 extends Node
 ## Root of the game. Owns the screen stack, the effect layers, the mosaic
-## transition, the flash overlay and the pause menu.
+## transition, the flash overlay and the pause menu. The game draws into a
+## 384 x 216 SubViewport, shown at the largest whole-number scale that fits
+## the window, through the CRT filter when it is on.
 
 const SCREENS := {
 	"title": "res://scripts/ui/title.gd",
@@ -26,31 +28,56 @@ var _flash: ColorRect
 var _palette: ColorRect
 var _pause: CanvasLayer
 var _busy := false
+var _frame: SubViewportContainer
+var _vp: SubViewport
+var _crt := ShaderMaterial.new()
 
 
 func _ready() -> void:
 	Game.main = self
+	_frame = SubViewportContainer.new()
+	_frame.stretch = true
+	_frame.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_frame.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(_frame)
+	_vp = SubViewport.new()
+	_vp.size = Vector2i(Px.W, Px.H)
+	_vp.snap_2d_transforms_to_pixel = true
+	_vp.snap_2d_vertices_to_pixel = true
+	_vp.canvas_item_default_texture_filter = Viewport.DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_NEAREST
+	_frame.add_child(_vp)
+	_crt.shader = load("res://shaders/crt.gdshader")
+	get_tree().root.size_changed.connect(_fit_frame)
+	_fit_frame()
+	set_crt(Game.opts.get("crt", true))
+	var tap := PauseTap.new()
+	tap.main = self
+	_vp.add_child(tap)
+
 	world = Node2D.new()
 	world.name = "World"
-	add_child(world)
+	world.process_mode = Node.PROCESS_MODE_PAUSABLE
+	_vp.add_child(world)
 	fx_layer = Node2D.new()
 	fx_layer.name = "FxLayer"
 	fx_layer.z_index = 50
 	world.add_child(fx_layer)
 	ui = CanvasLayer.new()
 	ui.layer = 45
-	add_child(ui)
+	ui.process_mode = Node.PROCESS_MODE_PAUSABLE
+	_vp.add_child(ui)
 
 	var pal_layer := CanvasLayer.new()
 	pal_layer.layer = 40
-	add_child(pal_layer)
+	_vp.add_child(pal_layer)
 	_palette = _overlay_rect(load("res://shaders/palette.gdshader"))
 	_palette.visible = false
 	pal_layer.add_child(_palette)
 
 	var top := CanvasLayer.new()
 	top.layer = 90
-	add_child(top)
+	top.process_mode = Node.PROCESS_MODE_PAUSABLE
+	_vp.add_child(top)
 	_mosaic = _overlay_rect(load("res://shaders/mosaic.gdshader"))
 	_mosaic.visible = false
 	top.add_child(_mosaic)
@@ -61,7 +88,7 @@ func _ready() -> void:
 	top.add_child(_flash)
 
 	_pause = preload("res://scripts/ui/pause_menu.gd").new()
-	add_child(_pause)
+	_vp.add_child(_pause)
 
 	var first := "title"
 	for a in OS.get_cmdline_user_args():
@@ -160,7 +187,26 @@ func set_palette(colors: Array, amount: float) -> void:
 	_palette.visible = true
 
 
-func _unhandled_input(e: InputEvent) -> void:
-	if e.is_action_pressed("pause") and not get_tree().paused and screen and screen.get("pausable") == true and not _busy:
-		get_viewport().set_input_as_handled()
-		_pause.open()
+## Scales the game frame by the largest whole number that fits the window,
+## so every game pixel stays a sharp square, and centres it.
+func _fit_frame() -> void:
+	var win := Vector2(get_tree().root.size)
+	var k := maxi(1, mini(floori(win.x / Px.W), floori(win.y / Px.H)))
+	_frame.stretch_shrink = k
+	_frame.size = Vector2(Px.W * k, Px.H * k)
+	_frame.position = ((win - _frame.size) / 2.0).floor()
+
+
+func set_crt(on: bool) -> void:
+	_frame.material = _crt if on else null
+
+
+## Opens the pause menu. Runs inside the game viewport, so menus that use
+## Esc as "back" mark it handled first.
+class PauseTap extends Node:
+	var main: Node
+
+	func _unhandled_input(e: InputEvent) -> void:
+		if e.is_action_pressed("pause") and not get_tree().paused and main.screen and main.screen.get("pausable") == true and not main._busy:
+			get_viewport().set_input_as_handled()
+			main._pause.open()
