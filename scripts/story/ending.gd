@@ -47,7 +47,7 @@ func _draw() -> void:
 	if t > 1.0 and t < 3.0:
 		Px.text_c(self, "APPROVED", Px.W / 2.0, 56, Px.C.red, 16)
 	# Pix and the first members.
-	var pix := Px.char_tex(Player.PIX_LOOK, "walk1" if int(t * 3) % 2 == 0 else "idle")
+	var pix := Px.char_tex(Game.pix_look(), "walk1" if int(t * 3) % 2 == 0 else "idle")
 	draw_texture_rect(pix, Rect2(Vector2(176, 96), pix.get_size() * 2), false)
 	var n := clampi(int((t - 3.5) * 3.0), 0, heads.size())
 	for i in n:

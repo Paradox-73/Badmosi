@@ -121,7 +121,7 @@ static func headline_page(text: String) -> Callable:
 		var lines := DialogueBox.wrap_text(text, 20)
 		for i in lines.size():
 			Px.text_c(ci, lines[i], Px.W / 2.0, 72 + i * 18, Px.C.dark, 16, false)
-		var tex := Px.char_tex(Player.PIX_LOOK, "idle")
+		var tex := Px.char_tex(Game.pix_look(), "idle")
 		ci.draw_texture_rect(tex, Rect2(Vector2(72, 140), tex.get_size() * 2), false)
 		for i in 5:
 			ci.draw_rect(Rect2(110, 142 + i * 8, 200 - (i % 3) * 30, 3), Px.C.tan)

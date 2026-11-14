@@ -37,7 +37,7 @@ var assist_invincible := false
 var assist_double := false
 var opts := {
 	"music": 0.7, "sfx": 0.8, "clean_text": false, "shake": true,
-	"reduce_flash": false, "fullscreen": false, "rhythm_offset": 0,
+	"reduce_flash": false, "fullscreen": false, "rhythm_offset": 0, "hoodie": 0,
 }
 
 
@@ -243,6 +243,16 @@ func flipped_count() -> int:
 ## Words for the F-it switch, censored or clean.
 func fit_words() -> String:
 	return "FORGET IT!" if opts.clean_text else "F*** IT!"
+
+
+## Hoodie colours for Pix: [cloth, shade]. Chosen in Options.
+const HOODIES := [["gold", "orange"], ["cyan", "teal"], ["pink", "maroon"], ["lime", "green"], ["violet", "plum"], ["white", "mist"]]
+
+
+func pix_look() -> Dictionary:
+	var h: Array = HOODIES[int(opts.get("hoodie", 0)) % HOODIES.size()]
+	return {"hair": "brown", "skin": "skin2", "cloth": h[0], "shade": h[1],
+		"accent": "pink" if h[0] != "pink" else "cyan", "pants": "navy", "shoes": "white"}
 
 
 # ---------------------------------------------------------------- saving

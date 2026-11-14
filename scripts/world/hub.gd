@@ -98,7 +98,7 @@ func _check_unlocks() -> void:
 	elif Game.cards.has("sac") and from == "sac":
 		_say([{"who": "CLIPBOARD", "text": "THE ADMIN OFFICE IS OPEN. NEXT TO ARYABHATTA BLOCK. GOOD LUCK.", "look": Clubs.get_club("sac").head_look}])
 	elif Game.card_count() == 0 and from == "":
-		_say([{"who": "PIX", "text": "THIRTEEN CLUBS. BEAT EVERY ONE AT ITS OWN GAME. WALK INTO A DOOR TO START.", "look": Player.PIX_LOOK}])
+		_say([{"who": "PIX", "text": "THIRTEEN CLUBS. BEAT EVERY ONE AT ITS OWN GAME. WALK INTO A DOOR TO START.", "look": Game.pix_look()}])
 
 
 func _say(pages: Array) -> void:

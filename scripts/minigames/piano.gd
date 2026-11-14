@@ -152,7 +152,7 @@ func _draw() -> void:
 	var head := Px.char_tex(Clubs.get_club("symphony").head_look, "walk1" if int(t * 4) % 2 == 0 else "idle")
 	draw_texture_rect(head, Rect2(Vector2(30, 120), head.get_size() * 2), false)
 	Px.text_c(self, "FEEDBACK", 46, 166, Px.C.gold)
-	var pix := Px.char_tex(Player.PIX_LOOK, "idle")
+	var pix := Px.char_tex(Game.pix_look(), "idle")
 	draw_texture_rect(pix, Rect2(Vector2(Px.W - 66, 124), pix.get_size() * 2), false)
 	Px.text_c(self, "ODE TO JOY", Px.W - 52, 40, Px.C.mist)
 	Px.text_c(self, "(L. VAN BEETHOVEN)", Px.W - 52, 50, Px.C.slate)

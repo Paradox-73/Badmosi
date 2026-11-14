@@ -55,7 +55,7 @@ func _run() -> void:
 	var tw := create_tween()
 	tw.tween_property(player, "position:x", 110.0, 1.2)
 	await _talk([
-		{"who": "PIX", "text": "IIIT-B! I'M STARTING THE PIXEL CLUB. ALL I NEED IS A ROOM.", "look": Player.PIX_LOOK},
+		{"who": "PIX", "text": "IIIT-B! I'M STARTING THE PIXEL CLUB. ALL I NEED IS A ROOM.", "look": Game.pix_look()},
 		{"who": "IMPULSE", "text": "A ROOM? EVERY ROOM IS BOOKED FOR SYNERGY. 5-6-7-NO.", "look": Clubs.get_club("impulse").look},
 		{"who": "ZENSE", "text": "ROOMS: 0 FREE. EXCEPT ROOM 404. IT RETURNS NOT FOUND.", "look": Clubs.get_club("zense").look},
 		{"who": "8-BIT", "text": "ROOM 404 ISN'T ON ANY FLOOR PLAN. GREAT STORY THOUGH.", "look": Clubs.get_club("eightbit").look},
@@ -82,8 +82,8 @@ func _run() -> void:
 func _after_fight() -> void:
 	Audio.play_music("hub")
 	await _talk([
-		{"who": "PIX", "text": "THIRTEEN CLUBS. THEIR OWN GAMES. FINE.", "look": Player.PIX_LOOK},
-		{"who": "PIX", "text": "AND IF A GAME IS UNFAIR... I CAN ALWAYS HOLD F AND FLIP THE TABLE.", "look": Player.PIX_LOOK},
+		{"who": "PIX", "text": "THIRTEEN CLUBS. THEIR OWN GAMES. FINE.", "look": Game.pix_look()},
+		{"who": "PIX", "text": "AND IF A GAME IS UNFAIR... I CAN ALWAYS HOLD F AND FLIP THE TABLE.", "look": Game.pix_look()},
 	])
 	Game.save_run()
 	Game.goto("hub")

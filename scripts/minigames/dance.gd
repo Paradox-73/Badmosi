@@ -174,7 +174,7 @@ func _draw() -> void:
 	var head: Dictionary = Clubs.get_club("impulse").head_look
 	var bob := 1 if ph < 0.25 else 0
 	_dancer(Px.char_tex(head, "walk1" if pose_t[0] > 0.0 else "idle"), Vector2(64, 150 - bob), pose[0], pose_t[0])
-	_dancer(Px.char_tex(Player.PIX_LOOK, "walk2" if pose_t[1] > 0.0 else "idle"), Vector2(252, 150 - bob), pose[1], pose_t[1])
+	_dancer(Px.char_tex(Game.pix_look(), "walk2" if pose_t[1] > 0.0 else "idle"), Vector2(252, 150 - bob), pose[1], pose_t[1])
 	draw_card()
 
 

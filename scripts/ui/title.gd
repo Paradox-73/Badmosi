@@ -58,7 +58,7 @@ func _draw() -> void:
 	Px.text_c(self, "BADMOSI", Px.W / 2.0 + gl * 2, 24, Px.C.red, 48)
 	Px.text_c(self, "BADMOSI", Px.W / 2.0 - gl, 22, Px.C.gold, 48)
 	# Pix waits by the gate.
-	var tex := Px.char_tex(Player.PIX_LOOK, "walk1" if int(t * 2.0) % 2 == 0 else "idle")
+	var tex := Px.char_tex(Game.pix_look(), "walk1" if int(t * 2.0) % 2 == 0 else "idle")
 	draw_texture_rect(tex, Rect2(Vector2(Px.W / 2.0 - 16, 118), tex.get_size() * 2), false)
 	if int(t * 2.0) % 2 == 0:
 		Px.text_c(self, "PRESS ANY KEY", Px.W / 2.0, 166, Px.C.white)

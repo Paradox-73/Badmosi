@@ -3,8 +3,6 @@ extends Actor
 ## Pix in a fight: move, 3-hit combo, dodge with i-frames, specials.
 
 const SPEED := 80.0            # 5 tiles per second
-const PIX_LOOK := {"hair": "brown", "skin": "skin2", "cloth": "gold", "shade": "orange",
-	"accent": "pink", "pants": "navy", "shoes": "white"}
 
 enum S { MOVE, ATTACK, DODGE, HURT, SPIN, LOCKED }
 
@@ -26,7 +24,7 @@ var _bot_t := 0.0
 
 
 func _ready() -> void:
-	set_look(PIX_LOOK)
+	set_look(Game.pix_look())
 
 
 func _process(delta: float) -> void:

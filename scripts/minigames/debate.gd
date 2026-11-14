@@ -107,7 +107,7 @@ func _draw() -> void:
 	draw_texture_rect(rb, Rect2(Vector2(40, 96), rb.get_size() * 2), false)
 	draw_rect(Rect2(32, 128, 48, 30), Px.C.brown)
 	Px.text_c(self, "REBUTTAL", 56, 162, Px.C.white)
-	var pix := Px.char_tex(Player.PIX_LOOK, "idle")
+	var pix := Px.char_tex(Game.pix_look(), "idle")
 	draw_texture_rect(pix, Rect2(Vector2(Px.W - 72, 96), pix.get_size() * 2), false)
 	draw_rect(Rect2(Px.W - 80, 128, 48, 30), Px.C.brown)
 	Px.text_c(self, "PIX", Px.W - 56, 162, Px.C.gold)
