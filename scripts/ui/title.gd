@@ -55,8 +55,8 @@ func _draw() -> void:
 	draw_skyline(self, t)
 	# Logo with a glitch offset.
 	var gl := 1 if int(t * 5.0) % 9 == 0 else 0
-	Px.text_c(self, "404:", Px.W / 2.0 + gl, 18, Px.C.red, 32)
-	Px.text_c(self, "CLUB NOT FOUND", Px.W / 2.0 - gl, 56, Px.C.gold, 24)
+	Px.text_c(self, "BADMOSI", Px.W / 2.0 + gl * 2, 24, Px.C.red, 48)
+	Px.text_c(self, "BADMOSI", Px.W / 2.0 - gl, 22, Px.C.gold, 48)
 	# Pix waits by the gate.
 	var tex := Px.char_tex(Player.PIX_LOOK, "walk1" if int(t * 2.0) % 2 == 0 else "idle")
 	draw_texture_rect(tex, Rect2(Vector2(Px.W / 2.0 - 16, 118), tex.get_size() * 2), false)

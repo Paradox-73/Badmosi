@@ -1,4 +1,4 @@
-# 404: Club Not Found
+# Badmosi
 
 A top-down pixel adventure set at IIIT-B, made for the Synergy '26 Game Dev competition (theme: **Pixelated Game**) by Team Claude laggye.
 
@@ -86,7 +86,7 @@ Command line:
 ```
 godot --path .
 godot --headless --path . --export-release "Web" build/web/index.html
-godot --headless --path . --export-release "Windows Desktop" build/win/404ClubNotFound.exe
+godot --headless --path . --export-release "Windows Desktop" build/win/Badmosi.exe
 ```
 
 The web build is exported without thread support, so it runs on any static host such as itch.io or GitHub Pages.

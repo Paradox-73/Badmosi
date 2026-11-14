@@ -3,7 +3,7 @@ extends Node2D
 
 var t := 0.0
 var lines := [
-	["404: CLUB NOT FOUND", "gold"], ["", ""],
+	["BADMOSI", "gold"], ["", ""],
 	["A GAME BY TEAM CLAUDE LAGGYE", "white"], ["FOR SYNERGY '26 GAME DEV", "mist"], ["", ""],
 	["MADE WITH GODOT 4.7.2", "cyan"], ["", ""],
 	["ART", "gold"], ["EVERY SPRITE, TILE AND FONT GLYPH", "white"], ["IS DRAWN PIXEL BY PIXEL IN OUR CODE", "white"], ["", ""],
