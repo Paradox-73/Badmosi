@@ -15,8 +15,6 @@ static func build(include_difficulty := true) -> Array:
 	if include_difficulty:
 		items.append({"text": "DIFFICULTY", "value": func(): return Game.diff_name(),
 			"change": func(d): Game.difficulty = (Game.difficulty + d + 3) % 3})
-	items.append({"text": "PIX'S HOODIE", "value": func(): return str(Game.HOODIES[int(Game.opts.hoodie) % Game.HOODIES.size()][0]).to_upper(),
-		"change": func(d): Game.opts.hoodie = (int(Game.opts.hoodie) + d + Game.HOODIES.size()) % Game.HOODIES.size(); Game.save_options()})
 	items.append({"text": "CRT FILTER", "value": func(): return onoff(Game.opts.crt),
 		"change": func(_d): Game.opts.crt = not Game.opts.crt; Game.apply_options(); Game.save_options()})
 	items.append({"text": "RHYTHM OFFSET", "value": func(): return "%d MS" % int(Game.opts.rhythm_offset),

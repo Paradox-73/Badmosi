@@ -17,6 +17,14 @@ const SPECIALS := [
 	{"id": "pi", "name": "PI SHIELD", "cards": 12, "cost": 6},
 ]
 
+## Short-lived boosts from campus food. Each lasts until the next club is over.
+const BUFFS := {
+	"speed": {"name": "COLD COFFEE", "desc": "+25% MOVE SPEED"},
+	"power": {"name": "TRUFFLES ORDER", "desc": "+25% FIGHT DAMAGE"},
+	"guard": {"name": "CAPPUCCINO", "desc": "-25% ATTENDANCE LOSS"},
+	"upset": {"name": "PET KHARAB", "desc": "-25% MOVE SPEED, WASHROOM BREAKS"},
+}
+
 var main: Node = null
 
 # Run state
@@ -28,6 +36,11 @@ var sem := 1
 var hype := 0
 var special_idx := 0
 var cards := {}          # club id -> "straight" or "flipped"
+var character := "kanav" # Roster id of the player's character
+var buffs := {}          # buff id -> clubs left (see BUFFS)
+var tallies := {}        # run counters for the end-of-sem summary
+var dhairya := 100.0     # Sachan's patience meter
+var rage_t := 0.0        # seconds of Sachan's rage left
 var practice := false    # true when a club was opened from club select
 var autoplay := false    # --autoplay: scenes advance themselves, for frame captures
 
@@ -37,7 +50,7 @@ var assist_invincible := false
 var assist_double := false
 var opts := {
 	"music": 0.7, "sfx": 0.8, "clean_text": false, "shake": true,
-	"reduce_flash": false, "fullscreen": false, "rhythm_offset": 0, "hoodie": 0, "crt": true,
+	"reduce_flash": false, "fullscreen": false, "rhythm_offset": 0, "crt": true,
 }
 
 
@@ -116,12 +129,12 @@ func dmg_mult() -> float:
 
 ## Multiplier on timing windows.
 func window_mult() -> float:
-	return [1.5, 1.0, 0.7][difficulty]
+	return [1.5, 1.0, 0.7][difficulty] * (1.0 + stat("window"))
 
 
 ## Multiplier on minigame timers.
 func time_mult() -> float:
-	return [1.5, 1.0, 0.75][difficulty]
+	return [1.5, 1.0, 0.75][difficulty] * (1.0 + stat("time"))
 
 
 func max_attackers() -> int:
@@ -139,6 +152,10 @@ func new_run() -> void:
 	hype = 0
 	special_idx = 0
 	cards = {}
+	buffs = {}
+	tallies = {}
+	dhairya = 100.0
+	rage_t = 0.0
 	practice = false
 	stats_changed.emit()
 
@@ -147,7 +164,13 @@ func new_run() -> void:
 func hurt(pct: float) -> void:
 	if assist_invincible or pct <= 0.0:
 		return
-	var loss := pct * dmg_mult() * pow(0.95, sem - 1)
+	var loss := pct * dmg_mult() * pow(0.95, sem - 1) * (1.0 - stat("guard"))
+	if has_buff("guard"):
+		loss *= 0.75
+	if quirk() == "dhairya" and rage_t <= 0.0:
+		dhairya = maxf(0.0, dhairya - loss * 2.5)
+		if dhairya <= 0.0:
+			rage_t = 6.0
 	attendance = maxf(0.0, attendance - loss)
 	stats_changed.emit()
 	if attendance <= 0.0:
@@ -166,6 +189,8 @@ func heal(pct: float) -> void:
 
 
 func add_pixels(n: int) -> void:
+	if n > 0:
+		n = roundi(n * (1.0 + stat("px")))
 	pixels = maxi(0, pixels + n)
 	stats_changed.emit()
 
@@ -176,7 +201,78 @@ func add_hype(n: int) -> void:
 
 
 func player_dmg_mult() -> float:
-	return (1.0 + 0.1 * (sem - 1)) * (2.0 if assist_double else 1.0)
+	var m := (1.0 + 0.1 * (sem - 1)) * (2.0 if assist_double else 1.0) * (1.0 + stat("dmg"))
+	if has_buff("power"):
+		m *= 1.25
+	if rage_t > 0.0:
+		m *= 2.0
+	return m
+
+
+func speed_mult() -> float:
+	var m := 1.0 + stat("speed")
+	if has_buff("speed"):
+		m += 0.25
+	if has_buff("upset"):
+		m -= 0.25
+	if rage_t > 0.0:
+		m += 0.3
+	return m
+
+
+# ---------------------------------------------------------------- character
+
+func char_data() -> Dictionary:
+	return Roster.get_char(character)
+
+
+func char_name() -> String:
+	return char_data().name
+
+
+## The character's perk value for a key (see Roster), 0 if it has none.
+func stat(key: String) -> float:
+	return float(char_data().perks.get(key, 0.0))
+
+
+func quirk() -> String:
+	return char_data().get("quirk", "")
+
+
+func _process(delta: float) -> void:
+	if get_tree().paused:
+		return
+	if rage_t > 0.0:
+		rage_t -= delta
+		if rage_t <= 0.0:
+			dhairya = 100.0
+	elif quirk() == "dhairya" and dhairya < 100.0:
+		dhairya = minf(100.0, dhairya + delta)
+
+
+# ---------------------------------------------------------------- buffs and counters
+
+func add_buff(id: String, clubs := 1) -> void:
+	buffs[id] = maxi(int(buffs.get(id, 0)), clubs)
+	stats_changed.emit()
+
+
+func has_buff(id: String) -> bool:
+	return int(buffs.get(id, 0)) > 0
+
+
+## Called when a club visit ends, won or lost: every buff loses one club.
+func end_club_buffs() -> void:
+	for k in buffs.keys():
+		buffs[k] = int(buffs[k]) - 1
+		if buffs[k] <= 0:
+			buffs.erase(k)
+	stats_changed.emit()
+
+
+## Adds n to a run counter: fines, caught, flips, detained and so on.
+func tally(key: String, n := 1) -> void:
+	tallies[key] = int(tallies.get(key, 0)) + n
 
 
 func is_detained() -> bool:
@@ -245,14 +341,9 @@ func fit_words() -> String:
 	return "FORGET IT!" if opts.clean_text else "F*** IT!"
 
 
-## Hoodie colours for Pix: [cloth, shade]. Chosen in Options.
-const HOODIES := [["gold", "orange"], ["cyan", "teal"], ["pink", "maroon"], ["lime", "green"], ["violet", "plum"], ["white", "mist"]]
-
-
+## The player character's look.
 func pix_look() -> Dictionary:
-	var h: Array = HOODIES[int(opts.get("hoodie", 0)) % HOODIES.size()]
-	return {"hair": "brown", "skin": "skin2", "cloth": h[0], "shade": h[1],
-		"accent": "pink" if h[0] != "pink" else "cyan", "pants": "navy", "shoes": "white"}
+	return char_data().look
 
 
 # ---------------------------------------------------------------- saving
@@ -261,7 +352,8 @@ func save_run() -> void:
 	if practice:
 		return
 	var d := {"attendance": attendance, "proxies": proxies, "pixels": pixels,
-		"credits": credits, "sem": sem, "cards": cards, "difficulty": difficulty}
+		"credits": credits, "sem": sem, "cards": cards, "difficulty": difficulty,
+		"character": character, "buffs": buffs, "tallies": tallies}
 	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if f:
 		f.store_string(JSON.stringify(d))
@@ -285,6 +377,9 @@ func load_run() -> bool:
 	sem = int(d.get("sem", 1))
 	cards = d.get("cards", {})
 	difficulty = int(d.get("difficulty", 1))
+	character = str(d.get("character", "kanav"))
+	buffs = d.get("buffs", {})
+	tallies = d.get("tallies", {})
 	practice = false
 	stats_changed.emit()
 	return true

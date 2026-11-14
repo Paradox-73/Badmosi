@@ -21,7 +21,8 @@ func _process(_d: float) -> bool:
 		return true
 	_done = true
 	var G = root.get_node("Game")
-	# Attendance and difficulty.
+	# Attendance and difficulty, with a character that has no guard perk.
+	G.character = "betala"
 	G.difficulty = 1
 	G.new_run()
 	G.hurt(10.0)
@@ -40,6 +41,25 @@ func _process(_d: float) -> bool:
 	G.hurt(50.0)
 	check(is_equal_approx(G.attendance, 100.0), "invincible assist blocks losses")
 	G.assist_invincible = false
+	# Character perks.
+	G.character = "tyagi"
+	G.attendance = 100.0
+	G.hurt(10.0)
+	check(is_equal_approx(G.attendance, 93.0), "Tyagi's guard perk cuts a 10% loss to 7%")
+	G.character = "dhulli"
+	G.pixels = 0
+	G.add_pixels(100)
+	G.add_pixels(-30)
+	check(G.pixels == 100, "Dhulli earns 30% more pixels, spending is not scaled")
+	G.add_buff("power")
+	var hit: float = G.player_dmg_mult()
+	G.end_club_buffs()
+	check(not G.has_buff("power") and G.player_dmg_mult() < hit, "a food buff lasts one club")
+	for cid in Roster.ORDER:
+		var lines: Array = Roster.perk_lines(cid)
+		var has_bad: bool = lines.any(func(l): return not l[1]) or Roster.get_char(cid).has("quirk")
+		check(lines.any(func(l): return l[1]) and has_bad, cid + " has a buff and a nerf or quirk")
+	G.character = "betala"
 	# Proxies.
 	G.new_run()
 	G.proxies = 1
