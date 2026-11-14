@@ -23,6 +23,12 @@ var phase := "wave"
 var no_boss := false   # the opening's tutorial fight
 var over := false
 var _haz_tick := 0.0
+var sabotage_t := randf_range(10.0, 16.0)   # seconds to the Admin's next sabotage
+var dark_t := 0.0      # light outage
+var wifi_t := 0.0      # wifi down: no specials
+
+const SABOTAGE := ["ceiling", "lift", "lights", "wifi", "fine", "extinguisher"]
+const FINES := ["RUNNING IN THE CORRIDOR", "LAUGHING TOO LOUD", "WRONG ID LANYARD", "BREATHING AFTER 11 PM", "UNAPPROVED HAPPINESS"]
 
 
 func setup(club_id: String, r: Room, p: Player) -> void:
@@ -231,6 +237,74 @@ func clear_hazards() -> void:
 	rings = rings.filter(func(r): return not r.hurts)
 
 
+## The Admin's sabotage: one random event every 14-22 s of fighting.
+func _tick_sabotage(delta: float) -> void:
+	dark_t = maxf(0.0, dark_t - delta)
+	wifi_t = maxf(0.0, wifi_t - delta)
+	if over or no_boss or not phase in ["wave", "boss"]:
+		return
+	sabotage_t -= delta
+	if sabotage_t <= 0.0:
+		sabotage_t = randf_range(14.0, 22.0)
+		sabotage(SABOTAGE.pick_random())
+
+
+func sabotage(kind: String) -> void:
+	Game.tally("sabotage")
+	var pc := room.cell_of(player.position)
+	match kind:
+		"ceiling":
+			banner("ADMIN SABOTAGE: CEILING COLLAPSE!")
+			var cells := []
+			for i in 5:
+				var c := pc + Vector2i(randi_range(-3, 3), randi_range(-2, 2))
+				if not room.is_solid(c):
+					cells.append(c)
+			_drop(cells, 1.0, 6.0, Px.C.tan)
+		"lift":
+			banner("ADMIN SABOTAGE: THE LIFT IS FALLING!")
+			var cells2 := []
+			for dx in range(-1, 2):
+				for dy in range(-1, 2):
+					if not room.is_solid(pc + Vector2i(dx, dy)):
+						cells2.append(pc + Vector2i(dx, dy))
+			_drop(cells2, 1.3, 10.0, Px.C.grey)
+		"lights":
+			banner("ADMIN SABOTAGE: POWER CUT!")
+			dark_t = 3.0 if Game.ally("eclipse") else 7.0
+			Audio.play("zap", 0.0)
+		"wifi":
+			banner("ADMIN SABOTAGE: WIFI DOWN. NO SPECIALS!")
+			wifi_t = 3.0 if Game.ally("zense") else 7.0
+			Audio.play("bleep", 0.0)
+		"fine":
+			var paid := Game.fine(20)
+			banner("RANDOM FINE: %d PX, %s" % [paid, FINES.pick_random()])
+			Audio.play("stamp", 0.0)
+		"extinguisher":
+			banner("ADMIN SABOTAGE: FIRE EXTINGUISHER!")
+			var foam := []
+			for i in 7:
+				var c3 := pc + Vector2i(randi_range(-4, 4), randi_range(-2, 2))
+				if not room.is_solid(c3):
+					foam.append(c3)
+			add_hazard(foam, 5.0, Px.C.white)
+			Audio.play("burst", 0.0)
+
+
+## Telegraphs cells, then drops debris on them.
+func _drop(cells: Array, warn: float, dmg: float, color: Color) -> void:
+	Fx.telegraph(cells, warn, Px.C.red)
+	await get_tree().create_timer(warn, false).timeout
+	if over:
+		return
+	zap_cells(cells, dmg, color)
+	Audio.play("crash", 0.0)
+	Fx.shake(3, 0.25)
+	for c in cells:
+		Fx.burst(room.cell_center(c), [color, Px.C.white], 6)
+
+
 func banner(text: String) -> void:
 	if top:
 		top.banner_text = text
@@ -243,6 +317,7 @@ func _process(delta: float) -> void:
 	if Fx.frozen() or get_tree().paused:
 		return
 	delta = Fx.dt(delta)
+	_tick_sabotage(delta)
 	# Coordinators shield members near them.
 	var coords := enemies.filter(func(e): return is_instance_valid(e) and not e.dead and e.arch == "coordinator")
 	for e in enemies:
@@ -333,6 +408,13 @@ class FightTop extends Node2D:
 				var a := i * TAU / n
 				var p2: Vector2 = (r.c + Vector2(cos(a), sin(a) * 0.75) * r.r).round()
 				draw_rect(Rect2(p2, Vector2(2, 2)), r.color if i % 2 == 0 else Px.C.white)
+		if fight.dark_t > 0.0:
+			var pc: Vector2 = fight.player.center()
+			for y in range(Px.TOP, Px.H, 4):
+				for x in range(0, Px.W, 4):
+					var d := Vector2(x + 2, y + 2).distance_to(pc)
+					if d > 40.0:
+						draw_rect(Rect2(x, y, 4, 4), Color(Px.C.dark, 0.95 if d > 56.0 else 0.6))
 		if banner_t > 0.0 and banner_text != "":
 			var w := Px.text_w(banner_text) + 12
 			var rr := Rect2(Px.W / 2.0 - w / 2.0, Px.TOP + 4, w, 14)

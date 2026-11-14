@@ -275,6 +275,10 @@ func _black_hole(delta: float) -> void:
 func _try_special() -> void:
 	buffer = ""
 	var sp: Dictionary = Game.current_special()
+	if fight and fight.wifi_t > 0.0:
+		Fx.word("NO WIFI", center() + Vector2(0, -16), Px.C.steel)
+		Audio.play("back", 0.0)
+		return
 	if Game.hype < int(sp.cost):
 		Fx.word("NEED HYPE", center() + Vector2(0, -16), Px.C.steel)
 		Audio.play("back", 0.0)
