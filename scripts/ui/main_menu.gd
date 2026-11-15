@@ -77,8 +77,6 @@ func _draw() -> void:
 	draw_rect(Rect2(0, 0, Px.W, Px.H), Px.C.ink)
 	preload("res://scripts/ui/title.gd").draw_skyline(self, t, 200)
 	Px.text_c(self, "BADMOSI", Px.W / 2.0, 24, Px.C.gold, 24)
-	draw_texture(Px.flame_tex(), Vector2(108, 26))
-	draw_texture(Px.flame_tex(), Vector2(260, 26))
 	Px.text_c(self, "A PIXEL ADVENTURE AT IIIT-B", Px.W / 2.0, 52, Px.C.steel)
 	if diff_menu and is_instance_valid(diff_menu):
 		var lines := ["HD: HALF DAMAGE, WIDER WINDOWS, 3 PROXIES", "SD: AS DESIGNED", "8-BIT: HARDER, NO SPARE PROXIES"]
