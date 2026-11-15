@@ -29,14 +29,16 @@ func _unhandled_input(e: InputEvent) -> void:
 
 
 static func draw_skyline(ci: CanvasItem, t: float, base_y := 150) -> void:
-	# The IIIT-B front at night: Visvesvarya on the left, Aryabhatta's long block
-	# with its tall entrance, the fountain and flag on the lawn, Ramanujan and the
-	# football ground's goalpost on the right. No city: this is campus.
+	# The IIIT-B front at night, in the buildings' real colours (from the campus
+	# brochure's photos): cream Visvesvaraya, off-white Aryabhatta with sand-yellow
+	# panels and its white tower, white Ramanujan with a mustard panel, the flag and
+	# fountain on the lawn, the football field's goalpost. No city: this is campus.
+	var night := 0.55
 	var blocks := [
-		[6, 30, 34, Px.C.olive.darkened(0.55)],    # Visvesvarya hostel
-		[44, 196, 40, Px.C.tan.darkened(0.55)],    # Aryabhatta
-		[126, 32, 58, Px.C.tan.darkened(0.45)],    # Aryabhatta entrance tower
-		[260, 70, 48, Px.C.steel.darkened(0.5)],   # Ramanujan
+		[6, 30, 34, Color("efe3c2").darkened(night)],     # Visvesvaraya hostel
+		[44, 196, 40, Color("dcd8cc").darkened(night)],   # Aryabhatta
+		[126, 32, 58, Color("ece9e1").darkened(0.45)],    # Aryabhatta tower
+		[260, 70, 48, Color("ece9e1").darkened(night)],   # Ramanujan
 	]
 	for b in blocks:
 		var r := Rect2(b[0], base_y - b[2], b[1], b[2])
@@ -46,6 +48,12 @@ static func draw_skyline(ci: CanvasItem, t: float, base_y := 150) -> void:
 			for wx in range(int(r.position.x) + 4, int(r.end.x) - 4, 8):
 				var lit := (wx * 7 + wy * 13 + int(t * 0.5)) % 6 == 0
 				ci.draw_rect(Rect2(wx, wy, 4, 4), Px.C.gold if lit else Px.C.ink)
+	# Sand panels on Aryabhatta, the blue IIIT-B sign on its tower, Ramanujan's
+	# mustard panel.
+	for px in [60, 100, 170, 210]:
+		ci.draw_rect(Rect2(px, base_y - 40, 8, 40), Color("e6cf98").darkened(night))
+	ci.draw_rect(Rect2(132, base_y - 54, 20, 5), Px.C.blue)
+	ci.draw_rect(Rect2(296, base_y - 48, 10, 48), Color("d9a62e").darkened(night))
 	# Entrance doors and the reception's light.
 	ci.draw_rect(Rect2(136, base_y - 18, 12, 18), Px.C.gold.darkened(0.3))
 	# Flag on its pole, waving in two frames.
