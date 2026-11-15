@@ -57,6 +57,11 @@ func _draw() -> void:
 	var gl := 1 if int(t * 5.0) % 9 == 0 else 0
 	Px.text_c(self, "BADMOSI", Px.W / 2.0 + gl * 2, 24, Px.C.red, 48)
 	Px.text_c(self, "BADMOSI", Px.W / 2.0 - gl, 22, Px.C.gold, 48)
+	# Flames either side of the logo, bobbing a pixel out of step.
+	var fl := Px.flame_tex()
+	var bob := int(t * 5.0) % 2
+	draw_texture_rect(fl, Rect2(Vector2(26, 26 - bob), Vector2(32, 32)), false)
+	draw_texture_rect(fl, Rect2(Vector2(326, 25 + bob), Vector2(32, 32)), false)
 	# The whole gang on the lawn, bobbing out of step.
 	for i in Roster.ORDER.size():
 		var look: Dictionary = Roster.get_char(Roster.ORDER[i]).look

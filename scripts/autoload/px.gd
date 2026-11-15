@@ -22,6 +22,26 @@ const C := {
 	"maroon": Color("7a2236"), "sand": Color("e6cf98"), "jade": Color("1f6e5a"),
 }
 
+# The Badmosi flame: the game icon and the logo mark.
+const FLAME := [
+	".......r........",
+	".......rr.......",
+	"......rrr.......",
+	"......rrrr..r...",
+	".....rrorr..rr..",
+	"..r..rroorr.rr..",
+	"..rr.rrooorrrr..",
+	"..rrrroooorrrr..",
+	".rrrroooyyoorrr.",
+	".rrrooyyyyoorrr.",
+	".rrrooyyyyyoorr.",
+	".rrooyywwyyoorr.",
+	"..rrooywwyyoor..",
+	"..rrrooyyyoorr..",
+	"...rrroooorrr...",
+	".....rrrrrr.....",
+]
+
 var font: FontFile
 var _cache := {}
 
@@ -214,6 +234,10 @@ func tile_tex(kind: String, pal: Dictionary) -> Texture2D:
 	var t := ImageTexture.create_from_image(im)
 	_cache[key] = t
 	return t
+
+
+func flame_tex() -> Texture2D:
+	return tex_from("flame", FLAME, {"r": C.red, "o": C.orange, "y": C.gold, "w": C.white})
 
 
 ## A small square texture of one colour, used for particles and blocks.
