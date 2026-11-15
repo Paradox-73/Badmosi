@@ -26,7 +26,7 @@ Synergy '26 Game Dev competition entry by Team Claude laggye.
 
 It opens on a sepia flashback. Clubs used to run campus life: fest nights, 2 AM chai, pure badmosi. Then the Admin issued Circular No. 404 ("fun is pending approval"), brainwashed every club into enforcing its rules, and locked the campus down. Lifts fall, the lights go out, ceilings cave in, all "for your safety".
 
-You pick one member of the Badmosi gang. Beat a club at its own game and it snaps out of it and joins you. Free all thirteen, then beat the SAC, then the Admin. The game ends with everyone eating at Cornerhouse, then a report card: *Iss sem ki badmosi*.
+You pick one member of the Badmosi gang. Beat a club at its own game and it snaps out of it and joins you. Free all thirteen, then beat the SAC, then the Admin. The game ends with everyone eating at Corner House, then a report card: *Iss sem ki badmosi*.
 
 Every club challenge is a minigame. At any moment you can hold **F** to say `F*** IT!` (censored by a pixel mosaic): the minigame shatters into pixels and turns into a beat 'em up fight with the whole club.
 
@@ -43,7 +43,7 @@ Every club challenge is a minigame. At any moment you can hold **F** to say `F**
 | `scripts/club_room.gd` | One scene for every club: challenge, minigame, F-it switch, fight, results, membership card, 8-Bit headline |
 | `scripts/world/` | The room loader (text files) and the campus hub |
 | `scripts/ui/` | HUD, menus, character select, pause, options, dialogue, name cards, result cards, credits |
-| `scripts/story/` | Flashback, opening and the Cornerhouse ending |
+| `scripts/story/` | Flashback, opening and the Corner House ending |
 | `scripts/data/clubs.gd` | Every club's data: names, looks, palette, attacks, lines, headlines, ally perks |
 | `scripts/data/roster.gd` | The 21 playable characters: looks, perks, quirks, theme songs |
 | `levels/*.txt` | Club rooms, one character per tile (24 x 12) |
@@ -53,20 +53,47 @@ Every club challenge is a minigame. At any moment you can hold **F** to say `F**
 
 ## How to play
 
-Pick a character, then walk the campus. It follows the real IIIT-B layout: the fountain lawn and main gate, Aryabhatta, Visvesvarya, Lilavati, Ramanujan, the courts, the football ground, and the MPH and Bhaskara block. Walk into a door to see the clubs inside. Beat a club's game to free it and get its card. Free all thirteen to open the SAC room in the MPH; beat the SAC to open the Admin's office at Aryabhatta reception.
+Pick a character, then walk the campus. It follows the campus Keep Fit board: the main gate beside the football and cricket ground, the fountain lawn, Aryabhatta, the Visvesvaraya and Lilavati hostels with the koi pond between them, the basketball and volleyball/tennis courts, Ramanujan with the Thinker's statue facing the ground, and the MPH and Bhaskara block around one courtyard. The orange jogging track is the board's 1 km loop. Walk into a door to see the clubs inside; each board lists the MAIN clubs (needed for the SAC) before the SIDE clubs (optional, each frees an ally). Beat a club's game to free it and get its card. Free all thirteen to open the SAC room in the MPH; beat the SAC to open the Admin's office at Aryabhatta reception.
 
 College life is the rule set:
 - **Attendance** is your health. Every minigame mistake and every hit costs some. At 0% you are **DETAINED**, and the Admin emails your parents.
 - A **Proxy** is an extra life: a friend marks you present.
-- **Pixels (px)** are money. Spend them at the Bhaskara canteen, Coffee Cove, Juicy and Truffles.
+- **Pixels (px)** are money. Spend them at the Bhaskara canteen, Coffee Cove, or on your phone.
 - Each new club card is a **SEM UP**: more fight damage, smaller Attendance losses.
 - Every 3 cards unlock a new fight special.
 
 On campus:
 - **Security guards** patrol the paths like Pac-Man ghosts. Get spotted on a path and they chase you. Caught means a loitering fine and a walk back to the gate.
 - **Coffee Cove** (Aryabhatta and Ramanujan): cold coffee for speed, cappuccino for smaller Attendance losses, brownies to heal. Food buffs last until the end of your next club.
-- **Truffles**: order at the main gate and a rider brings it to you about 25 seconds later. Full heal and more fight damage.
-- **Juicy**: cheap juice that heals. Sometimes it ends in *pet kharab*: slower, with washroom breaks.
+- **Your phone** (L, or Y on a pad): order Truffles or Juicy. A rider leaves the main gate 20 seconds later and walks to wherever you are. A Truffles burger is a full heal and more fight damage. Juicy is cheap and heals a little; sometimes it ends in *pet kharab*: slower, with washroom breaks.
+- **The jogging track** has the board's 16 numbered posts. Touch all of them and get back to post 1 for a lap: +25 px and hype. The HUD shows how far you have walked.
+- **Campus cats** wander the lawns. Walk into one to pet it. Some are rare; the report card counts how many kinds you found.
+- **Visvesvaraya V121** was Badmosi's room. Nap on the bed for full Attendance (once per club beaten), or look at the photo on the wall to replay the flashback.
+- On **8-BIT** difficulty the guards carry torches: they see a cone ahead of them, off the paths too, and the cone is drawn on the ground.
+- The music speeds up when you are in trouble: low Attendance in a fight, the last 10 seconds of a minigame, or a guard on your tail. Rhythm games keep a steady tempo.
+
+### Side clubs and committees
+
+Optional. Each one you free becomes an ally with a small perk.
+
+| Where | Clubs |
+|---|---|
+| Aryabhatta classrooms | Algo club, Quantum club, MOSFIT, E-Cell, Alfaaz, Chess club |
+| Ramanujan classrooms | GDSC, Genesys, Lean-In, SquareOne, Turiya, ACM SIGCHI |
+| MPH Symphony room | Synergy |
+| Bhaskara mess | Aikyam, Prayas |
+| Football and cricket ground | Sports committee: chase 26 off the last two overs |
+| Basketball court | Basketball club: free throws on a power and arc meter |
+| Volleyball and tennis court | Volleyball club (first to 5), Tennis club (one game, with deuce) |
+
+### Quality of life
+
+- Every minigame's key card waits for you to press J (or X/A) before the clock starts.
+- Pausing stops the music, so the rhythm games don't count paused beats as misses. The pause menu has CONTROLS (the current minigame's goal and keys), FLIP THE TABLE, RESTART THIS CLUB, and asks before you leave a club or quit.
+- The game pauses itself when the window or browser tab loses focus.
+- On campus, I (or RB) opens a campus map with you, the guards and every door.
+- The window opens at the largest sharp scale that fits your screen, so 1366 x 768 laptops get the whole game.
+- The mouse pointer hides while you play with keys or a pad.
 
 In fights, the Admin sabotages you every 15 seconds or so: a ceiling collapse, a falling lift, a power cut, the wifi going down (no specials), a random fine, or a fire extinguisher full of foam.
 
