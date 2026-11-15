@@ -7,22 +7,29 @@ var start_fight := false
 
 func _ready() -> void:
 	Audio.play_music("title")
-	_build(false)
+	_build(0)
 
 
-## Builds the list: the thirteen clubs plus the SAC and Admin, or the side
-## clubs. Both lists do not fit on one screen.
-func _build(side: bool) -> void:
+## Page 0: the thirteen clubs plus the SAC and Admin. Pages 1 and 2: the side
+## clubs, split so every row fits on screen.
+func _pages() -> Array:
+	var half := ceili(Clubs.SIDE.size() / 2.0)
+	return [Clubs.ORDER + ["sac", "admin"], Clubs.SIDE.slice(0, half), Clubs.SIDE.slice(half)]
+
+
+func _build(page: int) -> void:
 	if menu:
 		menu.queue_free()
 	var items := []
-	for id in (Clubs.SIDE if side else Clubs.ORDER + ["sac", "admin"]):
+	var pages := _pages()
+	for id in pages[page]:
 		var d: Dictionary = Clubs.get_club(id)
 		var cid: String = id
 		items.append({"text": "%-15s %-20s %s" % [d.name, d.game_name, "*".repeat(int(d.stars))], "on": func(): _open(cid)})
 	items.append({"text": "MODE", "value": func(): return "FIGHT FIRST" if start_fight else "MINIGAME FIRST",
 		"change": func(_d): start_fight = not start_fight})
-	items.append({"text": "MAIN CLUBS" if side else "SIDE CLUBS AND COMMITTEES", "on": func(): _build.call_deferred(not side)})
+	var next := (page + 1) % pages.size()
+	items.append({"text": "NEXT PAGE (%d/%d): %s" % [page + 1, pages.size(), "MAIN CLUBS" if next == 0 else "SIDE CLUBS"], "on": func(): _build.call_deferred(next)})
 	items.append({"text": "BACK", "on": func(): Game.goto("menu")})
 	menu = MenuList.new(items, 330)
 	menu.row_h = 10

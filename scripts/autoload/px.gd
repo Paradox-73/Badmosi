@@ -357,8 +357,9 @@ func panel(ci: CanvasItem, r: Rect2, fill: Color = C.night, edge: Color = C.mist
 
 
 ## Draws text with the pixel font onto a CanvasItem. pos is the top-left.
-func text(ci: CanvasItem, s: String, pos: Vector2, color: Color = C.white, size := 8, shadow := true) -> void:
-	if Game.pad:
+## On a pad, key names become pad buttons unless raw is set.
+func text(ci: CanvasItem, s: String, pos: Vector2, color: Color = C.white, size := 8, shadow := true, raw := false) -> void:
+	if Game.pad and not raw:
 		s = Game.pad_text(s)
 	var base := pos + Vector2(0, 8 * (size / 8))
 	if shadow:
@@ -366,10 +367,10 @@ func text(ci: CanvasItem, s: String, pos: Vector2, color: Color = C.white, size 
 	ci.draw_string(font, base, s, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
 
 
-func text_c(ci: CanvasItem, s: String, cx: float, y: float, color: Color = C.white, size := 8, shadow := true) -> void:
-	if Game.pad:
+func text_c(ci: CanvasItem, s: String, cx: float, y: float, color: Color = C.white, size := 8, shadow := true, raw := false) -> void:
+	if Game.pad and not raw:
 		s = Game.pad_text(s)
-	text(ci, s, Vector2(roundi(cx - text_w(s, size) / 2.0), y), color, size, shadow)
+	text(ci, s, Vector2(roundi(cx - text_w(s, size) / 2.0), y), color, size, shadow, true)
 
 
 ## A pixel bar: outline, background and a fill of n whole pixels.

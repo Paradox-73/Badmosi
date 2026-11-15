@@ -11,6 +11,7 @@ const PLAY := Rect2(0, 24, 384, 192)
 var club := ""
 var hud: Hud
 var card_t := 3.0
+var card_wait := 0.0     # seconds the key card has been up; it waits for a press
 var running := false
 var over := false
 var time_left := 60.0
@@ -76,8 +77,12 @@ func _process(delta: float) -> void:
 	if over or get_tree().paused:
 		return
 	if card_t > 0.0:
-		card_t -= delta
-		if card_t <= 0.0 or (card_t < 2.6 and (Input.is_action_just_pressed("attack") or Input.is_action_just_pressed("accept"))):
+		card_wait += delta
+		var auto := short_round or Game.autoplay
+		if auto:
+			card_t -= delta
+		var pressed := card_wait > 0.4 and (Input.is_action_just_pressed("attack") or Input.is_action_just_pressed("accept"))
+		if (auto and card_t <= 0.0) or pressed:
 			card_t = 0.0
 			running = true
 			begin()
@@ -90,6 +95,8 @@ func _process(delta: float) -> void:
 			Audio.urge(1.0 - time_left / 10.0)
 			if time_left < 5.0 and ceili(time_left) != ceili(time_left + delta):
 				Audio.play("tick", 0.0, -6.0)
+	if Game.attendance < 35.0:
+		Audio.urge((35.0 - Game.attendance) / 25.0)
 	tick(delta)
 	if hud:
 		hud.goal = goal_text() if goal_text() != "" else info().goal
@@ -149,12 +156,16 @@ func draw_card() -> void:
 	var fit := "HOLD F TO SAY " + Game.fit_words()
 	Px.text_c(self, fit, Px.W / 2.0, 158, Px.C.pink)
 	if not Game.opts.clean_text:
-		var x0 := Px.W / 2.0 - Px.text_w(fit) / 2.0 + Px.text_w("HOLD F TO SAY F")
+		var shown := Game.pad_text(fit) if Game.pad else fit
+		var x0 := Px.W / 2.0 - Px.text_w(shown) / 2.0 + Px.text_w(Game.pad_text("HOLD F TO SAY F") if Game.pad else "HOLD F TO SAY F")
 		var cols := [Px.C.pink, Px.C.violet, Px.C.gold, Px.C.cyan]
 		for i in 6:
 			for j in 3:
 				draw_rect(Rect2(x0 + i * 3, 158 + j * 3, 3, 3), cols[(i + j + int(t * 8 + card_t * 8)) % 4])
-	Px.bar(self, Rect2(r.position.x + 8, r.end.y - 6, r.size.x - 16, 3), card_t / 3.0, Px.C.gold)
+	if short_round or Game.autoplay:
+		Px.bar(self, Rect2(r.position.x + 8, r.end.y - 6, r.size.x - 16, 3), card_t / 3.0, Px.C.gold)
+	elif card_wait > 0.4 and int(t * 2.0 + card_wait * 2.0) % 2 == 0:
+		Px.text_c(self, "PRESS J TO START", Px.W / 2.0, r.end.y - 11, Px.C.white)
 
 
 # ------------------------------------------------------------ shared cursor

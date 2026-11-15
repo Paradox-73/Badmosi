@@ -30,6 +30,8 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if Game.main and Game.main.pause_open():
+		return
 	_t += delta
 	if pages.is_empty():
 		_end()

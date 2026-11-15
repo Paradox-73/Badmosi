@@ -23,7 +23,7 @@ var splats := []
 
 
 func info() -> Dictionary:
-	return {"goal": "SQUASH 20 BUGS. LET FEWER THAN 3 REACH DEPLOY. DON'T SQUASH GREEN FEATURES.",
+	return {"goal": "SQUASH 20 BUGS. LET FEWER THAN 3 REACH DEPLOY. DON'T SQUASH FEATURES (GREEN, WITH A +).",
 		"keys": ["MOUSE CLICK, OR MOVE THE CURSOR AND PRESS J"], "time": 60.0}
 
 
@@ -112,6 +112,10 @@ func _draw() -> void:
 	for c in crawlers:
 		var tex: Texture2D = feat_tex if c.feature else bug_tex
 		draw_texture_rect(tex, Rect2((c.pos - Vector2(5, 5)).round(), Vector2(10, 10)), false)
+		if c.feature:
+			var m: Vector2 = c.pos.round() + Vector2(0, -8)
+			draw_rect(Rect2(m - Vector2(2, 0), Vector2(5, 1)), Px.C.white)
+			draw_rect(Rect2(m - Vector2(0, 2), Vector2(1, 5)), Px.C.white)
 	# Deploy line.
 	for x in range(0, Px.W, 4):
 		draw_rect(Rect2(x, DEPLOY_Y, 2, 2), Px.C.red if int(t * 4) % 2 == 0 else Px.C.orange)

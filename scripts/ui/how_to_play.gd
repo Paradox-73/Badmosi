@@ -89,18 +89,20 @@ func _page_rules() -> void:
 func _page_keys() -> void:
 	Px.text(self, "CONTROLS", Vector2(24, 34), Px.C.cyan)
 	var rows := [
-		["MOVE", "WASD OR ARROW KEYS"],
-		["ATTACK, CONFIRM", "J  (PRESS 3x FOR A COMBO)"],
-		["DODGE, BACK", "K"],
-		["SPECIAL", "L"],
-		["SWITCH SPECIAL", "I"],
-		["FLIP THE TABLE", "HOLD F FOR 1 SECOND"],
-		["PAUSE", "ESC"],
-		["FULLSCREEN", "F11"],
+		["", "KEYBOARD", "GAMEPAD"],
+		["MOVE", "WASD / ARROWS", "STICK / D-PAD"],
+		["ATTACK (3x COMBO)", "J", "X"],
+		["CONFIRM", "J / ENTER", "A"],
+		["DASH", "K", "A OR B"],
+		["BACK", "K / ESC", "B"],
+		["SPECIAL", "L", "Y"],
+		["SWITCH SPECIAL", "I", "RB"],
+		["FLIP THE TABLE", "HOLD F", "HOLD LT+RT"],
+		["PAUSE", "ESC OR P", "START"],
 	]
 	for i in rows.size():
-		var y := 50 + i * 13
-		Px.text(self, rows[i][0], Vector2(24, y), Px.C.gold)
-		Px.text(self, rows[i][1], Vector2(140, y), Px.C.white)
+		var y := 46 + i * 11
+		Px.text(self, rows[i][0], Vector2(24, y), Px.C.gold, 8, true, true)
+		Px.text(self, rows[i][1], Vector2(140, y), Px.C.cyan if i == 0 else Px.C.white, 8, true, true)
+		Px.text(self, rows[i][2], Vector2(250, y), Px.C.cyan if i == 0 else Px.C.white, 8, true, true)
 	Px.text(self, "EACH MINIGAME SHOWS ITS OWN KEYS FIRST.", Vector2(24, 160), Px.C.mist)
-	Px.text(self, "A GAMEPAD WORKS TOO.", Vector2(24, 171), Px.C.mist)

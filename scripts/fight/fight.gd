@@ -26,6 +26,7 @@ var _haz_tick := 0.0
 var sabotage_t := randf_range(10.0, 16.0)   # seconds to the Admin's next sabotage
 var dark_t := 0.0      # light outage
 var wifi_t := 0.0      # wifi down: no specials
+var _special_ready := false
 
 const SABOTAGE := ["ceiling", "lift", "lights", "wifi", "fine", "extinguisher"]
 const FINES := ["RUNNING IN THE CORRIDOR", "LAUGHING TOO LOUD", "WRONG ID LANYARD", "BREATHING AFTER 11 PM", "UNAPPROVED HAPPINESS"]
@@ -319,6 +320,11 @@ func _process(delta: float) -> void:
 	delta = Fx.dt(delta)
 	if Game.attendance < 35.0 and not over:
 		Audio.urge((35.0 - Game.attendance) / 25.0)
+	var ready := Game.hype >= int(Game.current_special().cost)
+	if ready and not _special_ready and player and not over:
+		Fx.word("SPECIAL READY: L", player.center() + Vector2(0, -26), Px.C.gold)
+		Audio.play("select", 0.0)
+	_special_ready = ready
 	_tick_sabotage(delta)
 	# Coordinators shield members near them.
 	var coords := enemies.filter(func(e): return is_instance_valid(e) and not e.dead and e.arch == "coordinator")

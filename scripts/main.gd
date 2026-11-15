@@ -38,6 +38,7 @@ var _crt := ShaderMaterial.new()
 
 func _ready() -> void:
 	Game.main = self
+	_fit_window.call_deferred()
 	_frame = SubViewportContainer.new()
 	_frame.stretch = true
 	_frame.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -193,6 +194,20 @@ func set_palette(colors: Array, amount: float) -> void:
 	_palette.visible = true
 
 
+## 1536 x 864 does not fit a 1366 x 768 or 1600 x 900 laptop. Shrink the window
+## to the largest whole-number scale that fits the screen's free area.
+func _fit_window() -> void:
+	if OS.has_feature("web") or OS.has_feature("movie") or DisplayServer.get_name() == "headless" or Game.opts.get("fullscreen", false):
+		return
+	var free := DisplayServer.screen_get_usable_rect()
+	var k := maxi(1, mini(floori(free.size.x / float(Px.W)), floori((free.size.y - 40) / float(Px.H))))
+	var want := Vector2i(Px.W * k, Px.H * k)
+	var win := get_window()
+	if win.size.x > want.x or win.size.y > want.y:
+		win.size = want
+		win.position = free.position + (free.size - want) / 2
+
+
 ## Scales the game frame by the largest whole number that fits the window,
 ## so every game pixel stays a sharp square, and centres it.
 func _fit_frame() -> void:
@@ -212,9 +227,13 @@ func apply_crt() -> void:
 ## Alt-tabbing out or the browser tab losing focus pauses the game, so a fight
 ## or a minigame timer never runs on unattended.
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and not Game.autoplay and not OS.has_feature("movie"):
+	if what in [NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_WM_WINDOW_FOCUS_OUT] and not Game.autoplay and not OS.has_feature("movie"):
 		if not get_tree().paused and screen and screen.get("pausable") == true and not _busy:
 			_pause.open()
+
+
+func pause_open() -> bool:
+	return _pause != null and _pause.visible
 
 
 ## Opens the pause menu. Runs inside the game viewport, so menus that use

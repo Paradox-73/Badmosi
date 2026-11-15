@@ -38,6 +38,8 @@ func _choose(i: int) -> void:
 
 
 func _process(delta: float) -> void:
+	if Game.main and Game.main.pause_open():
+		return
 	t += delta
 	queue_redraw()
 	if Game.autoplay and t > 0.8:

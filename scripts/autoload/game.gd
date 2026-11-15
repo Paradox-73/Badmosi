@@ -142,8 +142,13 @@ func fit_held() -> bool:
 func _input(e: InputEvent) -> void:
 	if e is InputEventJoypadButton or (e is InputEventJoypadMotion and absf(e.axis_value) > 0.5):
 		pad = true
+		Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	elif e is InputEventKey or e is InputEventMouseButton:
 		pad = false
+		if e is InputEventKey:
+			Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+	if e is InputEventMouseMotion and Input.mouse_mode != Input.MOUSE_MODE_VISIBLE:
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
 ## Rewrites keyboard prompts in s for a gamepad: "J:" becomes "X:", ESC becomes START.
@@ -230,12 +235,12 @@ func new_run() -> void:
 	rage_t = 0.0
 	run_time = 0.0
 	truffles_t = -1.0
+	order_item = ""
 	practice = false
 	stats_changed.emit()
 
 
 ## Loses Attendance. pct is a percentage before modifiers.
-	order_item = ""
 func hurt(pct: float) -> void:
 	if assist_invincible or pct <= 0.0:
 		return
@@ -531,16 +536,16 @@ func load_run(n := slot) -> bool:
 	tallies = d.get("tallies", {})
 	run_time = float(d.get("run_time", 0.0))
 	speedrun = bool(d.get("speedrun", false))
-	practice = false
-	stats_changed.emit()
-	return true
-
-
 	# A paid phone order belongs to its run: it comes back with the save, and a
 	# different slot never receives it.
 	var order: Array = d.get("order", [-1.0, ""])
 	truffles_t = float(order[0])
 	order_item = str(order[1])
+	practice = false
+	stats_changed.emit()
+	return true
+
+
 func save_options() -> void:
 	var f := FileAccess.open(OPTS_PATH, FileAccess.WRITE)
 	if f:
