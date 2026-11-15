@@ -363,11 +363,11 @@ func card_count() -> int:
 	return cards.size()
 
 
-## Cards from the thirteen clubs only, without the SAC and the Admin.
+## Cards from the thirteen main clubs only: no side clubs, SAC or Admin.
 func club_card_count() -> int:
 	var n := 0
 	for k in cards:
-		if not k in ["sac", "admin"]:
+		if k in Clubs.ORDER:
 			n += 1
 	return n
 

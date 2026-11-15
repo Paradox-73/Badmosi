@@ -70,8 +70,8 @@ func _draw() -> void:
 		var food := ", ".join(Game.buffs.keys().map(func(k): return Game.BUFFS[k].name))
 		if food != "":
 			Px.text(self, food, Vector2(110, 13), Px.C.red if Game.has_buff("upset") else Px.C.lime)
-		var spn := "DIFFICULTY " + Game.diff_name()
-		Px.text(self, spn, Vector2(Px.W - Px.text_w(spn) - 3, 13), Px.C.steel)
+		var spn := "SIDE CLUBS %d/%d" % [Clubs.SIDE.filter(func(i): return Game.cards.has(i)).size(), Clubs.SIDE.size()]
+		Px.text(self, spn, Vector2(Px.W - Px.text_w(spn) - 3, 13), Px.C.cyan)
 	if Game.speedrun:
 		var clk := Game.clock(Game.run_time)
 		var w2 := Px.text_w(clk) + 6

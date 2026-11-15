@@ -24,7 +24,7 @@ const MAP := [
 	"xjjjjjjjjjgAAAAAAAAAAAAAAAAAAAAAAAAAAAAgpgg.RRRR2RRRR.jx",
 	"xjgggggggpgAAAAAAAAAAAAAAAAAAAAAAAAAAAAgpgg.RRRcRRRRR.jx",
 	"xjgVVVVVgpgAAAAAA1AAAAAAAAAAAAAAAAAAAAAgpgg.RR.....RR.jx",
-	"xjgVVVVV.p..............................pgg.RR.....RR.jx",
+	"xjgVVVVW.p..............................pgg.RR.....RR.jx",
 	"xjgVVVVV.ppppppppppppppppppppppjjjjjjjjjjjj.....4..bR.jx",
 	"xjgVVVVV.ggg?ggggggggggggggggggjgkkkkkkkggj.RR.....RR.jx",
 	"xjgggggggggggggggggggg?gggggTggjgkkkkkkkggj.RR.....RR.jx",
@@ -52,17 +52,18 @@ const MAP := [
 	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
 ]
 const BUILDINGS := {
-	"1": {"name": "ARYABHATTA CLASSROOMS", "clubs": ["pioneers", "debsoc"]},
-	"2": {"name": "RAMANUJAN CLASSROOMS", "clubs": ["quiz", "zense"]},
+	"1": {"name": "ARYABHATTA CLASSROOMS", "clubs": ["pioneers", "debsoc", "algo", "quantum", "mosfit", "ecell"]},
+	"2": {"name": "RAMANUJAN CLASSROOMS", "clubs": ["quiz", "zense", "gdsc", "genesys", "leanin", "squareone"]},
 	"3": {"name": "MPH 8-BIT CORNER", "clubs": ["eightbit"]},
 	"4": {"name": "THINKER'S STATUE", "clubs": ["chhaya"]},
 	"5": {"name": "FOOTBALL GROUND (NIGHT)", "clubs": ["eclipse"]},
 	"6": {"name": "ARYABHATTA RECEPTION", "clubs": ["admin"]},
 	"7": {"name": "MPH SAC ROOM", "clubs": ["sac"]},
 	"8": {"name": "MPH IMPULSE & VINCI ROOM", "clubs": ["impulse", "vinci"]},
-	"9": {"name": "MPH SYMPHONY ROOM", "clubs": ["symphony"]},
-	"M": {"name": "BHASKARA MESS", "clubs": ["food"]},
-	"L": {"name": "LILAVATI", "clubs": ["film", "parvaaz"]},
+	"9": {"name": "MPH SYMPHONY ROOM", "clubs": ["symphony", "synergy"]},
+	"M": {"name": "BHASKARA MESS", "clubs": ["food", "aikyam", "prayas"]},
+	"L": {"name": "LILAVATI", "clubs": ["film", "parvaaz", "screening", "merch"]},
+	"W": {"name": "VISVESVARYA", "clubs": ["alfaaz", "turiya", "chess", "sigchi"]},
 }
 ## Doors and machines with one line to read and no club behind them.
 const FLAVOUR := {
