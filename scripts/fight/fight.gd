@@ -75,7 +75,7 @@ func start() -> void:
 	for s in spawn_list:
 		_spawn_later(s[0], s[1], delay)
 		delay += 0.15
-	banner("%s RUSHES IN!" % d.name)
+	banner("BEAT THE %s CREW, THEN %s STEPS IN" % [d.name, d.head])
 	Game.add_hype(int(Game.stat("hype")))
 
 

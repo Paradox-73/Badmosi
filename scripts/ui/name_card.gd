@@ -5,6 +5,14 @@ extends Node2D
 signal finished
 
 var club := ""
+## One-line tells for the eight shared attack pieces, shown on the card.
+const TELLS := {
+	"tiles": "GLOWING TILES, STEP OFF", "fan": "THROWN FAN, DASH THRU",
+	"dash": "CHARGE, SIDESTEP", "ring": "SHOCK RINGS, DASH THRU",
+	"summon": "CALLS HELP, CLEAR THEM", "hazard": "FLOOR SPILLS, AVOID",
+	"freeze": "FREEZE, KEEP MOVING", "shield": "SHIELD, WAIT IT OUT",
+}
+
 var t := 0.0
 var done := false
 
@@ -46,5 +54,8 @@ func _draw() -> void:
 	draw_texture_rect(tex, Rect2(pr.position + Vector2((64 - tex.get_width() * s) / 2.0, 84 - tex.get_height() * s - 6), tex.get_size() * s), false)
 	Px.text(self, d.head, Vector2(x + 100, 70), Px.C.gold, 16)
 	Px.text(self, d.name + " - " + d.full, Vector2(x + 100, 92), Px.C.white)
-	for i in 3:
+	for i in 2:
 		Px.text(self, "> " + d.stats[i], Vector2(x + 100, 108 + i * 12), Px.C.mist)
+	# What the fight is: the head's two attacks and how to beat each.
+	for i in d.get("attacks", []).size():
+		Px.text(self, "! " + TELLS.get(d.attacks[i], d.attacks[i].to_upper()), Vector2(x + 100, 132 + i * 12), Px.C.gold)
