@@ -65,7 +65,7 @@ func _process(delta: float) -> void:
 		return
 	if card_t > 0.0:
 		card_t -= delta
-		if card_t <= 0.0 or (card_t < 2.6 and Input.is_action_just_pressed("attack")):
+		if card_t <= 0.0 or (card_t < 2.6 and (Input.is_action_just_pressed("attack") or Input.is_action_just_pressed("accept"))):
 			card_t = 0.0
 			running = true
 			begin()
@@ -163,7 +163,7 @@ func cursor_step(delta: float, bounds: Rect2 = PLAY) -> bool:
 	if mv.length() > 0.1:
 		cursor += mv * cursor_speed * delta
 	cursor = cursor.clamp(bounds.position, bounds.end - Vector2.ONE)
-	var p := _clicked or Input.is_action_just_pressed("attack")
+	var p := _clicked or Input.is_action_just_pressed("attack") or Input.is_action_just_pressed("accept")
 	_clicked = false
 	return p
 

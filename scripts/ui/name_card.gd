@@ -17,9 +17,9 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	t += delta
 	queue_redraw()
-	if t > 0.4 and Input.is_action_just_pressed("attack"):
-		t = 2.4
-	if t >= 2.4 and not done:
+	if t > 0.4 and Input.is_action_just_pressed("accept"):
+		t = 4.5
+	if t >= 4.5 and not done:
 		done = true
 		get_tree().paused = false
 		finished.emit()

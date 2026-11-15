@@ -120,14 +120,21 @@ func is_hazard(p: Vector2) -> bool:
 
 
 ## Moves a box of half-size he from pos by motion, sliding along walls.
+## Long moves (a dash, or a slow frame) go in steps of at most 3 px, so a fast
+## body slides flush against a wall instead of stopping short or passing through.
 func move(pos: Vector2, motion: Vector2, he := Vector2(5, 3)) -> Vector2:
+	var steps := maxi(1, ceili(motion.length() / 3.0))
+	var step := motion / steps
 	var p := pos
-	p.x += motion.x
-	if _box_hits(p, he):
-		p.x = pos.x
-	p.y += motion.y
-	if _box_hits(p, he):
-		p.y = pos.y
+	for i in steps:
+		var q := p
+		q.x += step.x
+		if _box_hits(q, he):
+			q.x = p.x
+		q.y += step.y
+		if _box_hits(q, he):
+			q.y = p.y
+		p = q
 	return p
 
 

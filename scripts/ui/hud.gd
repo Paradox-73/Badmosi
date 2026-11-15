@@ -52,15 +52,15 @@ func _draw() -> void:
 	elif mode == "minigame":
 		var room := Px.W - 6
 		if show_fit_hint:
-			room -= Px.text_w("HOLD F: " + Game.fit_words()) + 8
+			room -= _w("HOLD F: " + Game.fit_words()) + 8
 		Px.text(self, _fit(goal, room), Vector2(3, 13), Px.C.gold)
 		if show_fit_hint:
 			var hint := "HOLD F: " + Game.fit_words()
 			if Game.opts.clean_text:
-				Px.text(self, hint, Vector2(Px.W - Px.text_w(hint) - 3, 13), Px.C.steel)
+				Px.text(self, hint, Vector2(Px.W - _w(hint) - 3, 13), Px.C.steel)
 			else:
-				Px.text(self, "HOLD F: F", Vector2(Px.W - Px.text_w(hint) - 3, 13), Px.C.steel)
-				_censor(Vector2(Px.W - Px.text_w(hint) - 3 + Px.text_w("HOLD F: F"), 13), 3)
+				Px.text(self, "HOLD F: F", Vector2(Px.W - _w(hint) - 3, 13), Px.C.steel)
+				_censor(Vector2(Px.W - _w(hint) - 3 + _w("HOLD F: F"), 13), 3)
 				Px.text(self, " IT!", Vector2(Px.W - Px.text_w(" IT!") - 3, 13), Px.C.steel)
 		if hold_f > 0.0:
 			Px.bar(self, Rect2(Px.W - 120, 21, 117, 3), hold_f, Px.C.red)
@@ -91,6 +91,11 @@ func _fit(s: String, w: int) -> String:
 	if Px.text_w(s) <= w:
 		return s
 	while s.length() > 1 and Px.text_w(s + "..") > w:
+## Width of s as drawn: on a pad, prompts read "HOLD LT+RT" instead of "HOLD F".
+func _w(s: String) -> int:
+	return Px.text_w(Game.pad_text(s) if Game.pad else s)
+
+
 		s = s.substr(0, s.length() - 1)
 	return s.strip_edges() + ".."
 

@@ -10,16 +10,16 @@ const PAGES := 3
 func _process(delta: float) -> void:
 	t += delta
 	queue_redraw()
-	if Input.is_action_just_pressed("right") or Input.is_action_just_pressed("attack"):
+	if Input.is_action_just_pressed("right") or Input.is_action_just_pressed("accept"):
 		if page < PAGES - 1:
 			page += 1
 			Audio.play("move", 0.0)
-		elif Input.is_action_just_pressed("attack"):
+		elif Input.is_action_just_pressed("accept"):
 			Game.goto("menu")
 	elif Input.is_action_just_pressed("left") and page > 0:
 		page -= 1
 		Audio.play("move", 0.0)
-	elif Input.is_action_just_pressed("dodge") or Input.is_action_just_pressed("pause"):
+	elif Input.is_action_just_pressed("cancel") or Input.is_action_just_pressed("pause"):
 		Game.goto("menu")
 
 

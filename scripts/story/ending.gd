@@ -36,7 +36,7 @@ func _process(delta: float) -> void:
 		Audio.play("stamp", 0.0)
 		Fx.shake(3, 0.2)
 	var ready := t > 13.0 or (Game.autoplay and t > 12.0)
-	if ready and not done and (Input.is_action_just_pressed("attack") or Input.is_action_just_pressed("pause") or Game.autoplay and t > 16.0):
+	if ready and not done and (Input.is_action_just_pressed("accept") or Input.is_action_just_pressed("pause") or Game.autoplay and t > 16.0):
 		done = true
 		Game.goto("credits")
 

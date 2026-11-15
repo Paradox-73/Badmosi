@@ -78,12 +78,17 @@ func _setup_input() -> void:
 		"special": [KEY_L, KEY_C], "switch": [KEY_I, KEY_V],
 		"fit": [KEY_F], "pause": [KEY_ESCAPE, KEY_P],
 		"fullscreen": [KEY_F11],
+		# Menus read accept/cancel, fights read attack/dodge/dash. On a keyboard
+		# they share keys; on a pad A confirms and dashes, B backs out and dodges.
+		"accept": [KEY_J, KEY_Z, KEY_ENTER, KEY_SPACE], "cancel": [KEY_K, KEY_X],
+		"dash": [],
 	}
 	var pads := {
 		"left": [JOY_BUTTON_DPAD_LEFT], "right": [JOY_BUTTON_DPAD_RIGHT],
 		"up": [JOY_BUTTON_DPAD_UP], "down": [JOY_BUTTON_DPAD_DOWN],
-		"attack": [JOY_BUTTON_X], "dodge": [JOY_BUTTON_A], "special": [JOY_BUTTON_Y],
-		"switch": [JOY_BUTTON_RIGHT_SHOULDER], "fit": [JOY_BUTTON_BACK], "pause": [JOY_BUTTON_START],
+		"attack": [JOY_BUTTON_X], "dodge": [JOY_BUTTON_B], "dash": [JOY_BUTTON_A],
+		"special": [JOY_BUTTON_Y], "switch": [JOY_BUTTON_RIGHT_SHOULDER], "pause": [JOY_BUTTON_START],
+		"accept": [JOY_BUTTON_A], "cancel": [JOY_BUTTON_B],
 	}
 	for action in map:
 		if not InputMap.has_action(action):
@@ -107,15 +112,31 @@ func _setup_input() -> void:
 		InputMap.action_add_event(action, jm)
 
 
+## Movement snapped to 8 directions. A stick pushed "up" is never exactly up,
+## and the leftover sideways part made players drift while walking straight.
 func move_vec() -> Vector2:
-	return Input.get_vector("left", "right", "up", "down")
+	var v := Input.get_vector("left", "right", "up", "down")
+	if v.length() < 0.1:
+		return Vector2.ZERO
+	var d := Vector2.from_angle(snappedf(v.angle(), PI / 4.0))
+	return Vector2(snappedf(d.x, 0.001), snappedf(d.y, 0.001)) * minf(v.length(), 1.0)
 
 
 ## True after the last input came from a gamepad: on-screen prompts then
 ## name pad buttons (Xbox layout) instead of keys.
 var pad := false
 var _pad_cache := {}
-const PAD_NAMES := {"J": "X", "K": "A", "L": "Y", "I": "RB", "F": "BACK"}
+const PAD_NAMES := {"J": "X", "K": "B", "L": "Y", "I": "RB", "F": "LT+RT"}
+
+
+## Flip the table: F on a keyboard, or both triggers held on a pad.
+func fit_held() -> bool:
+	if Input.is_action_pressed("fit"):
+		return true
+	for dev in Input.get_connected_joypads():
+		if Input.get_joy_axis(dev, JOY_AXIS_TRIGGER_LEFT) > 0.5 and Input.get_joy_axis(dev, JOY_AXIS_TRIGGER_RIGHT) > 0.5:
+			return true
+	return false
 
 
 func _input(e: InputEvent) -> void:
@@ -130,11 +151,13 @@ func pad_text(s: String) -> String:
 	if _pad_cache.has(s):
 		return _pad_cache[s]
 	var out := s
-	for pair in [["J/ENTER", "X"], ["K/ESC", "A"], ["ARROWS/WASD", "STICK"], ["WASD OR ARROWS", "STICK"],
-			["ENTER OR J", "X"], ["BACKSPACE OR K", "A"], ["J OR CLICK", "X"], ["MOVE THE CURSOR AND PRESS J", "MOVE THE CURSOR AND PRESS X"],
-			["ARROWS:", "STICK:"], ["ESC:", "START:"], ["ESC ", "START "], ["HOLD F", "HOLD BACK"], ["PRESS I ", "PRESS RB "], ["PRESS L ", "PRESS Y "]]:
+	# Menu prompts first: there J means confirm, which is A on a pad.
+	for pair in [["J/ENTER", "A"], ["K/ESC", "B"], ["J: PLAY AS", "A: PLAY AS"], ["J NEXT", "A NEXT"], ["J: NEXT", "A: NEXT"],
+			["J >", "A >"], ["J>", "A>"], ["PRESS J.", "PRESS A."], ["ARROWS/WASD", "STICK"], ["WASD OR ARROWS", "STICK"],
+			["ENTER OR J", "X"], ["BACKSPACE OR K", "B"], ["J OR CLICK", "X"], ["MOVE THE CURSOR AND PRESS J", "MOVE THE CURSOR AND PRESS X"],
+			["K: DODGE", "A/B: DASH"], ["ARROWS:", "STICK:"], ["ESC:", "START:"], ["ESC ", "START "], ["HOLD F", "HOLD LT+RT"], ["PRESS I ", "PRESS RB "], ["PRESS L ", "PRESS Y "]]:
 		out = out.replace(pair[0], pair[1])
-	var re := RegEx.create_from_string("(^|[ (])([JKLIF])(?=:|[.]|$| >| [(])")
+	var re := RegEx.create_from_string("(^|[ (])([JKLI])(?=:|[.]|$| >| [(])")  # F only via "HOLD F": it also starts the censored word
 	var m := re.search(out)
 	while m:
 		var key := m.get_string(2)

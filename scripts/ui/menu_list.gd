@@ -37,9 +37,9 @@ func _unhandled_input(e: InputEvent) -> void:
 		_change(-1)
 	elif e.is_action_pressed("right"):
 		_change(1)
-	elif e.is_action_pressed("attack"):
+	elif e.is_action_pressed("accept"):
 		_activate()
-	elif e.is_action_pressed("dodge") or e.is_action_pressed("pause"):
+	elif e.is_action_pressed("cancel") or e.is_action_pressed("pause"):
 		get_viewport().set_input_as_handled()
 		Audio.play("back", 0.0)
 		back.emit()

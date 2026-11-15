@@ -37,9 +37,9 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(e: InputEvent) -> void:
-	if e.is_action_pressed("attack"):
+	if e.is_action_pressed("accept"):
 		_next()
-	elif e.is_action_pressed("pause") or e.is_action_pressed("dodge"):
+	elif e.is_action_pressed("pause") or e.is_action_pressed("cancel"):
 		get_viewport().set_input_as_handled()
 		_finish()
 

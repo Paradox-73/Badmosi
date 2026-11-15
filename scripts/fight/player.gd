@@ -148,6 +148,9 @@ func _read_input() -> void:
 			buffer = a
 			buffer_t = 0.15
 	if Input.is_action_just_pressed("switch"):
+	if Input.is_action_just_pressed("dash"):
+		buffer = "dodge"
+		buffer_t = 0.15
 		Game.cycle_special()
 		Audio.play("move", 0.0)
 
@@ -217,7 +220,7 @@ func _quirks(delta: float) -> void:
 	if Game.quirk() == "phone":
 		if phone_warn > 0.0:
 			phone_warn -= delta
-			if Input.is_action_just_pressed("dodge"):
+			if Input.is_action_just_pressed("dodge") or Input.is_action_just_pressed("dash"):
 				phone_warn = 0.0
 				Fx.word("IGNORED!", center() + Vector2(0, -20), Px.C.lime)
 			elif phone_warn <= 0.0:

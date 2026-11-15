@@ -108,7 +108,7 @@ func _process(delta: float) -> void:
 	if phase == "minigame" and game and game.can_flip():
 		if "--autofit" in OS.get_cmdline_user_args() and game.t > 1.5:
 			fit_hold = 1.0
-		if Input.is_action_pressed("fit") or fit_hold >= 1.0:
+		if Game.fit_held() or fit_hold >= 1.0:
 			fit_hold += delta
 			hud.hold_f = fit_hold
 			if fit_hold >= 1.0:

@@ -14,10 +14,10 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	t += delta
 	queue_redraw()
-	if Input.is_action_just_pressed("dodge") or Input.is_action_just_pressed("pause"):
+	if Input.is_action_just_pressed("cancel") or Input.is_action_just_pressed("pause"):
 		Game.goto("menu")
 		return
-	if Input.is_action_just_pressed("attack") and taps.size() < 8:
+	if (Input.is_action_just_pressed("attack") or Input.is_action_just_pressed("accept")) and taps.size() < 8:
 		var bl := Audio.beat_len()
 		var st := Audio.song_time() + float(Game.opts.rhythm_offset) / 1000.0
 		var err := st - roundf(st / bl) * bl

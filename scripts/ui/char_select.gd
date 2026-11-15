@@ -38,9 +38,9 @@ func _unhandled_input(e: InputEvent) -> void:
 		sel = sel - COLS if sel >= COLS else sel
 	elif e.is_action_pressed("down"):
 		sel = sel + COLS if sel + COLS < n else sel
-	elif e.is_action_pressed("attack"):
+	elif e.is_action_pressed("accept"):
 		_pick()
-	elif e.is_action_pressed("dodge") or e.is_action_pressed("pause"):
+	elif e.is_action_pressed("cancel") or e.is_action_pressed("pause"):
 		get_viewport().set_input_as_handled()
 		Audio.play("back", 0.0)
 		Game.goto("menu")

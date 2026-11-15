@@ -53,7 +53,7 @@ func _process(_d: float) -> bool:
 		3:
 			check(main.screen.busy, "board makes the hub busy")
 			tap("down")
-			tap("dodge")
+			tap("cancel")
 			wait = 5
 		4:
 			check(not main.screen.busy, "K closes the board")
@@ -61,11 +61,11 @@ func _process(_d: float) -> bool:
 			wait = 5
 		5:
 			G.attendance = 50.0
-			tap("attack")
+			tap("accept")
 			wait = 5
 		6:
 			check(is_equal_approx(G.attendance, 70.0) and G.pixels == 470, "chai heals 20% for 30 px")
-			tap("dodge")
+			tap("cancel")
 			wait = 5
 		7:
 			main.screen.set("pausable", true)
@@ -74,39 +74,39 @@ func _process(_d: float) -> bool:
 		8:
 			check(paused, "Esc pauses")
 			tap("down")
-			tap("attack")
+			tap("accept")
 			wait = 5
 		9:
-			tap("attack")
+			tap("accept")
 			wait = 5
 		10:
 			check(G.assist_invincible, "assists page toggles Invincible")
 			G.assist_invincible = false
-			tap("dodge")
+			tap("cancel")
 			wait = 3
 		11:
-			tap("dodge")
+			tap("cancel")
 			wait = 5
 		12:
 			check(not paused, "back out of pause resumes")
 			main.screen._open_shop("c")
 			wait = 5
 		13:
-			tap("attack")
+			tap("accept")
 			wait = 5
 		14:
 			check(G.has_buff("speed") and G.pixels == 410, "cold coffee gives the speed buff for 60 px")
-			tap("dodge")
+			tap("cancel")
 			wait = 5
 		15:
 			main.screen._open_shop("t")
 			wait = 5
 		16:
-			tap("attack")
+			tap("accept")
 			wait = 5
 		17:
-			check(G.truffles_t > 0.0 and G.pixels == 260, "a Truffles order costs 150 px and starts the timer")
-			tap("dodge")
+			check(G.truffles_t > 0.0 and G.pixels == 260, "a Truffles order on the phone costs 150 px and starts the timer")
+			tap("cancel")
 			G.truffles_t = 0.0
 			G.attendance = 40.0
 			wait = 5
@@ -147,3 +147,6 @@ func _process(_d: float) -> bool:
 			return true
 	step += 1
 	return false
+			tap("accept")
+			wait = 40
+		25:

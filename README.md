@@ -75,13 +75,17 @@ In fights, the Admin sabotages you every 15 seconds or so: a ceiling collapse, a
 | Action | Keys | Gamepad |
 |---|---|---|
 | Move | W A S D or arrow keys | Left stick or d-pad |
-| Attack (3-hit combo), confirm | J, Z or Enter | X / Square |
-| Dodge, back | K or X | A / Cross |
+| Confirm in menus | J, Z or Enter | A / Cross |
+| Back in menus | K, X or Esc | B / Circle |
+| Attack (3-hit combo) | J, Z or Enter | X / Square |
+| Dash (a dodge with a moment of safety) | K or X | A or B |
 | Special | L or C | Y / Triangle |
 | Switch special | I or V | Right bumper |
-| Flip the table | Hold F for 1 second | Hold Back |
+| Flip the table | Hold F for 1 second | Hold both triggers (LT + RT) |
 | Pause | Esc | Start |
 | Fullscreen | F11 | |
+
+Each club head's name card lists its two attacks and how to beat each. Runs save to one of three slots; NEW GAME and LOAD GAME on the main menu ask which.
 
 Each minigame shows its own keys on a key card before it starts. Menus, minigames and fights all work with a gamepad.
 

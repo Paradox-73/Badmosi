@@ -39,14 +39,14 @@ func _process(delta: float) -> void:
 	if Game.autoplay and _t > 0.6:
 		_end()
 		return
-	if Input.is_action_pressed("attack"):
+	if Input.is_action_pressed("accept"):
 		hold += delta
 		if hold > 0.8:
 			_end()
 			return
 	else:
 		hold = 0.0
-	if Input.is_action_just_pressed("attack") or (Input.is_action_just_pressed("dodge")):
+	if Input.is_action_just_pressed("accept") or (Input.is_action_just_pressed("cancel")):
 		if shown < full.length():
 			shown = full.length()
 		else:

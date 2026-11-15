@@ -18,7 +18,7 @@ var lines := [
 func _process(delta: float) -> void:
 	t += delta
 	queue_redraw()
-	if t > 0.5 and (Input.is_action_just_pressed("attack") or Input.is_action_just_pressed("dodge") or Input.is_action_just_pressed("pause")):
+	if t > 0.5 and (Input.is_action_just_pressed("accept") or Input.is_action_just_pressed("cancel") or Input.is_action_just_pressed("pause")):
 		Game.goto("menu")
 
 
