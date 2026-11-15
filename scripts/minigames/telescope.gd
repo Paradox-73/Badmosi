@@ -6,12 +6,12 @@ const R := 30.0
 
 var stars := []
 var objects := []    # {id, name, pos, found}
-var need := 4
+var need := 5
 var sat_t := 0.0
 
 
 func info() -> Dictionary:
-	return {"goal": "FIND 4 OF 5 OBJECTS IN THE SKY. CENTRE ONE IN THE VIEW AND PRESS.",
+	return {"goal": "FIND ALL 5 OBJECTS IN THE SKY. CENTRE ONE IN THE VIEW AND PRESS.",
 		"keys": ["MOUSE TO AIM, CLICK   OR ARROWS + J"], "time": 75.0}
 
 
@@ -127,9 +127,17 @@ func _draw() -> void:
 			var a := i * TAU / 48.0
 			draw_rect(Rect2((cursor + Vector2(cos(a), sin(a)) * R).round(), Vector2.ONE), Px.C.slate)
 		draw_cursor(Px.C.gold)
-	# City glow along the bottom.
+	# Seen from the Thinker's statue: Ramanujan's roofline against the
+	# Electronic City glow, the statue's head in the corner.
 	for x in range(0, Px.W, 4):
-		draw_rect(Rect2(x, Px.H - 6, 4, 6), Color(Px.C.orange, 0.25 + 0.1 * sin(x * 0.3)))
+		draw_rect(Rect2(x, Px.H - 22, 4, 6), Color(Px.C.orange, 0.18 + 0.08 * sin(x * 0.3)))
+	draw_rect(Rect2(150, Px.H - 18, 234, 18), Px.C.ink)
+	draw_rect(Rect2(196, Px.H - 24, 40, 6), Px.C.ink)   # stair tower
+	for wx in range(158, 380, 12):
+		draw_rect(Rect2(wx, Px.H - 12, 4, 3), Px.C.gold if (wx / 12) % 5 == 1 else Px.C.night)
+	draw_rect(Rect2(0, Px.H - 6, 150, 6), Px.C.ink)
+	draw_rect(Rect2(14, Px.H - 22, 10, 16), Px.C.slate.darkened(0.4))   # the statue
+	draw_rect(Rect2(16, Px.H - 28, 7, 7), Px.C.slate.darkened(0.4))
 	# Checklist.
 	Px.panel(self, Rect2(Px.W - 108, 28, 104, 12 + objects.size() * 10), Px.C.ink, Px.C.violet)
 	for i in objects.size():
