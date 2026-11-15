@@ -209,6 +209,14 @@ func apply_crt() -> void:
 	_crt.set_shader_parameter("curve", 0.004 * float(Game.opts.get("crt_curve", 3)))
 
 
+## Alt-tabbing out or the browser tab losing focus pauses the game, so a fight
+## or a minigame timer never runs on unattended.
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and not Game.autoplay and not OS.has_feature("movie"):
+		if not get_tree().paused and screen and screen.get("pausable") == true and not _busy:
+			_pause.open()
+
+
 ## Opens the pause menu. Runs inside the game viewport, so menus that use
 ## Esc as "back" mark it handled first.
 class PauseTap extends Node:
