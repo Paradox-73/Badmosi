@@ -1,6 +1,6 @@
 extends Node2D
 ## After the Admin falls: Circular No. 404 is revoked, then the whole gang and
-## every freed club head eat together at Cornerhouse. Last, the run's report
+## every freed club head eat together at Corner House. Last, the run's report
 ## card: "Iss sem ki badmosi".
 
 var t := 0.0
@@ -64,15 +64,26 @@ func _revoked() -> void:
 		Px.text_c(self, "EVERY CLUB IS FREE. THE LOCKDOWN IS OVER.", Px.W / 2.0, 172, Px.C.gold)
 
 
+const CH_PURPLE := Color("8652a1")
+const CH_BROWN := Color("4e2f27")
+const CH_CREAM := Color("fff3f0")
+
+
 func _cornerhouse(k: float) -> void:
-	# The restaurant: warm walls, the sign, one long table.
-	draw_rect(Rect2(0, 24, Px.W, 192), Px.C.maroon.darkened(0.3))
-	for x in range(0, Px.W, 16):
-		draw_rect(Rect2(x, 24, 8, 70), Px.C.maroon.darkened(0.15))
-	var sign := Rect2(Px.W / 2.0 - 70, 30, 140, 22)
-	Px.panel(self, sign, Px.C.ink, Px.C.gold)
+	# Corner House in its own colours, sampled from the brand's logo: a purple and
+	# white striped awning, chocolate-brown lettering on cream.
+	draw_rect(Rect2(0, 24, Px.W, 192), CH_CREAM)
+	draw_rect(Rect2(0, 94, Px.W, 122), CH_PURPLE.darkened(0.15))     # purple lower wall
+	for x in range(0, Px.W, 12):
+		draw_rect(Rect2(x, 24, 6, 14), CH_PURPLE)                     # awning stripes
+		draw_rect(Rect2(x + 6, 24, 6, 14), Color.WHITE)
+		draw_rect(Rect2(x + 1, 38, 4, 2), CH_PURPLE)                  # scalloped edge
+		draw_rect(Rect2(x + 7, 38, 4, 2), Color.WHITE)
+	var sign := Rect2(Px.W / 2.0 - 66, 44, 132, 30)
+	Px.panel(self, sign, CH_CREAM, CH_PURPLE)
 	var lit := int(k * 4.0) % 6 != 0
-	Px.text_c(self, "CORNERHOUSE", Px.W / 2.0, 37, Px.C.gold if lit else Px.C.brown, 8)
+	Px.text_c(self, "CORNER HOUSE", Px.W / 2.0, 49, CH_BROWN if lit else CH_PURPLE, 8)
+	Px.text_c(self, "ICE CREAMS", Px.W / 2.0, 62, CH_PURPLE)
 	# Back row: club heads arrive one by one. Front row: the gang.
 	var n := clampi(int(k * 3.0), 0, heads.size())
 	for i in n:
@@ -82,8 +93,8 @@ func _cornerhouse(k: float) -> void:
 	for i in g:
 		var x2 := 12 + i * 18
 		draw_texture(Px.char_tex(gang[i], "idle"), Vector2(x2, 140 - (int(k * 5.0 + i) % 2)))
-	draw_rect(Rect2(8, 108, Px.W - 16, 22), Px.C.brown)
-	draw_rect(Rect2(8, 108, Px.W - 16, 3), Px.C.tan)
+	draw_rect(Rect2(8, 108, Px.W - 16, 22), CH_BROWN)
+	draw_rect(Rect2(8, 108, Px.W - 16, 3), CH_CREAM)
 	# Death by Chocolate, one for everybody.
 	for i in 14:
 		var bx := 20 + i * 26
