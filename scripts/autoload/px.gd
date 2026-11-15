@@ -259,6 +259,8 @@ func panel(ci: CanvasItem, r: Rect2, fill: Color = C.night, edge: Color = C.mist
 
 ## Draws text with the pixel font onto a CanvasItem. pos is the top-left.
 func text(ci: CanvasItem, s: String, pos: Vector2, color: Color = C.white, size := 8, shadow := true) -> void:
+	if Game.pad:
+		s = Game.pad_text(s)
 	var base := pos + Vector2(0, 8 * (size / 8))
 	if shadow:
 		ci.draw_string(font, base + Vector2(1, 1), s, HORIZONTAL_ALIGNMENT_LEFT, -1, size, C.dark)
@@ -266,6 +268,8 @@ func text(ci: CanvasItem, s: String, pos: Vector2, color: Color = C.white, size 
 
 
 func text_c(ci: CanvasItem, s: String, cx: float, y: float, color: Color = C.white, size := 8, shadow := true) -> void:
+	if Game.pad:
+		s = Game.pad_text(s)
 	text(ci, s, Vector2(roundi(cx - text_w(s, size) / 2.0), y), color, size, shadow)
 
 

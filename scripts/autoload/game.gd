@@ -92,6 +92,7 @@ func _setup_input() -> void:
 		for b in pads.get(action, []):
 			var jb := InputEventJoypadButton.new()
 			jb.button_index = b
+			jb.device = -1    # any controller, not only the first one
 			InputMap.action_add_event(action, jb)
 	var axes := {"left": [JOY_AXIS_LEFT_X, -1.0], "right": [JOY_AXIS_LEFT_X, 1.0],
 		"up": [JOY_AXIS_LEFT_Y, -1.0], "down": [JOY_AXIS_LEFT_Y, 1.0]}
@@ -99,11 +100,52 @@ func _setup_input() -> void:
 		var jm := InputEventJoypadMotion.new()
 		jm.axis = axes[action][0]
 		jm.axis_value = axes[action][1]
+		jm.device = -1
 		InputMap.action_add_event(action, jm)
 
 
 func move_vec() -> Vector2:
 	return Input.get_vector("left", "right", "up", "down")
+
+
+## True after the last input came from a gamepad: on-screen prompts then
+## name pad buttons (Xbox layout) instead of keys.
+var pad := false
+var _pad_cache := {}
+const PAD_NAMES := {"J": "X", "K": "A", "L": "Y", "I": "RB", "F": "BACK"}
+
+
+func _input(e: InputEvent) -> void:
+	if e is InputEventJoypadButton or (e is InputEventJoypadMotion and absf(e.axis_value) > 0.5):
+		pad = true
+	elif e is InputEventKey or e is InputEventMouseButton:
+		pad = false
+
+
+## Rewrites keyboard prompts in s for a gamepad: "J:" becomes "X:", ESC becomes START.
+func pad_text(s: String) -> String:
+	if _pad_cache.has(s):
+		return _pad_cache[s]
+	var out := s
+	for pair in [["J/ENTER", "X"], ["K/ESC", "A"], ["ARROWS/WASD", "STICK"], ["WASD OR ARROWS", "STICK"],
+			["ENTER OR J", "X"], ["BACKSPACE OR K", "A"], ["J OR CLICK", "X"], ["MOVE THE CURSOR AND PRESS J", "MOVE THE CURSOR AND PRESS X"],
+			["ARROWS:", "STICK:"], ["ESC:", "START:"], ["ESC ", "START "], ["HOLD F", "HOLD BACK"], ["PRESS I ", "PRESS RB "], ["PRESS L ", "PRESS Y "]]:
+		out = out.replace(pair[0], pair[1])
+	var re := RegEx.create_from_string("(^|[ (])([JKLIF])(?=:|[.]|$| >| [(])")
+	var m := re.search(out)
+	while m:
+		var key := m.get_string(2)
+		if key == "I" and m.get_end(2) < out.length() and out[m.get_end(2)] != ":":
+			m = re.search(out, m.get_end(2))
+			continue
+		out = out.substr(0, m.get_start(2)) + PAD_NAMES[key] + out.substr(m.get_end(2))
+		m = re.search(out, m.get_start(2) + PAD_NAMES[key].length())
+	for k in ["J", "K", "L"]:
+		out = out.replace("PRESS " + k + " ", "PRESS " + PAD_NAMES[k] + " ").replace("PRESS " + k + ".", "PRESS " + PAD_NAMES[k] + ".")
+		if out.ends_with("PRESS " + k):
+			out = out.trim_suffix(k) + PAD_NAMES[k]
+	_pad_cache[s] = out
+	return out
 
 
 func _unhandled_input(e: InputEvent) -> void:
@@ -249,9 +291,17 @@ func ally(id: String) -> bool:
 	return cards.has(id)
 
 
+## True when any freed club gives this ally effect (see Clubs.ALLIES).
+func ally_effect(effect: String) -> bool:
+	for id in cards:
+		if Clubs.ALLIES.get(id, {}).get("effect", "") == effect:
+			return true
+	return false
+
+
 ## Takes a fine in pixels. DebSoc, once freed, argues it down by half.
 func fine(px: int) -> int:
-	if ally("debsoc"):
+	if ally_effect("fine_half"):
 		px /= 2
 	add_pixels(-px)
 	tally("fines", px)
@@ -354,9 +404,9 @@ func beat_club(id: String, how: String) -> bool:
 	var first := not cards.has(id)
 	cards[id] = how
 	if first:
-		if ally("food"):
+		if ally_effect("heal_on_free"):
 			heal(15)
-		if id == "parvaaz":
+		if Clubs.ALLIES.get(id, {}).get("effect", "") == "proxy":
 			proxies += 1
 	credits += 100
 	var up := false

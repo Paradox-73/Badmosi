@@ -271,11 +271,11 @@ func sabotage(kind: String) -> void:
 			_drop(cells2, 1.3, 10.0, Px.C.grey)
 		"lights":
 			banner("ADMIN SABOTAGE: POWER CUT!")
-			dark_t = 3.0 if Game.ally("eclipse") else 7.0
+			dark_t = 3.0 if Game.ally_effect("dark") else 7.0
 			Audio.play("zap", 0.0)
 		"wifi":
 			banner("ADMIN SABOTAGE: WIFI DOWN. NO SPECIALS!")
-			wifi_t = 3.0 if Game.ally("zense") else 7.0
+			wifi_t = 3.0 if Game.ally_effect("wifi") else 7.0
 			Audio.play("bleep", 0.0)
 		"fine":
 			var paid := Game.fine(20)
