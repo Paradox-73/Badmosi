@@ -4,7 +4,7 @@ extends Node2D
 var t := 0.0
 var lines := [
 	["BADMOSI", "gold"], ["", ""],
-	["A GAME BY TEAM CLAUDE LAGGYE", "white"], ["FOR SYNERGY '26 GAME DEV", "mist"], ["", ""],
+	["A GAME BY KANAV, NIRBHAY,", "white"], ["AARYAN AND BHAVYA", "white"], ["", ""],
 	["MADE WITH GODOT 4.7.2", "cyan"], ["", ""],
 	["ART", "gold"], ["EVERY SPRITE, TILE AND FONT GLYPH", "white"], ["IS DRAWN PIXEL BY PIXEL IN OUR CODE", "white"], ["", ""],
 	["MUSIC AND SOUND", "gold"], ["A CHIPTUNE SYNTH WE WROTE", "white"], ["SQUARE, TRIANGLE, SAW AND NOISE", "white"], ["", ""],

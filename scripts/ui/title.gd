@@ -29,21 +29,47 @@ func _unhandled_input(e: InputEvent) -> void:
 
 
 static func draw_skyline(ci: CanvasItem, t: float, base_y := 150) -> void:
-	# Aryabhatta and Ramanujan blocks, the statue and trees, as pixel blocks.
-	var bl := [
-		[10, 46, 70, Px.C.plum], [86, 30, 50, Px.C.night], [124, 60, 40, Px.C.plum],
-		[190, 70, 62, Px.C.night], [266, 40, 46, Px.C.plum], [312, 64, 34, Px.C.night],
+	# The IIIT-B front at night: Visvesvarya on the left, Aryabhatta's long block
+	# with its tall entrance, the fountain and flag on the lawn, Ramanujan and the
+	# football ground's goalpost on the right. No city: this is campus.
+	var blocks := [
+		[6, 30, 34, Px.C.olive.darkened(0.55)],    # Visvesvarya hostel
+		[44, 196, 40, Px.C.tan.darkened(0.55)],    # Aryabhatta
+		[126, 32, 58, Px.C.tan.darkened(0.45)],    # Aryabhatta entrance tower
+		[260, 70, 48, Px.C.steel.darkened(0.5)],   # Ramanujan
 	]
-	for b in bl:
+	for b in blocks:
 		var r := Rect2(b[0], base_y - b[2], b[1], b[2])
 		ci.draw_rect(r, b[3])
-		for wy in range(int(r.position.y) + 6, base_y - 6, 8):
-			for wx in range(int(r.position.x) + 4, int(r.end.x) - 4, 7):
-				var lit := (wx * 7 + wy * 13 + int(t * 0.5)) % 5 == 0
-				ci.draw_rect(Rect2(wx, wy, 3, 4), Px.C.gold if lit else Px.C.ink)
+		ci.draw_rect(Rect2(r.position.x, r.position.y, r.size.x, 2), b[3].lightened(0.15))
+		for wy in range(int(r.position.y) + 6, base_y - 8, 9):
+			for wx in range(int(r.position.x) + 4, int(r.end.x) - 4, 8):
+				var lit := (wx * 7 + wy * 13 + int(t * 0.5)) % 6 == 0
+				ci.draw_rect(Rect2(wx, wy, 4, 4), Px.C.gold if lit else Px.C.ink)
+	# Entrance doors and the reception's light.
+	ci.draw_rect(Rect2(136, base_y - 18, 12, 18), Px.C.gold.darkened(0.3))
+	# Flag on its pole, waving in two frames.
+	ci.draw_rect(Rect2(178, base_y - 62, 1, 62), Px.C.mist)
+	var wave := int(t * 3.0) % 2
+	for i in 3:
+		ci.draw_rect(Rect2(179, base_y - 62 + i * 3 + wave * (i % 2), 10, 3), [Px.C.orange, Px.C.white, Px.C.green][i])
+	# Trees.
+	for tx in [36, 242, 330, 360]:
+		ci.draw_rect(Rect2(tx + 3, base_y - 8, 2, 8), Px.C.brown.darkened(0.4))
+		ci.draw_rect(Rect2(tx, base_y - 18, 8, 11), Px.C.jade.darkened(0.45))
+		ci.draw_rect(Rect2(tx + 1, base_y - 20, 6, 3), Px.C.jade.darkened(0.35))
+	# Goalpost of the football ground.
+	ci.draw_rect(Rect2(342, base_y - 14, 1, 14), Px.C.white)
+	ci.draw_rect(Rect2(370, base_y - 14, 1, 14), Px.C.white)
+	ci.draw_rect(Rect2(342, base_y - 14, 29, 1), Px.C.white)
 	ci.draw_rect(Rect2(0, base_y, Px.W, Px.H - base_y), Px.C.jade.darkened(0.5))
 	for x in range(0, Px.W, 8):
 		ci.draw_rect(Rect2(x, base_y, 4, 1), Px.C.jade)
+	# The fountain on the lawn.
+	ci.draw_rect(Rect2(176, base_y + 2, 24, 3), Px.C.steel)
+	ci.draw_rect(Rect2(180, base_y - 1, 16, 3), Px.C.blue)
+	for i in 3:
+		ci.draw_rect(Rect2(186 + (i - 1) * 3, base_y - 6 + int(t * 6.0 + i) % 4, 1, 2), Px.C.white)
 
 
 func _draw() -> void:
@@ -66,4 +92,3 @@ func _draw() -> void:
 	if int(t * 2.0) % 2 == 0:
 		Px.text_c(self, "PRESS ANY KEY", Px.W / 2.0, 166, Px.C.white)
 	Px.text_c(self, "CONTAINS FLASHING LIGHTS. SEE OPTIONS.", Px.W / 2.0, 186, Px.C.steel)
-	Px.text_c(self, "TEAM CLAUDE LAGGYE  -  SYNERGY '26", Px.W / 2.0, 200, Px.C.slate)
