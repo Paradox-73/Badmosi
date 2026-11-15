@@ -14,7 +14,7 @@ const DATA := {
 	"impulse": {
 		"name": "IMPULSE", "full": "THE DANCE CLUB", "head": "COUNT EIGHT", "stars": 1,
 		"building": "MPH", "game": "dance", "game_name": "DANCE-OFF", "music": "dance",
-		"head_look": {"hair": "pink", "skin": "skin2", "cloth": "violet", "shade": "plum", "accent": "cyan", "pants": "ink", "hat": "headset"},
+		"head_look": {"hair": "pink", "skin": "skin2", "cloth": "violet", "shade": "plum", "accent": "cyan", "pants": "ink", "hat": "headset", "style": "ponytail", "face": "shades", "badge": "star"},
 		"look": {"hair": "ink", "skin": "skin2", "cloth": "pink", "shade": "maroon", "accent": "cyan", "pants": "ink"},
 		"floor": "plum", "wall": "violet", "hazard": "pink",
 		"palette": ["22182f", "8c4fd6", "f07ab5", "fbe3f0"],
@@ -32,7 +32,7 @@ const DATA := {
 	"symphony": {
 		"name": "SYMPHONY", "full": "THE MUSIC CLUB", "head": "FEEDBACK", "stars": 2,
 		"building": "MPH", "game": "piano", "game_name": "PIANO TILES", "music": "",
-		"head_look": {"hair": "red", "skin": "skin1", "cloth": "ink", "shade": "dark", "accent": "gold", "pants": "navy", "hat": "horns"},
+		"head_look": {"hair": "red", "skin": "skin1", "cloth": "ink", "shade": "dark", "accent": "gold", "pants": "navy", "hat": "horns", "style": "spiky", "prop": "headphones"},
 		"look": {"hair": "brown", "skin": "skin1", "cloth": "ink", "shade": "dark", "accent": "red", "pants": "navy"},
 		"floor": "navy", "wall": "maroon", "hazard": "gold",
 		"palette": ["0b0910", "7a2236", "f6c445", "f4f1e8"],
@@ -50,7 +50,7 @@ const DATA := {
 	"quiz": {
 		"name": "QUIZ SOCIETY", "full": "THE QUIZ CLUB", "head": "BUZZER", "stars": 2,
 		"building": "RAMANUJAN", "game": "quiz", "game_name": "QUIZ", "music": "minigame",
-		"head_look": {"hair": "ink", "skin": "skin3", "cloth": "teal", "shade": "jade", "accent": "red", "pants": "slate", "hat": "cap"},
+		"head_look": {"hair": "ink", "skin": "skin3", "cloth": "teal", "shade": "jade", "accent": "red", "pants": "slate", "hat": "cap", "face": "glasses", "prop": "book"},
 		"look": {"hair": "ink", "skin": "skin3", "cloth": "teal", "shade": "jade", "accent": "white", "pants": "slate"},
 		"floor": "jade", "wall": "teal", "hazard": "cyan",
 		"palette": ["0b1a1a", "1f6e5a", "5fd3e0", "eefcff"],
@@ -68,7 +68,7 @@ const DATA := {
 	"pioneers": {
 		"name": "PIONEERS", "full": "THE MATHS CLUB", "head": "QED", "stars": 2,
 		"building": "ARYABHATTA", "game": "maths", "game_name": "MATHS SPRINT", "music": "minigame",
-		"head_look": {"hair": "steel", "skin": "skin1", "cloth": "blue", "shade": "navy", "accent": "white", "pants": "slate", "hat": "tophat"},
+		"head_look": {"hair": "steel", "skin": "skin1", "cloth": "blue", "shade": "navy", "accent": "white", "pants": "slate", "hat": "tophat", "style": "bald", "face": "monocle", "badge": "pi"},
 		"look": {"hair": "brown", "skin": "skin1", "cloth": "blue", "shade": "navy", "accent": "white", "pants": "slate"},
 		"floor": "navy", "wall": "blue", "hazard": "white",
 		"palette": ["0d1230", "1f2a55", "3a5fcf", "e8f0ff"],
@@ -86,7 +86,7 @@ const DATA := {
 	"eightbit": {
 		"name": "8-BIT", "full": "THE STUDENT MAGAZINE", "head": "DEADLINE", "stars": 3,
 		"building": "ARYABHATTA", "game": "proofread", "game_name": "PROOFREAD THE COVER", "music": "minigame",
-		"head_look": {"hair": "ink", "skin": "skin2", "cloth": "white", "shade": "mist", "accent": "red", "pants": "ink", "hat": "visor"},
+		"head_look": {"hair": "ink", "skin": "skin2", "cloth": "white", "shade": "mist", "accent": "red", "pants": "ink", "hat": "visor", "style": "long", "prop": "pencil"},
 		"look": {"hair": "brown", "skin": "skin2", "cloth": "mist", "shade": "steel", "accent": "red", "pants": "ink"},
 		"floor": "mist", "wall": "slate", "hazard": "red",
 		"palette": ["101010", "5a5a5a", "b0b0b0", "f4f1e8"],
@@ -104,7 +104,7 @@ const DATA := {
 	"eclipse": {
 		"name": "ECLIPSE", "full": "THE ASTRONOMY CLUB", "head": "NIGHT OWL", "stars": 1,
 		"building": "PLAYGROUND", "game": "telescope", "game_name": "TELESCOPE HUNT", "music": "hub",
-		"head_look": {"hair": "violet", "skin": "skin3", "cloth": "navy", "shade": "ink", "accent": "gold", "pants": "ink", "hat": "antenna"},
+		"head_look": {"hair": "violet", "skin": "skin3", "cloth": "navy", "shade": "ink", "accent": "gold", "pants": "ink", "hat": "wizard", "face": "glasses", "prop": "telescope"},
 		"look": {"hair": "ink", "skin": "skin3", "cloth": "navy", "shade": "ink", "accent": "gold", "pants": "ink"},
 		"floor": "ink", "wall": "navy", "hazard": "gold",
 		"palette": ["05040a", "1f2a55", "8c4fd6", "f6c445"],
@@ -122,7 +122,7 @@ const DATA := {
 	"food": {
 		"name": "FOOD COMMITTEE", "full": "THE MESS COMMITTEE", "head": "IRON STOMACH", "stars": 1,
 		"building": "BHASKARA", "game": "rush", "game_name": "2 AM RUSH", "music": "minigame",
-		"head_look": {"hair": "ink", "skin": "skin2", "cloth": "white", "shade": "mist", "accent": "orange", "pants": "brown", "hat": "beret"},
+		"head_look": {"hair": "ink", "skin": "skin2", "cloth": "white", "shade": "mist", "accent": "orange", "pants": "brown", "hat": "chef", "face": "moustache", "prop": "ladle"},
 		"look": {"hair": "brown", "skin": "skin2", "cloth": "orange", "shade": "brown", "accent": "white", "pants": "brown"},
 		"floor": "sand", "wall": "orange", "hazard": "brown",
 		"palette": ["2a1408", "7a4a33", "f27d2e", "fff1d0"],
@@ -140,7 +140,7 @@ const DATA := {
 	"chhaya": {
 		"name": "CHHAYACHITRA", "full": "THE PHOTOGRAPHY CLUB", "head": "SHUTTER", "stars": 2,
 		"building": "STATUE", "game": "photo", "game_name": "GOLDEN HOUR", "music": "hub",
-		"head_look": {"hair": "tan", "skin": "skin1", "cloth": "olive", "shade": "brown", "accent": "ink", "pants": "brown", "hat": "cap"},
+		"head_look": {"hair": "tan", "skin": "skin1", "cloth": "olive", "shade": "brown", "accent": "ink", "pants": "brown", "hat": "cap", "style": "long", "prop": "camera"},
 		"look": {"hair": "ink", "skin": "skin1", "cloth": "olive", "shade": "brown", "accent": "ink", "pants": "brown"},
 		"floor": "green", "wall": "olive", "hazard": "white",
 		"palette": ["1a1408", "6f7d3a", "f6c445", "fff6d8"],
@@ -158,7 +158,7 @@ const DATA := {
 	"film": {
 		"name": "FILM DIVISION", "full": "THE FILM CLUB", "head": "DIRECTOR'S CUT", "stars": 2,
 		"building": "RAMANUJAN", "game": "boom", "game_name": "BOOM OPERATOR", "music": "minigame",
-		"head_look": {"hair": "ink", "skin": "skin2", "cloth": "maroon", "shade": "dark", "accent": "gold", "pants": "ink", "hat": "beret"},
+		"head_look": {"hair": "ink", "skin": "skin2", "cloth": "maroon", "shade": "dark", "accent": "gold", "pants": "ink", "hat": "beret", "face": "beard", "prop": "clapper"},
 		"look": {"hair": "brown", "skin": "skin2", "cloth": "ink", "shade": "dark", "accent": "gold", "pants": "ink"},
 		"floor": "ink", "wall": "maroon", "hazard": "gold",
 		"palette": ["0b0910", "3b2a4d", "c98e5f", "f4f1e8"],
@@ -176,7 +176,7 @@ const DATA := {
 	"zense": {
 		"name": "ZENSE", "full": "THE DEVELOPERS' CLUB", "head": "HOTFIX", "stars": 1,
 		"building": "RAMANUJAN", "game": "bugs", "game_name": "BUG SQUASH", "music": "fight",
-		"head_look": {"hair": "lime", "skin": "skin2", "cloth": "ink", "shade": "dark", "accent": "lime", "pants": "slate", "hat": "headset"},
+		"head_look": {"hair": "lime", "skin": "skin2", "cloth": "ink", "shade": "dark", "accent": "lime", "pants": "slate", "hat": "bandana", "face": "glasses", "prop": "laptop"},
 		"look": {"hair": "ink", "skin": "skin2", "cloth": "slate", "shade": "navy", "accent": "lime", "pants": "ink"},
 		"floor": "ink", "wall": "jade", "hazard": "lime",
 		"palette": ["041008", "1f6e5a", "9bdc4b", "e8ffd8"],
@@ -194,7 +194,7 @@ const DATA := {
 	"vinci": {
 		"name": "VINCI", "full": "THE ART CLUB", "head": "MONA PIXA", "stars": 2,
 		"building": "ARYABHATTA", "game": "paint", "game_name": "PAINT FROM MEMORY", "music": "hub",
-		"head_look": {"hair": "brown", "skin": "skin1", "cloth": "jade", "shade": "teal", "accent": "pink", "pants": "brown", "hat": "beret"},
+		"head_look": {"hair": "brown", "skin": "skin1", "cloth": "jade", "shade": "teal", "accent": "pink", "pants": "brown", "hat": "beret", "style": "long", "prop": "brush"},
 		"look": {"hair": "orange", "skin": "skin1", "cloth": "pink", "shade": "maroon", "accent": "cyan", "pants": "brown"},
 		"floor": "sand", "wall": "pink", "hazard": "cyan",
 		"palette": ["1a0f1a", "8c4fd6", "f07ab5", "fff0e0"],
@@ -212,7 +212,7 @@ const DATA := {
 	"debsoc": {
 		"name": "DEBSOC", "full": "THE DEBATING SOCIETY", "head": "REBUTTAL", "stars": 3,
 		"building": "ARYABHATTA", "game": "debate", "game_name": "POINT OF ORDER", "music": "minigame",
-		"head_look": {"hair": "ink", "skin": "skin3", "cloth": "navy", "shade": "ink", "accent": "red", "pants": "ink", "hat": "none"},
+		"head_look": {"hair": "ink", "skin": "skin3", "cloth": "navy", "shade": "ink", "accent": "red", "pants": "ink", "hat": "mortar", "face": "glasses", "prop": "gavel"},
 		"look": {"hair": "brown", "skin": "skin3", "cloth": "navy", "shade": "ink", "accent": "white", "pants": "ink"},
 		"floor": "maroon", "wall": "navy", "hazard": "red",
 		"palette": ["120814", "3b2a4d", "e2384a", "f4f1e8"],
@@ -230,7 +230,7 @@ const DATA := {
 	"parvaaz": {
 		"name": "PARVAAZ", "full": "THE THEATRE CLUB", "head": "PLOT TWIST", "stars": 3,
 		"building": "RAMANUJAN", "game": "stage", "game_name": "STAGE FRIGHT", "music": "hub",
-		"head_look": {"hair": "gold", "skin": "skin1", "cloth": "red", "shade": "maroon", "accent": "gold", "pants": "ink", "hat": "crown"},
+		"head_look": {"hair": "gold", "skin": "skin1", "cloth": "red", "shade": "maroon", "accent": "gold", "pants": "ink", "hat": "crown", "face": "moustache", "prop": "mic"},
 		"look": {"hair": "ink", "skin": "skin1", "cloth": "maroon", "shade": "dark", "accent": "gold", "pants": "ink"},
 		"floor": "brown", "wall": "maroon", "hazard": "gold",
 		"palette": ["120806", "7a2236", "f6c445", "fff6e0"],
@@ -248,7 +248,7 @@ const DATA := {
 	"sac": {
 		"name": "THE SAC", "full": "THE ADMIN'S ENFORCERS", "head": "CLIPBOARD", "stars": 3,
 		"building": "MPH", "game": "rules", "game_name": "HOUSE RULES", "music": "boss",
-		"head_look": {"hair": "slate", "skin": "skin2", "cloth": "grey", "shade": "slate", "accent": "red", "pants": "ink", "hat": "cap"},
+		"head_look": {"hair": "slate", "skin": "skin2", "cloth": "grey", "shade": "slate", "accent": "red", "pants": "ink", "hat": "cap", "face": "shades", "prop": "clipboard"},
 		"look": {"hair": "ink", "skin": "skin2", "cloth": "grey", "shade": "slate", "accent": "red", "pants": "ink"},
 		"floor": "maroon", "wall": "grey", "hazard": "red",
 		"palette": ["0d0d10", "4b5a7a", "8a8580", "e8e8e0"],
@@ -284,7 +284,7 @@ const DATA := {
 	"sigchi": {
 		"name": "ACM SIGCHI", "full": "THE HCI CHAPTER", "head": "DARK PATTERN", "stars": 2,
 		"building": "", "game": "usability", "game_name": "USABILITY TEST", "music": "minigame",
-		"head_look": {"hair": "brown", "skin": "skin2", "cloth": "cyan", "shade": "teal", "accent": "white", "pants": "ink", "hat": "visor"},
+		"head_look": {"hair": "brown", "skin": "skin2", "cloth": "cyan", "shade": "teal", "accent": "white", "pants": "ink", "hat": "visor", "style": "spiky", "face": "shades", "prop": "phone"},
 		"look": {"hair": "sand", "skin": "skin3", "cloth": "cyan", "shade": "teal", "accent": "white", "pants": "navy"},
 		"floor": "navy", "wall": "cyan", "hazard": "white",
 		"palette": ["0d1230", "2b7f86", "5fd3e0", "eefcff"],
@@ -302,7 +302,7 @@ const DATA := {
 	"turiya": {
 		"name": "TURIYA", "full": "THE CLASSICAL MUSIC CLUB", "head": "SAM", "stars": 2,
 		"building": "", "game": "taal", "game_name": "TAAL", "music": "minigame",
-		"head_look": {"hair": "ink", "skin": "skin3", "cloth": "orange", "shade": "maroon", "accent": "gold", "pants": "ink", "hat": "none"},
+		"head_look": {"hair": "ink", "skin": "skin3", "cloth": "orange", "shade": "maroon", "accent": "gold", "pants": "ink", "hat": "none", "style": "long", "prop": "flute"},
 		"look": {"hair": "ink", "skin": "skin1", "cloth": "orange", "shade": "maroon", "accent": "gold", "pants": "navy"},
 		"floor": "maroon", "wall": "orange", "hazard": "gold",
 		"palette": ["1e140c", "7a2236", "f27d2e", "fbe8c8"],
@@ -320,7 +320,7 @@ const DATA := {
 	"mosfit": {
 		"name": "MOSFIT", "full": "THE VLSI CLUB", "head": "LOGIC LEVEL", "stars": 3,
 		"building": "", "game": "gates", "game_name": "WIRE THE GATE", "music": "minigame",
-		"head_look": {"hair": "sand", "skin": "skin1", "cloth": "lime", "shade": "green", "accent": "ink", "pants": "ink", "hat": "antenna"},
+		"head_look": {"hair": "sand", "skin": "skin1", "cloth": "lime", "shade": "green", "accent": "ink", "pants": "ink", "hat": "none", "style": "bald", "face": "glasses", "badge": "chip"},
 		"look": {"hair": "brown", "skin": "skin2", "cloth": "lime", "shade": "green", "accent": "ink", "pants": "navy"},
 		"floor": "jade", "wall": "green", "hazard": "lime",
 		"palette": ["0b1a10", "1f6e5a", "9bdc4b", "effce0"],
@@ -338,7 +338,7 @@ const DATA := {
 	"prayas": {
 		"name": "PRAYAS", "full": "THE TEACHING INITIATIVE", "head": "DIDI", "stars": 1,
 		"building": "", "game": "books", "game_name": "BOOK DRIVE", "music": "minigame",
-		"head_look": {"hair": "ink", "skin": "skin2", "cloth": "sand", "shade": "tan", "accent": "red", "pants": "ink", "hat": "none"},
+		"head_look": {"hair": "ink", "skin": "skin2", "cloth": "sand", "shade": "tan", "accent": "red", "pants": "ink", "hat": "bun", "face": "glasses", "prop": "pointer"},
 		"look": {"hair": "ink", "skin": "skin3", "cloth": "sand", "shade": "tan", "accent": "red", "pants": "navy"},
 		"floor": "brown", "wall": "tan", "hazard": "red",
 		"palette": ["1e140c", "7a4a33", "c98e5f", "f2e2c0"],
@@ -356,7 +356,7 @@ const DATA := {
 	"quantum": {
 		"name": "QUANTUM CLUB", "full": "QUANTUM COMPUTING", "head": "SUPERPOSITION", "stars": 3,
 		"building": "", "game": "qubits", "game_name": "QUBIT FLIP", "music": "minigame",
-		"head_look": {"hair": "brown", "skin": "skin3", "cloth": "blue", "shade": "violet", "accent": "cyan", "pants": "ink", "hat": "antenna"},
+		"head_look": {"hair": "brown", "skin": "skin3", "cloth": "blue", "shade": "violet", "accent": "cyan", "pants": "ink", "hat": "antenna", "style": "afro", "face": "shades"},
 		"look": {"hair": "brown", "skin": "skin1", "cloth": "blue", "shade": "violet", "accent": "cyan", "pants": "navy"},
 		"floor": "night", "wall": "violet", "hazard": "cyan",
 		"palette": ["0b0910", "3a5fcf", "8c4fd6", "e8f0ff"],
@@ -392,7 +392,7 @@ const DATA := {
 	"genesys": {
 		"name": "GENESYS", "full": "THE OPEN SOURCE CLUB", "head": "ROOT", "stars": 2,
 		"building": "", "game": "terminal", "game_name": "TERMINAL", "music": "minigame",
-		"head_look": {"hair": "brown", "skin": "skin2", "cloth": "white", "shade": "steel", "accent": "gold", "pants": "ink", "hat": "none"},
+		"head_look": {"hair": "brown", "skin": "skin2", "cloth": "white", "shade": "steel", "accent": "gold", "pants": "ink", "hat": "none", "style": "long", "face": "beard", "prop": "mug"},
 		"look": {"hair": "sand", "skin": "skin3", "cloth": "white", "shade": "steel", "accent": "gold", "pants": "navy"},
 		"floor": "ink", "wall": "slate", "hazard": "gold",
 		"palette": ["0b0910", "4b5a7a", "f6c445", "f4f1e8"],
@@ -410,7 +410,7 @@ const DATA := {
 	"alfaaz": {
 		"name": "ALFAAZ", "full": "THE POETRY SOCIETY", "head": "QAAFIYA", "stars": 2,
 		"building": "", "game": "shayari", "game_name": "SHAYARI", "music": "minigame",
-		"head_look": {"hair": "ink", "skin": "skin3", "cloth": "plum", "shade": "night", "accent": "gold", "pants": "ink", "hat": "beret"},
+		"head_look": {"hair": "ink", "skin": "skin3", "cloth": "plum", "shade": "night", "accent": "gold", "pants": "ink", "hat": "beret", "face": "moustache", "prop": "quill"},
 		"look": {"hair": "ink", "skin": "skin1", "cloth": "plum", "shade": "night", "accent": "gold", "pants": "navy"},
 		"floor": "plum", "wall": "maroon", "hazard": "gold",
 		"palette": ["22182f", "3b2a4d", "f6c445", "f4f1e8"],
@@ -428,7 +428,7 @@ const DATA := {
 	"leanin": {
 		"name": "LEAN-IN", "full": "THE WOMEN IN TECH CIRCLE", "head": "MENTOR", "stars": 1,
 		"building": "", "game": "mentor", "game_name": "MENTOR MATCH", "music": "minigame",
-		"head_look": {"hair": "sand", "skin": "skin1", "cloth": "orange", "shade": "red", "accent": "white", "pants": "ink", "hat": "none"},
+		"head_look": {"hair": "sand", "skin": "skin1", "cloth": "orange", "shade": "red", "accent": "white", "pants": "ink", "hat": "flower", "style": "ponytail", "face": "glasses", "badge": "star"},
 		"look": {"hair": "brown", "skin": "skin2", "cloth": "orange", "shade": "red", "accent": "white", "pants": "navy"},
 		"floor": "maroon", "wall": "orange", "hazard": "white",
 		"palette": ["22182f", "e2384a", "f27d2e", "fbe8c8"],
@@ -446,7 +446,7 @@ const DATA := {
 	"aikyam": {
 		"name": "AIKYAM", "full": "THE SOCIAL SERVICE CLUB", "head": "SAPLING", "stars": 1,
 		"building": "", "game": "saplings", "game_name": "GREEN CAMPUS", "music": "minigame",
-		"head_look": {"hair": "ink", "skin": "skin2", "cloth": "lime", "shade": "green", "accent": "white", "pants": "ink", "hat": "cap"},
+		"head_look": {"hair": "ink", "skin": "skin2", "cloth": "lime", "shade": "green", "accent": "white", "pants": "ink", "hat": "bandana", "prop": "sapling", "badge": "cross"},
 		"look": {"hair": "ink", "skin": "skin3", "cloth": "lime", "shade": "green", "accent": "white", "pants": "navy"},
 		"floor": "green", "wall": "jade", "hazard": "lime",
 		"palette": ["0b1a10", "3a9e58", "9bdc4b", "effce0"],
@@ -464,7 +464,7 @@ const DATA := {
 	"squareone": {
 		"name": "SQUAREONE", "full": "THE DESIGN CLUB", "head": "KERNING", "stars": 2,
 		"building": "", "game": "deck", "game_name": "PITCH DECK", "music": "minigame",
-		"head_look": {"hair": "brown", "skin": "skin3", "cloth": "tan", "shade": "brown", "accent": "ink", "pants": "ink", "hat": "beret"},
+		"head_look": {"hair": "brown", "skin": "skin3", "cloth": "tan", "shade": "brown", "accent": "ink", "pants": "ink", "hat": "beret", "style": "mohawk", "face": "glasses", "prop": "ruler"},
 		"look": {"hair": "brown", "skin": "skin1", "cloth": "tan", "shade": "brown", "accent": "ink", "pants": "navy"},
 		"floor": "sand", "wall": "tan", "hazard": "brown",
 		"palette": ["1e140c", "7a4a33", "c98e5f", "f2e2c0"],
@@ -482,7 +482,7 @@ const DATA := {
 	"gdsc": {
 		"name": "GDSC", "full": "THE DEVELOPER STUDENT CLUB", "head": "STACK", "stars": 2,
 		"building": "", "game": "stacker", "game_name": "STACK BUILDER", "music": "minigame",
-		"head_look": {"hair": "ink", "skin": "skin1", "cloth": "blue", "shade": "navy", "accent": "red", "pants": "ink", "hat": "cap"},
+		"head_look": {"hair": "ink", "skin": "skin1", "cloth": "blue", "shade": "navy", "accent": "red", "pants": "ink", "hat": "cap", "style": "spiky", "badge": "bolt"},
 		"look": {"hair": "ink", "skin": "skin2", "cloth": "blue", "shade": "navy", "accent": "red", "pants": "navy"},
 		"floor": "navy", "wall": "blue", "hazard": "red",
 		"palette": ["0d1230", "3a5fcf", "e2384a", "f6c445"],
@@ -500,7 +500,7 @@ const DATA := {
 	"algo": {
 		"name": "ALGO CLUB", "full": "THE CLUB FOR ALGORITHMS", "head": "BIG O", "stars": 3,
 		"building": "", "game": "sorting", "game_name": "SORT IT", "music": "minigame",
-		"head_look": {"hair": "brown", "skin": "skin2", "cloth": "teal", "shade": "jade", "accent": "gold", "pants": "ink", "hat": "tophat"},
+		"head_look": {"hair": "brown", "skin": "skin2", "cloth": "teal", "shade": "jade", "accent": "gold", "pants": "ink", "hat": "tophat", "face": "glasses", "badge": "ring"},
 		"look": {"hair": "sand", "skin": "skin3", "cloth": "teal", "shade": "jade", "accent": "gold", "pants": "navy"},
 		"floor": "jade", "wall": "teal", "hazard": "gold",
 		"palette": ["0b1a1a", "2b7f86", "5fd3e0", "f6c445"],
@@ -518,7 +518,7 @@ const DATA := {
 	"ecell": {
 		"name": "E-CELL", "full": "THE ENTREPRENEURSHIP CELL", "head": "UNICORN", "stars": 2,
 		"building": "", "game": "stocks", "game_name": "BUY LOW", "music": "minigame",
-		"head_look": {"hair": "ink", "skin": "skin3", "cloth": "gold", "shade": "orange", "accent": "green", "pants": "ink", "hat": "tophat"},
+		"head_look": {"hair": "ink", "skin": "skin3", "cloth": "gold", "shade": "orange", "accent": "green", "pants": "ink", "hat": "tophat", "face": "moustache", "prop": "coin"},
 		"look": {"hair": "ink", "skin": "skin1", "cloth": "gold", "shade": "orange", "accent": "green", "pants": "navy"},
 		"floor": "olive", "wall": "gold", "hazard": "green",
 		"palette": ["1e140c", "6f7d3a", "f6c445", "fbf3d0"],
@@ -536,7 +536,7 @@ const DATA := {
 	"synergy": {
 		"name": "SYNERGY", "full": "THE FEST COMMITTEE", "head": "CONVENOR", "stars": 2,
 		"building": "", "game": "fest", "game_name": "FEST SETUP", "music": "minigame",
-		"head_look": {"hair": "sand", "skin": "skin1", "cloth": "violet", "shade": "plum", "accent": "pink", "pants": "ink", "hat": "headset"},
+		"head_look": {"hair": "sand", "skin": "skin1", "cloth": "violet", "shade": "plum", "accent": "pink", "pants": "ink", "hat": "headset", "style": "long", "prop": "megaphone"},
 		"look": {"hair": "brown", "skin": "skin2", "cloth": "violet", "shade": "plum", "accent": "pink", "pants": "navy"},
 		"floor": "plum", "wall": "violet", "hazard": "pink",
 		"palette": ["22182f", "8c4fd6", "f07ab5", "fbe3f0"],
@@ -554,7 +554,7 @@ const DATA := {
 	"chess": {
 		"name": "CHESS CLUB", "full": "THE CHESS CLUB", "head": "GAMBIT", "stars": 3,
 		"building": "", "game": "knight", "game_name": "KNIGHT'S PATH", "music": "minigame",
-		"head_look": {"hair": "ink", "skin": "skin2", "cloth": "white", "shade": "grey", "accent": "ink", "pants": "ink", "hat": "crown"},
+		"head_look": {"hair": "ink", "skin": "skin2", "cloth": "white", "shade": "grey", "accent": "ink", "pants": "ink", "hat": "crown", "style": "bald", "face": "beard", "prop": "pawn"},
 		"look": {"hair": "ink", "skin": "skin3", "cloth": "white", "shade": "grey", "accent": "ink", "pants": "navy"},
 		"floor": "ink", "wall": "grey", "hazard": "white",
 		"palette": ["0b0910", "4b5a7a", "c3d0e6", "ffffff"],
