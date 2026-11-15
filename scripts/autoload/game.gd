@@ -235,6 +235,7 @@ func new_run() -> void:
 
 
 ## Loses Attendance. pct is a percentage before modifiers.
+	order_item = ""
 func hurt(pct: float) -> void:
 	if assist_invincible or pct <= 0.0:
 		return
@@ -474,7 +475,7 @@ func save_run() -> void:
 	var d := {"attendance": attendance, "proxies": proxies, "pixels": pixels,
 		"credits": credits, "sem": sem, "cards": cards, "difficulty": difficulty,
 		"character": character, "buffs": buffs, "tallies": tallies,
-		"run_time": run_time, "speedrun": speedrun}
+		"run_time": run_time, "speedrun": speedrun, "order": [truffles_t, order_item]}
 	var f := FileAccess.open(slot_path(slot), FileAccess.WRITE)
 	if f:
 		f.store_string(JSON.stringify(d))
@@ -535,6 +536,11 @@ func load_run(n := slot) -> bool:
 	return true
 
 
+	# A paid phone order belongs to its run: it comes back with the save, and a
+	# different slot never receives it.
+	var order: Array = d.get("order", [-1.0, ""])
+	truffles_t = float(order[0])
+	order_item = str(order[1])
 func save_options() -> void:
 	var f := FileAccess.open(OPTS_PATH, FileAccess.WRITE)
 	if f:

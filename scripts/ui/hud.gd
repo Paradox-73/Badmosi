@@ -29,13 +29,11 @@ func _draw() -> void:
 		var filled := att >= (i + 1) * 4 - 2
 		draw_rect(Rect2(bx + i * 3, 3, 2, 7), col if filled else Px.C.plum)
 	Px.text(self, "%d%%" % roundi(att), Vector2(bx + 78, 3), col)
-	if low and int(_t * 4) % 2 == 0:
-		Px.text(self, "SHORT ATTENDANCE!", Vector2(66, 13), Px.C.red)
 	var right := "PROXY x%d  SEM %d  %d PX" % [Game.proxies, Game.sem, Game.pixels]
 	Px.text(self, right, Vector2(Px.W - Px.text_w(right) - 3, 3), Px.C.white)
 	if low and int(_t * 4) % 2 == 0:
-		pass
-	elif mode == "fight":
+		Px.text(self, "LOW!", Vector2(bx + 104, 3), Px.C.red)
+	if mode == "fight":
 		var sp: Dictionary = Game.current_special()
 		Px.text(self, "L:" + sp.name, Vector2(3, 13), Px.C.cyan)
 		Px.text(self, "HYPE", Vector2(100, 13), Px.C.steel)
@@ -72,6 +70,12 @@ func _draw() -> void:
 			Px.text(self, food, Vector2(110, 13), Px.C.red if Game.has_buff("upset") else Px.C.lime)
 		var spn := "SIDE CLUBS %d/%d" % [Clubs.SIDE.filter(func(i): return Game.cards.has(i)).size(), Clubs.SIDE.size()]
 		Px.text(self, spn, Vector2(Px.W - Px.text_w(spn) - 3, 13), Px.C.cyan)
+		# Bottom strip: the jogging-track score and the phone.
+		var walk := "WALKED %.2f KM   LAPS %d   L: PHONE   I: MAP" % [float(Game.tallies.get("walk_m", 0.0)) / 1000.0, int(Game.tallies.get("laps", 0))]
+		if Game.truffles_t >= 0.0:
+			walk += "   %s: %s" % [Game.order_item, "ON ITS WAY" if Game.truffles_t == 0.0 else "%dS" % ceili(Game.truffles_t)]
+		draw_rect(Rect2(0, Px.H - 11, Px.text_w(walk) + 6, 11), Color(Px.C.ink, 0.8))
+		Px.text(self, walk, Vector2(3, Px.H - 9), Px.C.lime)
 	if Game.speedrun:
 		var clk := Game.clock(Game.run_time)
 		var w2 := Px.text_w(clk) + 6
@@ -85,17 +89,17 @@ func _draw() -> void:
 		Px.bar(self, r, boss.hp / boss.max_hp, Px.C.red)
 
 
+## Width of s as drawn: on a pad, prompts read "HOLD LT+RT" instead of "HOLD F".
+func _w(s: String) -> int:
+	return Px.text_w(Game.pad_text(s) if Game.pad else s)
+
+
 ## Cuts s to w pixels with ".." at the end. The minigame goal shares its row with the
 ## hold-F hint, and long goals ran underneath it. The full goal is on the key card.
 func _fit(s: String, w: int) -> String:
 	if Px.text_w(s) <= w:
 		return s
 	while s.length() > 1 and Px.text_w(s + "..") > w:
-## Width of s as drawn: on a pad, prompts read "HOLD LT+RT" instead of "HOLD F".
-func _w(s: String) -> int:
-	return Px.text_w(Game.pad_text(s) if Game.pad else s)
-
-
 		s = s.substr(0, s.length() - 1)
 	return s.strip_edges() + ".."
 

@@ -16,6 +16,11 @@ var panels := [
 var idx := 0
 var t := 0.0
 var done := false
+var back := "opening"   # V121 replays this and returns to campus
+
+
+func setup(args: Dictionary) -> void:
+	back = args.get("back", "opening")
 
 
 func _ready() -> void:
@@ -71,7 +76,7 @@ func _finish() -> void:
 		return
 	done = true
 	Game.main.set_palette([], 0.0)
-	Game.goto("opening")
+	Game.goto(back, {"from": "v121"} if back == "hub" else {})
 
 
 ## The panel's caption, wrapped to the caption box (58 characters a line).

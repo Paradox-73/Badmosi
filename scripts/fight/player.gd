@@ -144,13 +144,14 @@ func _bot(delta: float) -> Vector2:
 
 func _read_input() -> void:
 	for a in ["attack", "dodge", "special"]:
-		if Input.is_action_just_pressed(a):
+		# On campus the special button opens the phone instead.
+		if Input.is_action_just_pressed(a) and not (a == "special" and fight == null):
 			buffer = a
 			buffer_t = 0.15
-	if Input.is_action_just_pressed("switch"):
 	if Input.is_action_just_pressed("dash"):
 		buffer = "dodge"
 		buffer_t = 0.15
+	if Input.is_action_just_pressed("switch"):
 		Game.cycle_special()
 		Audio.play("move", 0.0)
 

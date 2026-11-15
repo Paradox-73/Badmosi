@@ -42,6 +42,7 @@ func _process(_d: float) -> bool:
 			root.add_child(main)
 			wait = 5
 		1:
+			G.slot = 0  # autosaves go to a file no player slot uses
 			G.new_run()
 			G.pixels = 500
 			main.change("hub", {})
@@ -57,7 +58,7 @@ func _process(_d: float) -> bool:
 			wait = 5
 		4:
 			check(not main.screen.busy, "K closes the board")
-			main.screen._open_canteen()
+			main.screen._open_shop("$")
 			wait = 5
 		5:
 			G.attendance = 50.0
@@ -73,7 +74,8 @@ func _process(_d: float) -> bool:
 			wait = 5
 		8:
 			check(paused, "Esc pauses")
-			tap("down")
+			tap("down")   # CONTROLS
+			tap("down")   # ASSISTS
 			tap("accept")
 			wait = 5
 		9:
@@ -99,7 +101,7 @@ func _process(_d: float) -> bool:
 			tap("cancel")
 			wait = 5
 		15:
-			main.screen._open_shop("t")
+			main.screen._open_shop("P")
 			wait = 5
 		16:
 			tap("accept")
@@ -109,6 +111,7 @@ func _process(_d: float) -> bool:
 			tap("cancel")
 			G.truffles_t = 0.0
 			G.attendance = 40.0
+			main.screen.player.position = main.screen._stand(Vector2i(25, 16))  # away from the gate the rider starts at
 			wait = 5
 		18:
 			check(main.screen.rider != null, "the rider sets off when the timer runs out")
@@ -135,18 +138,29 @@ func _process(_d: float) -> bool:
 			check(main.screen.player.position == main.screen._gate_pos(), "a caught player goes back to the gate")
 			wait = 5
 		22:
+			var hub2 = main.screen
+			G.tallies.erase("laps")
+			for pc in hub2.POSTS + [hub2.POSTS[0]]:
+				hub2.player.position = hub2._stand(pc)
+				hub2._walk(0.0)
+			check(int(G.tallies.get("laps", 0)) == 1, "all 16 track posts and back to post 1 make a lap")
+			var cat = hub2.cats[0]
+			cat.pet_cd = 0.0
+			cat.rest_t = 5.0
+			cat.position = hub2.player.position
+			wait = 3
+		23:
+			check(int(G.tallies.get("cats", 0)) == 1, "walking into a cat pets it")
+			close_dialogues()
 			main.screen._open_board("3")
 			wait = 5
-		23:
-			tap("attack")
-			wait = 40
 		24:
+			tap("accept")
+			wait = 40
+		25:
 			check(main.screen_name == "club", "board opens a club")
 			print("ui smoke: %d problems" % fails)
 			quit(1 if fails > 0 else 0)
 			return true
 	step += 1
 	return false
-			tap("accept")
-			wait = 40
-		25:

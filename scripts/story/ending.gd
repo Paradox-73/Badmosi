@@ -120,6 +120,8 @@ func _report() -> void:
 		["DETAINED (PARENTS MAILED)", str(int(tl.get("detained", 0)))],
 		["JUICY INCIDENTS", str(int(tl.get("juicy", 0)))],
 		["TRUFFLES ORDERS", str(int(tl.get("truffles", 0)))],
+		["CATS PETTED (KINDS FOUND)", "%d (%d/7)" % [int(tl.get("cats", 0)), tl.keys().filter(func(k): return k.begins_with("cat_")).size()]],
+		["CAMPUS LAPS (KM WALKED)", "%d (%.1f)" % [int(tl.get("laps", 0)), float(tl.get("walk_m", 0.0)) / 1000.0]],
 	]
 	if Game.quirk() == "phone":
 		rows.append(["TIMES LOST TO THE PHONE", str(int(tl.get("phone", 0)))])
