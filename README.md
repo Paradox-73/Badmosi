@@ -53,6 +53,8 @@ Every club challenge is a minigame. At any moment you can hold **F** to say `F**
 
 ## How to play
 
+Play in the browser: https://paradox-73.github.io/Badmosi/ (rebuilt on every push to `main`).
+
 Pick a character, then walk the campus. It follows the campus Keep Fit board: the main gate beside the football and cricket ground, the fountain lawn, Aryabhatta, the Visvesvaraya and Lilavati hostels with the koi pond between them, the basketball and volleyball/tennis courts, Ramanujan with the Thinker's statue facing the ground, and the MPH and Bhaskara block around one courtyard. The orange jogging track is the board's 1 km loop. Walk into a door to see the clubs inside; each board lists the MAIN clubs (needed for the SAC) before the SIDE clubs (optional, each frees an ally). Beat a club's game to free it and get its card. Free all thirteen to open the SAC room in the MPH; beat the SAC to open the Admin's office at Aryabhatta reception.
 
 College life is the rule set:
