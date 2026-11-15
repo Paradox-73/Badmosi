@@ -29,6 +29,12 @@ func _ready() -> void:
 		_players.append(p)
 	music = AudioStreamPlayer.new()
 	add_child(music)
+	# The synth mixes quietly (about -23 dB average). Push the master bus up 6 dB
+	# and catch the peaks with a limiter so nothing clips.
+	var lim := AudioEffectHardLimiter.new()
+	lim.pre_gain_db = 6.0
+	lim.ceiling_db = -0.5
+	AudioServer.add_bus_effect(0, lim)
 	apply_volumes()
 
 
@@ -342,7 +348,7 @@ func play_music(name: String) -> void:
 	_loop_len = 60.0 / music_bpm * 4.0 * 8.0
 	_loops = 0
 	_last_pos = 0.0
-	music.pitch_scale = 1.0
+	music.pitch_scale = 1.0 + 0.14 * _urge
 	music.play()
 
 
@@ -383,7 +389,22 @@ func prewarm() -> void:
 			_prewarm.append(s)
 
 
+## Urgency this frame, 0 to 1: low attendance, a timer running out, a guard
+## giving chase. The music speeds up (and climbs in pitch) with it.
+var _urge := 0.0
+var _urge_now := 0.0
+var tempo_lock := false   # rhythm games read the beat clock; keep their tempo steady
+
+
+func urge(level: float) -> void:
+	_urge_now = maxf(_urge_now, clampf(level, 0.0, 1.0))
+
+
 func _process(_d: float) -> void:
+	_urge = move_toward(_urge, 0.0 if tempo_lock else _urge_now, _d * 1.5)
+	_urge_now = 0.0
+	if music.playing:
+		music.pitch_scale = 1.0 + 0.14 * _urge
 	for n in _tasks.keys():
 		if WorkerThreadPool.is_task_completed(_tasks[n]):
 			WorkerThreadPool.wait_for_task_completion(_tasks[n])

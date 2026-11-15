@@ -317,6 +317,8 @@ func _process(delta: float) -> void:
 	if Fx.frozen() or get_tree().paused:
 		return
 	delta = Fx.dt(delta)
+	if Game.attendance < 35.0 and not over:
+		Audio.urge((35.0 - Game.attendance) / 25.0)
 	_tick_sabotage(delta)
 	# Coordinators shield members near them.
 	var coords := enemies.filter(func(e): return is_instance_valid(e) and not e.dead and e.arch == "coordinator")

@@ -18,6 +18,10 @@ var results := []
 var stamp_tries := 0
 
 
+
+func rhythm() -> bool:
+	return true
+
 func info() -> Dictionary:
 	return {"goal": "FILL IN EVERY FIELD OF FORM 404: A QUICK ROUND OF EACH CLUB'S GAME. THEN STAMP IT.",
 		"keys": ["EACH FIELD SHOWS ITS OWN KEYS", "LAST FIELD: PRESS L ON THE BEAT"], "time": 999.0}
@@ -74,6 +78,7 @@ func can_flip() -> bool:
 
 
 func _exit_tree() -> void:
+	super._exit_tree()
 	if Game.main:
 		Game.main.set_mosaic(1.0)
 

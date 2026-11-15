@@ -7,7 +7,12 @@ var started := false
 var result := ""
 
 
+func _exit_tree() -> void:
+	Audio.tempo_lock = false
+
+
 func _ready() -> void:
+	Audio.tempo_lock = true
 	Audio.play_music("dance")
 
 

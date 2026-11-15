@@ -21,6 +21,7 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	super._exit_tree()
 	var parent_pix = get_parent().get("player") if get_parent() else null
 	if parent_pix:
 		parent_pix.visible = true

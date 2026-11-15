@@ -21,6 +21,10 @@ var hit_t := 0.0
 var sam_t := 0.0
 
 
+
+func rhythm() -> bool:
+	return true
+
 func info() -> Dictionary:
 	return {"goal": "KEEP TEENTAAL: J ON EVERY BEAT. SAM (X) COUNTS TRIPLE.",
 		"keys": ["J: STRIKE THE TABLA AS EACH BOL MEETS THE LINE"], "time": 60.0}

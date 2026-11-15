@@ -47,7 +47,19 @@ func can_flip() -> bool:
 	return running and not over
 
 
+## Rhythm games read the music's beat clock, so the hurry-up tempo stays off.
+func rhythm() -> bool:
+	return false
+
+
+func _exit_tree() -> void:
+	if not get_parent() is Minigame:   # Form 404's sub-rounds leave the lock to it
+		Audio.tempo_lock = false
+
+
 func _ready() -> void:
+	if not get_parent() is Minigame:
+		Audio.tempo_lock = rhythm()
 	var inf := info()
 	time_total = float(inf.get("time", 60.0)) * Game.time_mult()
 	if short_round:
@@ -73,6 +85,11 @@ func _process(delta: float) -> void:
 	t += delta
 	if uses_timer():
 		time_left -= delta
+		# Last 10 seconds: the music hurries up, and the last 5 tick.
+		if time_left < 10.0:
+			Audio.urge(1.0 - time_left / 10.0)
+			if time_left < 5.0 and ceili(time_left) != ceili(time_left + delta):
+				Audio.play("tick", 0.0, -6.0)
 	tick(delta)
 	if hud:
 		hud.goal = goal_text() if goal_text() != "" else info().goal

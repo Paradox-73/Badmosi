@@ -23,6 +23,10 @@ var pose_t := [0.0, 0.0]
 var rng := RandomNumberGenerator.new()
 
 
+
+func rhythm() -> bool:
+	return true
+
 func info() -> Dictionary:
 	return {"goal": "REPEAT COUNT EIGHT'S PHRASES ON THE BEAT",
 		"keys": ["ARROW KEYS OR WASD, AS EACH ARROW HITS THE TOP ROW"], "time": 60.0}
