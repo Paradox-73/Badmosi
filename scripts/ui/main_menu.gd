@@ -1,5 +1,5 @@
 extends Node2D
-## New game, Continue, Club select, Options, Credits, Quit.
+## New game, Load game, Club select, Options, Credits, Quit.
 
 var menu: MenuList
 var t := 0.0
@@ -11,7 +11,7 @@ func _ready() -> void:
 	Audio.prewarm()
 	var items := [
 		{"text": "NEW GAME", "on": _new_game},
-		{"text": "CONTINUE", "on": _continue, "disabled": not Game.has_save()},
+		{"text": "LOAD GAME", "on": func(): Game.goto("slots", {"mode": "load"}), "disabled": not Game.has_save()},
 		{"text": "SPEEDRUN", "on": _speedrun},
 		{"text": "HOW TO PLAY", "on": func(): Game.goto("how_to_play")},
 		{"text": "CLUB SELECT", "on": func(): Game.goto("club_select")},
@@ -48,24 +48,13 @@ func _new_game() -> void:
 
 
 func _start(d: int) -> void:
-	Game.difficulty = d
-	Game.new_run()
-	Game.speedrun = false
-	Game.goto("char_select")
+	Game.goto("slots", {"mode": "new", "difficulty": d})
 
 
 ## A speedrun is a normal run on SD with the timer on screen. The flashback
 ## and the gate scene are skipped: char select leads straight to campus.
 func _speedrun() -> void:
-	Game.difficulty = 1
-	Game.new_run()
-	Game.speedrun = true
-	Game.goto("char_select")
-
-
-func _continue() -> void:
-	if Game.load_run():
-		Game.goto("hub")
+	Game.goto("slots", {"mode": "new", "difficulty": 1, "speedrun": true})
 
 
 func _process(delta: float) -> void:

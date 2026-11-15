@@ -6,7 +6,8 @@ signal detained
 signal proxy_used
 signal stats_changed
 
-const SAVE_PATH := "user://save.json"
+const SAVE_PATH := "user://save.json"  # the old single save, moved into slot 1
+const SLOTS := 3
 const OPTS_PATH := "user://options.json"
 const DIFFS := ["HD", "SD", "8-BIT"]
 const SPECIALS := [
@@ -46,6 +47,8 @@ var speedrun := false    # shows the timer and keeps a best time
 var practice := false    # true when a club was opened from club select
 var autoplay := false    # --autoplay: scenes advance themselves, for frame captures
 var truffles_t := -1.0   # seconds until a Truffles order leaves the gate, -1 when none
+var order_item := ""     # what the rider is bringing: TRUFFLES or JUICY
+var slot := 1            # save slot this run writes to, 1..SLOTS
 
 # Settings
 var difficulty := 1
@@ -449,22 +452,49 @@ func save_run() -> void:
 		"credits": credits, "sem": sem, "cards": cards, "difficulty": difficulty,
 		"character": character, "buffs": buffs, "tallies": tallies,
 		"run_time": run_time, "speedrun": speedrun}
-	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	var f := FileAccess.open(slot_path(slot), FileAccess.WRITE)
 	if f:
 		f.store_string(JSON.stringify(d))
 
 
+func slot_path(n: int) -> String:
+	return "user://save_%d.json" % n
+
+
+## True when slot n holds a run. The old single save.json becomes slot 1.
+func slot_used(n: int) -> bool:
+	if n == 1 and FileAccess.file_exists(SAVE_PATH) and not FileAccess.file_exists(slot_path(1)):
+		DirAccess.rename_absolute(SAVE_PATH, slot_path(1))
+	return FileAccess.file_exists(slot_path(n))
+
+
+## True when any slot holds a run.
 func has_save() -> bool:
-	return FileAccess.file_exists(SAVE_PATH)
+	for n in range(1, SLOTS + 1):
+		if slot_used(n):
+			return true
+	return false
 
 
-func load_run() -> bool:
-	if not has_save():
+## The saved run in slot n, or {} when the slot is empty or unreadable.
+func slot_data(n: int) -> Dictionary:
+	if not slot_used(n):
+		return {}
+	var d = JSON.parse_string(FileAccess.get_file_as_string(slot_path(n)))
+	return d if typeof(d) == TYPE_DICTIONARY else {}
+
+
+func delete_slot(n: int) -> void:
+	if slot_used(n):
+		DirAccess.remove_absolute(slot_path(n))
+
+
+## Loads slot n and makes it the slot that save_run writes to.
+func load_run(n := slot) -> bool:
+	var d := slot_data(n)
+	if d.is_empty():
 		return false
-	var f := FileAccess.open(SAVE_PATH, FileAccess.READ)
-	var d = JSON.parse_string(f.get_as_text())
-	if typeof(d) != TYPE_DICTIONARY:
-		return false
+	slot = n
 	attendance = maxf(30.0, float(d.get("attendance", 100)))
 	proxies = int(d.get("proxies", 1))
 	pixels = int(d.get("pixels", 0))

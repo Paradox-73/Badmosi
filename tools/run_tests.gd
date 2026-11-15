@@ -21,6 +21,7 @@ func _process(_d: float) -> bool:
 		return true
 	_done = true
 	var G = root.get_node("Game")
+	G.slot = 0  # autosaves go to a file no player slot uses
 	# Attendance and difficulty, with a character that has no guard perk.
 	G.character = "betala"
 	G.difficulty = 1
@@ -128,6 +129,31 @@ func _process(_d: float) -> bool:
 	# Piano columns rise with pitch.
 	var P = load("res://scripts/minigames/piano.gd")
 	check(P.col_for(60) < P.col_for(62) and P.col_for(62) < P.col_for(64) and P.col_for(64) < P.col_for(67), "piano columns follow pitch")
+	# Save slots: slot 2 saves and loads on its own. The player's own slot files are put back after.
+	var kept := {}
+	for n in [1, 2]:
+		kept[n] = FileAccess.get_file_as_string(G.slot_path(n)) if FileAccess.file_exists(G.slot_path(n)) else null
+	G.delete_slot(2)
+	G.new_run()
+	G.practice = false
+	G.slot = 1
+	G.pixels = 11
+	G.save_run()
+	G.slot = 2
+	G.pixels = 222
+	G.sem = 4
+	G.save_run()
+	G.new_run()
+	check(G.load_run(2) and G.pixels == 222 and G.sem == 4 and G.slot == 2, "slot 2 loads its own run")
+	check(int(G.slot_data(1).get("pixels", -1)) == 11, "saving slot 2 leaves slot 1 alone")
+	G.delete_slot(2)
+	check(not G.slot_used(2) and not G.load_run(2), "a deleted slot is empty")
+	for n in kept:
+		if kept[n] == null:
+			G.delete_slot(n)
+		else:
+			FileAccess.open(G.slot_path(n), FileAccess.WRITE).store_string(kept[n])
+	G.slot = 0
 	print("%d passed, %d failed" % [passes, fails])
 	quit(1 if fails > 0 else 0)
 	return true
